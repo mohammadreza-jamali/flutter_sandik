@@ -1,6 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/core/application/navigation_service.dart';
+import 'package:flutter_sandik/core/application/theme_manager.dart';
+import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/pages/landing_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
@@ -27,26 +31,52 @@ void main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeManager _themeManager;
+  late ThemeDto currentTheme;
+  late EventBus _eventBus;
+
+  @override
+  void initState() {
+    super.initState();
+    _themeManager = locator<ThemeManager>();
+    currentTheme = _themeManager.getTheme();
+    _eventBus = locator<EventBus>();
+    _eventBus.on<ThemeDto>().listen((event) {
+      currentTheme = event;
+      if (mounted) setState(() {});
+    });
+    _themeManager.createTheme();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [
-        ChangeNotifierProvider(
-          create: (context) => UserModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => MTransaction(),
-        ),
-      ], builder: (context, child) => MaterialApp(
-      title: 'Sandik',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: SplashScreen(),
-    ));
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => UserModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => MTransaction(),
+          ),
+        ],
+        builder: (context, child) => MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              title: 'Sandik',
+              debugShowCheckedModeBanner: false,
+              theme: currentTheme.theme,
+              home: SplashScreen(),
+              navigatorKey: locator<NavigationService>().navigatorKey,
+            ));
   }
 }
 

@@ -1,0 +1,1 @@
+enum ThemeNames { Light, Dark }
