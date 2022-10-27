@@ -49,5 +49,20 @@ class DbRepository implements IDbBase{
   Future<List<AppUser>?> getUsers()async {
     return await _dbService.getUsers();
   }
+  
+  @override
+  Future deleteGroup(String groupId) async {
+    await _dbService.deleteGroup(groupId);
+  }
+  
+  @override
+  Future updateGroup(Group group) async {
+    await _dbService.updateGroup(group);
+  }
+  
+  @override
+  Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async {
+    await _dbService.getAllTransactions(groupId);
+  }
 
 }

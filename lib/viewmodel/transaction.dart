@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/user.dart';
@@ -25,6 +26,7 @@ class MTransaction with ChangeNotifier implements IDbBase{
   Future<List<Group>?> getGroups(String userId) async{
     return await _dbRepository.getGroups(userId);
   }
+  
   Future<Map<String,dynamic>> getTransactionInfo(String groupId,String month)async{
     var budget=await getMonthBudget(groupId,month);
     var transactions=await getTransactions(groupId,month);
@@ -38,6 +40,23 @@ class MTransaction with ChangeNotifier implements IDbBase{
     };
   }
 
+  // Future<Map<String,dynamic>> getTransactionsMonthlyReport(String groupId)async{
+  //   var transactions=await getAllTransactions(groupId);
+
+  //   var grous=groupBy(transactions, (MoneyTransaction transaction) {
+  //     transaction.month
+  //   },);
+
+  //   // double transactionsSum=0;
+  //   // transactions?.forEach((element) { transactionsSum+=element.amount!;});
+  //   // var remaining=(budget?.budgetValue??0) - transactionsSum;
+  //   // return {
+  //   //     "budget":budget,
+  //   //     "transactions":transactions,
+  //   //     "remaining":remaining
+  //   // };
+  // }
+
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{
     return await _dbRepository.getMonthBudget(groupId, month);
@@ -46,6 +65,10 @@ class MTransaction with ChangeNotifier implements IDbBase{
   @override
   Future<List<MoneyTransaction>?> getTransactions(String groupId,String month) async{
     return await _dbRepository.getTransactions(groupId,month);
+  }
+  @override
+  Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async{
+    return await _dbRepository.getAllTransactions(groupId);
   }
 
   @override
@@ -79,10 +102,22 @@ class MTransaction with ChangeNotifier implements IDbBase{
 
   @override
   Future<List<AppUser>?> getUsers() async {
-    state=ViewState.Busy;
-    var data= await _dbRepository.getUsers();
-    state=ViewState.Idle;
-    return data;
+    return await _dbRepository.getUsers();
   }
+  
+  @override
+  Future deleteGroup(String groupId) async {
+    state=ViewState.Busy;
+    await _dbRepository.deleteGroup(groupId);
+    state=ViewState.Idle;
+  }
+  
+  @override
+  Future updateGroup(Group group) async {
+    state=ViewState.Busy;
+    await _dbRepository.updateGroup(group);
+    state=ViewState.Idle;
+  }
+  
 
 }

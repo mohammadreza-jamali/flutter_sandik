@@ -29,6 +29,17 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
     return list;
   }
 
+   Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async {
+    var transactions = await _firestore
+        .collection("Transactions")
+        .where("groupId", isEqualTo: groupId)
+        .get();
+    var list = transactions.docs
+        .map((e) => MoneyTransaction().fromJson(e.data()))
+        .toList();
+    return list;
+  }
+
   @override
   Future<Group> saveGroup(Group group) async {
     await _firestore.collection("Groups").doc(group.groupId).set(group.toMap(),SetOptions(merge: true));
@@ -58,4 +69,14 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
    var users=await _firestore.collection("Users").get();
    return users.docs.map((e) => AppUser().fromJson(e.data())).toList();
   }
+
+  Future deleteGroup(String groupId)async{
+    await _firestore.collection("Groups").doc(groupId).delete();
+  }
+
+  Future updateGroup(Group group)async{
+    await _firestore.collection("Groups").doc(group.groupId).update(group.toMap());
+  }
+
+ 
 }
