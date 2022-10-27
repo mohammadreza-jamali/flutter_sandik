@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/locator.dart';
+import 'package:flutter_sandik/model/transaction_per_month.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -40,22 +41,28 @@ class MTransaction with ChangeNotifier implements IDbBase{
     };
   }
 
-  // Future<Map<String,dynamic>> getTransactionsMonthlyReport(String groupId)async{
-  //   var transactions=await getAllTransactions(groupId);
+  Future<List<TransactionPerMonth>?> getTransactionsMonthlyReport(String groupId)async{
+    var transactions=await getAllTransactions(groupId);
 
-  //   var grous=groupBy(transactions, (MoneyTransaction transaction) {
-  //     transaction.month
-  //   },);
+    if(transactions==null) return [];
+    var groups=groupBy(transactions, (MoneyTransaction transaction)=>
+      transaction.month
+    );
+    
+    List<TransactionPerMonth>? _transactions=[];
+    for (var group in groups.entries) {
+        double _sum=0;
+        var budget=await getMonthBudget(groupId, group.key!);
+        for (var transaction in group.value) {
+          _sum+=transaction.amount!;
+        }
+        group.value.sort((a,b)=>a.insertDate!.compareTo(b.insertDate!));
+        _transactions.add(TransactionPerMonth(month: group.key,transaction: group.value, plannedBudget: budget!.budgetValue, sum: _sum, overPayed: budget.budgetValue!-_sum));
+    }
+    _transactions.sort((a,b)=>a.month!.compareTo(b.month!));
+    return _transactions;
 
-  //   // double transactionsSum=0;
-  //   // transactions?.forEach((element) { transactionsSum+=element.amount!;});
-  //   // var remaining=(budget?.budgetValue??0) - transactionsSum;
-  //   // return {
-  //   //     "budget":budget,
-  //   //     "transactions":transactions,
-  //   //     "remaining":remaining
-  //   // };
-  // }
+  }
 
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{

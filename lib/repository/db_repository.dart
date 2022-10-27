@@ -17,7 +17,12 @@ class DbRepository implements IDbBase{
 
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{
-    return await _dbService.getMonthBudget(groupId,month);
+    try {
+      return await _dbService.getMonthBudget(groupId,month);
+    } catch (e) {
+      return Budget.init(budgetValue: 0, budgetmonth: month, groupId: groupId);
+    }
+    
   }
 
   @override
@@ -62,7 +67,7 @@ class DbRepository implements IDbBase{
   
   @override
   Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async {
-    await _dbService.getAllTransactions(groupId);
+    return await _dbService.getAllTransactions(groupId);
   }
 
 }

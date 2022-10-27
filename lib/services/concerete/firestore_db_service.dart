@@ -18,7 +18,12 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{
     var budget=await _firestore.collection("Budgets").where("budgetmonth" ,isEqualTo: month).where("groupId",isEqualTo: groupId).get(); 
-    return Budget().fromJson(budget.docs[0].data());
+    try {
+      return Budget().fromJson(budget.docs[0].data());
+    } catch (e) {
+      return Budget.init(budgetValue: 0, budgetmonth: month, groupId: groupId);
+    }
+    
   }
 
   @override

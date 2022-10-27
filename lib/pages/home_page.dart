@@ -9,6 +9,7 @@ import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/add_group.dart';
+import 'package:flutter_sandik/pages/group_report.dart';
 import 'package:flutter_sandik/pages/transactions_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
@@ -131,7 +132,9 @@ class _HomePageState extends State<HomePage> {
                             label: 'Edit',
                           ),
                           SlidableAction(
-                            onPressed: (context){},
+                            onPressed: (context){
+                                _goToReport(_groups![index].groupId!);
+                            },
                             backgroundColor: AppStyle.deepBlue,
                             foregroundColor: Colors.white,
                             icon: Icons.print,
@@ -192,4 +195,10 @@ class _HomePageState extends State<HomePage> {
       builder: (context) => AddGroup(Group()),
     ));
   }
+  _goToReport(String groupId){
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => GroupReport(groupId),
+    ));
+  }
+  
 }
