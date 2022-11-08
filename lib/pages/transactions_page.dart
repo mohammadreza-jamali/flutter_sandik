@@ -33,55 +33,30 @@ class TransactionsPage extends StatelessWidget {
           future: _getInfo(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              if (_budget == null || _transactions == null) {
+              if (_budget==null || (_budget?.budgetValue ??
+                    0)==0 || _transactions == null) {
                 return Center(
                   child: Column(
                     children: [
                       Text("Budget Not Defined"),
                       ElevatedButton(
-                          onPressed:()=> _addBudget(context), child: Text("Add Budget"))
+                          onPressed:()=> _addBudget(context), child: Text("Add Budget",
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ))
                     ],
                   ),
                 );
               }
               return Stack(
                 children: [
-                 
-                  Positioned.fill(
-                      child: _transactions != null
-                          ? ListView.builder(
-                              itemCount: _transactions!.length,
-                              itemBuilder: (context, index) => Container(
-                                    margin: EdgeInsets.all(4),
-                                    color: Colors.orange,
-                                    child: ListTile(
-                                      title: Text(
-                                          (_transactions![index].description ??
-                                                  0)
-                                              .toString()),
-                                      subtitle: Text(_transactions![index]
-                                          .insertDate!
-                                          .toDate()
-                                          .toString()),
-                                      trailing: Text(
-                                        (_transactions![index].amount ?? 0)
-                                            .toString(),
-                                      ),
-                                    ),
-                                  ))
-                          : Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                child: Text(
-                                    "This Group Has Not Transaction For This Month"),
-                              ),
-                            )),
-                             Positioned(
-                      bottom: 10,
+                 Positioned(
+                      top: 10,
                       left: 0,
                       child: _budget != null
                           ? Container(
                               width: MediaQuery.of(context).size.width,
+                              height:
+                                    MediaQuery.of(context).size.height / 0.4,
                               color: Colors.white70,
                               child: Column(
                                 children: [
@@ -110,7 +85,43 @@ class TransactionsPage extends StatelessWidget {
                                   Text("Budget not definded for this month")
                                 ],
                               ),
-                            ))
+                            )),
+                  Positioned(
+                      top: 120,
+                      left: 0,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height/1.3,
+                        width: MediaQuery.of(context).size.width,
+                        child: _transactions != null
+                            ? ListView.builder(
+                              shrinkWrap: true,
+                                itemCount: _transactions!.length,
+                                itemBuilder: (context, index) => Container(
+                                      margin: EdgeInsets.all(4),
+                                      color: Theme.of(context).cardColor,
+                                      child: ListTile(
+                                        title: Text(
+                                            (_transactions![index].description ??
+                                                    0)
+                                                .toString()),
+                                        subtitle: Text(_transactions![index]
+                                            .insertDate!
+                                            .toDate()
+                                            .toString()),
+                                        trailing: Text(
+                                          (_transactions![index].amount ?? 0)
+                                              .toString(),
+                                        ),
+                                      ),
+                                    ))
+                            : Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(
+                                  child: Text(
+                                      "This Group Has Not Transaction For This Month"),
+                                ),
+                              )),
+                  ),        
                 ],
               );
             }

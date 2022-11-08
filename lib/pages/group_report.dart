@@ -57,22 +57,32 @@ class _GroupReportState extends State<GroupReport> {
               HintColorContainer( Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Estimated Budget"),
-                    Text("${_transactions![index].plannedBudget}")
+                    Text("Estimated Budget",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                    Text("${_transactions![index].plannedBudget}",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          )
                   ],
                 ),
               ),
               HintColorContainer(Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Paied Amount"),
-                  Text("${_transactions![index].sum}")
+                  Text("Paied Amount",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                  Text("${_transactions![index].sum}",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          )
                 ],
               ),),
               HintColorContainer(Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Paied Over Budget"),
+                  Text("Paied Over Budget",
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
                   Text("${_transactions![index].overPayed}",style: TextStyle(color: _transactions![index].overPayed!>=0?AppStyle.deepGreen:AppStyle.deepRed),)
                 ],
               ),),

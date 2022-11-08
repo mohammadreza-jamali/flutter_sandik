@@ -1,10 +1,11 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
-import 'package:provider/src/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/src/provider.dart';
 
 class AddTransaction extends StatelessWidget {
    AddTransaction(this.groupId,{Key? key}) : super(key: key);
@@ -42,7 +43,9 @@ class AddTransaction extends StatelessWidget {
                 _description=value;
               },
             ),
-            ElevatedButton(onPressed:()=> _saveTransaction(context), child: Text("Save"))
+            ElevatedButton(onPressed:()=> _saveTransaction(context), child: Text("Save",
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ))
           ],
         ),
       ),),

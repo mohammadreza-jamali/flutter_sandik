@@ -34,7 +34,7 @@ class _AddBudgetState extends State<AddBudget> {
                 if(value!.isEmpty) return "Value not Correct";
               },
             ),
-            ElevatedButton(onPressed:()=> _saveGroup(context), child: Text("Save"))
+            ElevatedButton(onPressed:()=> _saveGroup(context), child: Text("Save",style: Theme.of(context).textTheme.subtitle2,))
           ],
         ),
       ),),
