@@ -48,36 +48,39 @@ class TransactionsPage extends StatelessWidget {
                 children: [
                  
                   Positioned.fill(
-                      child: _transactions != null
-                          ? ListView.builder(
-                              itemCount: _transactions!.length,
-                              itemBuilder: (context, index) => Container(
-                                    margin: EdgeInsets.all(4),
-                                    color: Colors.orange,
-                                    child: ListTile(
-                                      title: Text(
-                                          (_transactions![index].description ??
-                                                  0)
-                                              .toString()),
-                                      subtitle: Text(_transactions![index]
-                                          .insertDate!
-                                          .toDate()
-                                          .toString()),
-                                      trailing: Text(
-                                        (_transactions![index].amount ?? 0)
-                                            .toString(),
+                      child: Padding(
+                        padding: EdgeInsets.only(top:110 ),
+                        child: _transactions != null
+                            ? ListView.builder(
+                                itemCount: _transactions!.length,
+                                itemBuilder: (context, index) => Container(
+                                      margin: const EdgeInsets.symmetric(vertical:2,horizontal: 4),
+                                      color: Theme.of(context).cardColor,
+                                      child: ListTile(
+                                        title: Text(
+                                            (_transactions![index].description ??
+                                                    0)
+                                                .toString()),
+                                        subtitle: Text(_transactions![index]
+                                            .insertDate!
+                                            .toDate()
+                                            .toString()),
+                                        trailing: Text(
+                                          (_transactions![index].amount ?? 0)
+                                              .toString(),
+                                        ),
                                       ),
-                                    ),
-                                  ))
-                          : Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                child: Text(
-                                    "This Group Has Not Transaction For This Month"),
+                                    ))
+                            : Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: Center(
+                                  child: Text(
+                                      "This Group Has Not Transaction For This Month"),
+                                ),
                               ),
-                            )),
+                      )),
                              Positioned(
-                      bottom: 10,
+                      top: 0,
                       left: 0,
                       child: _budget != null
                           ? Container(

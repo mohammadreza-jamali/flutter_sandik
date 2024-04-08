@@ -1,5 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/locator.dart';
+import 'package:flutter_sandik/model/transaction_per_month.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -25,6 +27,7 @@ class MTransaction with ChangeNotifier implements IDbBase{
   Future<List<Group>?> getGroups(String userId) async{
     return await _dbRepository.getGroups(userId);
   }
+  
   Future<Map<String,dynamic>> getTransactionInfo(String groupId,String month)async{
     var budget=await getMonthBudget(groupId,month);
     var transactions=await getTransactions(groupId,month);
@@ -38,6 +41,29 @@ class MTransaction with ChangeNotifier implements IDbBase{
     };
   }
 
+  Future<List<TransactionPerMonth>?> getTransactionsMonthlyReport(String groupId)async{
+    var transactions=await getAllTransactions(groupId);
+
+    if(transactions==null) return [];
+    var groups=groupBy(transactions, (MoneyTransaction transaction)=>
+      transaction.month
+    );
+    
+    List<TransactionPerMonth>? _transactions=[];
+    for (var group in groups.entries) {
+        double _sum=0;
+        var budget=await getMonthBudget(groupId, group.key!);
+        for (var transaction in group.value) {
+          _sum+=transaction.amount!;
+        }
+        group.value.sort((a,b)=>a.insertDate!.compareTo(b.insertDate!));
+        _transactions.add(TransactionPerMonth(month: group.key,transaction: group.value, plannedBudget: budget!.budgetValue, sum: _sum, overPayed: budget.budgetValue!-_sum));
+    }
+    _transactions.sort((a,b)=>a.month!.compareTo(b.month!));
+    return _transactions;
+
+  }
+
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{
     return await _dbRepository.getMonthBudget(groupId, month);
@@ -46,6 +72,10 @@ class MTransaction with ChangeNotifier implements IDbBase{
   @override
   Future<List<MoneyTransaction>?> getTransactions(String groupId,String month) async{
     return await _dbRepository.getTransactions(groupId,month);
+  }
+  @override
+  Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async{
+    return await _dbRepository.getAllTransactions(groupId);
   }
 
   @override
@@ -79,10 +109,22 @@ class MTransaction with ChangeNotifier implements IDbBase{
 
   @override
   Future<List<AppUser>?> getUsers() async {
-    state=ViewState.Busy;
-    var data= await _dbRepository.getUsers();
-    state=ViewState.Idle;
-    return data;
+    return await _dbRepository.getUsers();
   }
+  
+  @override
+  Future deleteGroup(String groupId) async {
+    state=ViewState.Busy;
+    await _dbRepository.deleteGroup(groupId);
+    state=ViewState.Idle;
+  }
+  
+  @override
+  Future updateGroup(Group group) async {
+    state=ViewState.Busy;
+    await _dbRepository.updateGroup(group);
+    state=ViewState.Idle;
+  }
+  
 
 }

@@ -18,7 +18,12 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
   @override
   Future<Budget?> getMonthBudget(String groupId,String month) async{
     var budget=await _firestore.collection("Budgets").where("budgetmonth" ,isEqualTo: month).where("groupId",isEqualTo: groupId).get(); 
-    return Budget().fromJson(budget.docs[0].data());
+    try {
+      return Budget().fromJson(budget.docs[0].data());
+    } catch (e) {
+      return Budget.init(budgetValue: 0, budgetmonth: month, groupId: groupId);
+    }
+    
   }
 
   @override
@@ -26,6 +31,17 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
     var transactions=await _firestore.collection("Transactions").where("groupId",isEqualTo: groupId).where("month",isEqualTo: month).get();
     var list=transactions.docs.map((e) => MoneyTransaction().fromJson(e.data())).toList();
     list.sort((a,b)=>a.insertDate!.compareTo(b.insertDate!)) ;
+    return list;
+  }
+
+   Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async {
+    var transactions = await _firestore
+        .collection("Transactions")
+        .where("groupId", isEqualTo: groupId)
+        .get();
+    var list = transactions.docs
+        .map((e) => MoneyTransaction().fromJson(e.data()))
+        .toList();
     return list;
   }
 
@@ -58,4 +74,14 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
    var users=await _firestore.collection("Users").get();
    return users.docs.map((e) => AppUser().fromJson(e.data())).toList();
   }
+
+  Future deleteGroup(String groupId)async{
+    await _firestore.collection("Groups").doc(groupId).delete();
+  }
+
+  Future updateGroup(Group group)async{
+    await _firestore.collection("Groups").doc(group.groupId).update(group.toMap());
+  }
+
+ 
 }
