@@ -3,7 +3,7 @@ import 'package:flutter_sandik/model/budget.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:provider/provider.dart';
 class AddBudget extends StatefulWidget {
-  AddBudget(this.groupId,{Key? key}) : super(key: key);
+  const AddBudget(this.groupId,{Key? key}) : super(key: key);
 
   final String groupId;
   @override
@@ -18,7 +18,8 @@ class _AddBudgetState extends State<AddBudget> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Add Budget"),),
-      body: Form(child: Container(
+      body: Form(child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             TextFormField(

@@ -33,7 +33,7 @@ class TransactionsPage extends StatelessWidget {
           future: _getInfo(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              if (_budget == null || _transactions == null) {
+              if ((_budget??Budget()).budgetValue==0 || _transactions == null) {
                 return Center(
                   child: Column(
                     children: [
