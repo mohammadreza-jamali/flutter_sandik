@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_sandik/core/application/navigation_service.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
@@ -10,22 +11,27 @@ import 'package:flutter_sandik/pages/landing_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
-import 'package:splash_screen_view/SplashScreenView.dart';
 
+
+Future init() async{
+  await Future.delayed(Duration(seconds: 3));
+  FlutterNativeSplash.remove();
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   setupLocator();
+  init();
 
   runApp(EasyLocalization(
     child: const MyApp(),
     supportedLocales: [
       Locale('en'),
-      Locale('tr'),
+      Locale('fa'),
     ],
     path: 'assets/translations',
-    fallbackLocale: Locale('tr'),
+    fallbackLocale: Locale('fa'),
     saveLocale: true,
     useOnlyLangCode: false,
   ));
@@ -74,23 +80,23 @@ class _MyAppState extends State<MyApp> {
               title: 'Sandik',
               debugShowCheckedModeBanner: false,
               theme: currentTheme.theme,
-              home: SplashScreen(),
+              home: LandingPage(),
               navigatorKey: locator<NavigationService>().navigatorKey,
             ));
   }
 }
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+// class SplashScreen extends StatelessWidget {
+//   const SplashScreen({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return SplashScreenView(
-      navigateRoute: LandingPage(),
-      duration: 3000,
-      imageSize: 700,
-      imageSrc: "assets/images/splash.jpg",
-      backgroundColor: Colors.orange,
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SplashScreenView(
+//       navigateRoute: LandingPage(),
+//       duration: 3000,
+//       imageSize: 700,
+//       imageSrc: "assets/images/splash.jpg",
+//       backgroundColor: Colors.orange,
+//     );
+//   }
+// }
