@@ -145,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  TransactionsPage(_groups![index].groupId!)));
                           },
-                          leading: Icon(Icons.group,color: currentTheme.theme.textTheme.headline1!.color,),
+                          leading: Icon(Icons.group,color: currentTheme.theme.textTheme.headlineLarge!.color,),
                           title: Text(_groups![index].groupName ?? ""),
                         ),
                       )),

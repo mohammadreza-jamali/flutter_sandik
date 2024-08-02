@@ -103,7 +103,7 @@ class _AddGroupState extends State<AddGroup> {
                                                     ? Colors.green.shade400
                                                     : Colors.red.shade400)),
                                     tileColor:
-                                        Theme.of(context).backgroundColor,
+                                        Theme.of(context).colorScheme.background,
                                     title: Text(_users![index].email!),
                                     onTap: () {
                                       if (_selectedUsers.contains(_userId)) {
@@ -132,7 +132,7 @@ class _AddGroupState extends State<AddGroup> {
                     onPressed: _saveGroup,
                     child: Text(
                       "Save",
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.displayLarge,
                     ))
               ],
             ),

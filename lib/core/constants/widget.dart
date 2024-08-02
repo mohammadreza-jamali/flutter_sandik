@@ -92,7 +92,7 @@ class ConstWidget {
               child: Text(
                 "Ok",
                 style: TextStyle(
-                    color: Theme.of(_context!).textTheme.headline1!.color),
+                    color: Theme.of(_context!).textTheme.headlineLarge!.color),
               ).tr())
         ]);
   }
