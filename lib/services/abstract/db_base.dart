@@ -1,4 +1,5 @@
 import 'package:flutter_sandik/model/budget.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/user.dart';
@@ -15,4 +16,8 @@ abstract class IDbBase {
   Future deleteGroup(String groupId);
   Future updateGroup(Group group);
   Future<List<MoneyTransaction>?> getAllTransactions(String groupId);
+  Future<List<Category>> initDefaultCategories(List<Category> categories);
+  Future<List<Category>> getCategories(String groupId);
+  Future<Category> addCategory(Category category);
+  Future deleteCategory(String categoryId);
 }

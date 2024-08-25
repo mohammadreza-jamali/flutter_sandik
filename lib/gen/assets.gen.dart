@@ -15,6 +15,10 @@ import 'package:vector_graphics/vector_graphics.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/backgrounds
+  $AssetsImagesBackgroundsGen get backgrounds =>
+      const $AssetsImagesBackgroundsGen();
+
   /// Directory path: assets/images/icons
   $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
 
@@ -36,6 +40,21 @@ class $AssetsTranslationsGen {
 
   /// List of all assets
   List<String> get values => [en, tr];
+}
+
+class $AssetsImagesBackgroundsGen {
+  const $AssetsImagesBackgroundsGen();
+
+  /// File path: assets/images/backgrounds/darkCardBackground.jpg
+  AssetGenImage get darkCardBackground =>
+      const AssetGenImage('assets/images/backgrounds/darkCardBackground.jpg');
+
+  /// File path: assets/images/backgrounds/lightCardBackground.jpg
+  AssetGenImage get lightCardBackground =>
+      const AssetGenImage('assets/images/backgrounds/lightCardBackground.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [darkCardBackground, lightCardBackground];
 }
 
 class $AssetsImagesIconsGen {

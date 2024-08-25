@@ -1,3 +1,4 @@
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -83,5 +84,32 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
     await _firestore.collection("Groups").doc(group.groupId).update(group.toMap());
   }
 
- 
+ @override
+  Future<List<Category>> initDefaultCategories(List<Category> categories) async {
+    for(var category in categories){
+      await _firestore.collection("Categories").doc(category.categoryId).set(category.toMap(),SetOptions(merge: true));
+    }
+
+   return categories;
+  }
+
+  @override
+  Future<List<Category>> getCategories(String groupId) async {
+
+    var categories = await _firestore.collection("Categories")
+        .where("groupId", isEqualTo: groupId)
+        .get();
+    var list = categories.docs.map((e) => Category().fromJson(e.data())).toList();
+    return list;
+  }
+
+  @override
+  Future<Category> addCategory(Category category) async {
+      await _firestore.collection("Categories").doc(category.categoryId).set(category.toMap(),SetOptions(merge: true));
+      return category;
+  }
+
+ Future deleteCategory(String categoryId)async{
+    await _firestore.collection("Categories").doc(categoryId).delete();
+  }
 }

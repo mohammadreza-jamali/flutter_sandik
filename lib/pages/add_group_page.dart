@@ -1,9 +1,8 @@
-import 'dart:collection';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_sandik/locator.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
@@ -24,7 +23,6 @@ class AddGroupPage extends StatefulWidget{
 class _AddGroupPageState extends State<AddGroupPage> {
 
  TextEditingController searchController=TextEditingController();
-  String? _groupName = "";
   late Group _group;
   ValueNotifier<bool> _usersIsLoaded = ValueNotifier(false);
   List<AppUser>? _users;
@@ -43,7 +41,6 @@ class _AddGroupPageState extends State<AddGroupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<IconData> icons=MdiIcons.getIcons();
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -93,83 +90,17 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         showSelectedItems: true,
                         searchFieldProps: TextFieldProps(
                           controller: searchController,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(MdiIcons.magnify),
-                            label: Text('Users'),
-                            hintText: 'search user email',
-                            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(MdiIcons.magnify),
+                              label: Text('Users'),
+                              hintText: 'search user email',
+                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                            ),
                           ),
-                        ),
                           bottomSheetProps: BottomSheetProps(elevation: 16, backgroundColor: Colors.grey.shade50,), 
                           ),
-                          
-    onChanged: (List<AppUser>? data) {
-      // _selectedUsers=[];
-      // for (var user in data??[]) {
-      //   if(_selectedUsers.any((selectedUser)=>user.userId==selectedUser.userId))
-      //   continue;
-
-      //   _selectedUsers.add(user);
-      // }
-      
-      // setState((){});
-    },
-)
-                // ValueListenableBuilder(
-                //       valueListenable: _usersIsLoaded,
-                //       builder:
-                //           (BuildContext context, dynamic value, Widget? child) {
-                //         if (value) {
-                //           // return Container(
-                //           //   height: MediaQuery.of(context).size.height * 0.35,
-                //           //   margin: EdgeInsets.all(8),
-                //           //   padding: EdgeInsets.all(8),
-                //           //   decoration: BoxDecoration(
-                //           //       border: Border.all(color: Colors.blueGrey),
-                //           //       borderRadius: BorderRadius.circular(8)),
-                //           //   child: ListView.builder(
-                //           //     itemCount: _users?.length ?? 0,
-                //           //     itemBuilder: (BuildContext context, int index) {
-                //           //       var _userId = _users![index].userId;
-                //           //       return Container(
-                //           //         margin: EdgeInsets.symmetric(
-                //           //             vertical: 4, horizontal: 4),
-                //           //         child: ListTile(
-                //           //           leading: Icon(Icons.person_pin),
-                //           //           shape: RoundedRectangleBorder(
-                //           //               borderRadius: BorderRadius.circular(4),
-                //           //               side: BorderSide(
-                //           //                   width: 2,
-                //           //                   color:
-                //           //                       _selectedUsers.contains(_userId)
-                //           //                           ? Colors.green.shade400
-                //           //                           : Colors.red.shade400)),
-                //           //           tileColor:
-                //           //               Theme.of(context).colorScheme.surface,
-                //           //           title: Text(_users![index].email!),
-                //           //           onTap: () {
-                //           //             if (_selectedUsers.contains(_userId)) {
-                //           //               _selectedUsers.remove(_userId);
-                //           //             } else {
-                //           //               _selectedUsers.add(_userId!);
-                //           //             }
-                //           //             if(mounted) setState(() {});
-                //           //           },
-                //           //         ),
-                //           //       );
-                //           //     },
-                //           //   ),
-                //           // );
-                          
-                //         }
-                //         return Container(
-                //             height: 100,
-                //             child: Center(
-                //               child: CircularProgressIndicator(),
-                //             ));
-                //       },
-                //     ),
+                        )
               ),
               ElevatedButton(onPressed: ()=>_addGroupMemberBottomSheet(context,_users), child: Text('add users')),
               SizedBox(height: 32,),
@@ -193,11 +124,21 @@ class _AddGroupPageState extends State<AddGroupPage> {
 
   _addNewGroup(UserModel userModel) async {
     final _transaction = context.read<MTransaction>();
+    var groupId=Uuid().v8();
     await _transaction.saveGroup(Group.init(
-        groupId: Uuid().v8(),
+        groupId: groupId,
         groupName: _groupNameController.text,
         groupUsers: [userModel.getCurrentUser()!.userId!, ..._selectedUsers],
         groupAdmin: userModel.getCurrentUser()!.userId!));
+
+    await _transaction.initDefaultCategories(
+      [
+        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"غدا و خوراک",icon:"food",isDefault:true),
+        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"لباس و پوشاک'",icon:"tshirtCrew",isDefault:true),
+        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"حمل و نقل'",icon:"carSide",isDefault:true),
+        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"قبض موبایل'",icon:"cellphone",isDefault:true),
+      ]
+    );
   }
 
   _editGroup(UserModel userModel) async {

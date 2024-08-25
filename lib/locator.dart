@@ -7,6 +7,7 @@ import 'package:flutter_sandik/repository/user_repository.dart';
 import 'package:flutter_sandik/services/concerete/firebase_auth_service.dart';
 import 'package:flutter_sandik/services/concerete/firestore_db_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 GetIt locator=GetIt.instance;

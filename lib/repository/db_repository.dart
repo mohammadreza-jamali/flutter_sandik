@@ -1,4 +1,5 @@
 import 'package:flutter_sandik/locator.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -68,6 +69,26 @@ class DbRepository implements IDbBase{
   @override
   Future<List<MoneyTransaction>?> getAllTransactions(String groupId) async {
     return await _dbService.getAllTransactions(groupId);
+  }
+
+  @override
+  Future<Category> addCategory(Category category) async {
+    return await _dbService.addCategory(category);
+  }
+
+  @override
+  Future deleteCategory(String categoryId) async {
+    await _dbService.deleteCategory(categoryId);
+  }
+
+  @override
+  Future<List<Category>> initDefaultCategories(List<Category> categories) async {
+    return await _dbService.initDefaultCategories(categories);
+  }
+
+  @override
+  Future<List<Category>> getCategories(String groupId) async {
+    return await _dbService.getCategories(groupId);
   }
 
 }

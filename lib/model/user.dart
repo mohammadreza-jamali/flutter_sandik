@@ -11,7 +11,7 @@ class AppUser{
     "userId":userId,
     "email":email,
     "name":name,
-    "insertDate":insertDate??FieldValue.serverTimestamp()
+    "insertDate":insertDate??FieldValue.serverTimestamp(),
   };
   AppUser fromJson(Map<String,dynamic> json){
     userId=json["userId"];

@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/locator.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/transaction_per_month.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
@@ -124,6 +125,35 @@ class MTransaction with ChangeNotifier implements IDbBase{
     state=ViewState.Busy;
     await _dbRepository.updateGroup(group);
     state=ViewState.Idle;
+  }
+
+  @override
+  Future<Category> addCategory(Category category) async {
+    state=ViewState.Busy;
+    var result= await _dbRepository.addCategory(category);
+    state=ViewState.Idle;
+    return result;
+  }
+
+  @override
+  Future deleteCategory(String categoryId)async {
+    state=ViewState.Busy;
+    await _dbRepository.deleteCategory(categoryId);
+    state=ViewState.Idle;
+  }
+
+  @override
+  Future<List<Category>> initDefaultCategories(List<Category> categories) async {
+    state=ViewState.Busy;
+    var result= await _dbRepository.initDefaultCategories(categories);
+    state=ViewState.Idle;
+    return result;
+  }
+  
+  @override
+  Future<List<Category>> getCategories(String groupId) async {
+    var result= await _dbRepository.getCategories(groupId);
+    return result;
   }
   
 

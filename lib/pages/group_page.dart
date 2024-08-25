@@ -1,5 +1,4 @@
 import 'package:event_bus/event_bus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
@@ -147,7 +146,7 @@ class _GroupPageState extends State<GroupPage> {
                           ),
                         ]),
                         child: InkWell(
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ReportPage())),
+                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(user:widget.user,group: _groups![index],))),
                             child: Container(
                               padding: EdgeInsets.all(8),
                               margin: EdgeInsets.all(8),
