@@ -8,7 +8,7 @@ import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:provider/src/provider.dart';
 
 class TransactionsPage extends StatelessWidget {
-   TransactionsPage(this.groupId, {Key? key}) : super(key: key);
+   TransactionsPage(this.groupId, {super.key});
   final String groupId;
   List<MoneyTransaction>? _transactions;
   Budget? _budget;

@@ -8,8 +8,9 @@ class MoneyTransaction{
   double? amount;
   String? description;
   String? month;
+  String? categoryId;
   MoneyTransaction();
-  MoneyTransaction.init({required this.id,required this.amount,required this.month,required this.groupId,this.userId,this.description});
+  MoneyTransaction.init({required this.id,required this.amount,required this.month,required this.groupId,required this.categoryId,this.userId,this.description});
      Map<String,dynamic> toMap()=>{
     "id":id,
     "userId":userId,
@@ -17,7 +18,8 @@ class MoneyTransaction{
     "amount":amount,
     "month":month,
     "description":description,
-    "groupId":groupId
+    "groupId":groupId,
+    "categoryId":categoryId
   };
   MoneyTransaction fromJson(Map<String,dynamic> json){
     id=json["id"];
@@ -27,6 +29,7 @@ class MoneyTransaction{
     month=json["month"];
     description=json["description"];
     groupId=json["groupId"];
+    categoryId= json["categoryId"];
     return this;
   }
 }
