@@ -5,8 +5,6 @@ import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
 import 'package:flutter_sandik/core/constants/app_style.dart';
 import 'package:flutter_sandik/locator.dart';
 
-import 'package:fluttertoast/fluttertoast.dart';
-
 class ConstWidget {
   ConstWidget() {
     _context = locator<NavigationService>().navigatorKey.currentContext;
@@ -42,9 +40,7 @@ class ConstWidget {
         header: Container(
           height: 100,
           padding: EdgeInsets.symmetric(horizontal: 0, vertical: 16),
-          decoration: BoxDecoration(
-              color: AppStyle.deepGreen,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+          decoration: BoxDecoration(color: AppStyle.deepGreen, borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
           child: Material(
               shape: CircleBorder(),
               color: Colors.white,
@@ -91,39 +87,32 @@ class ConstWidget {
               },
               child: Text(
                 "Ok",
-                style: TextStyle(
-                    color: Theme.of(_context!).textTheme.headlineLarge!.color),
+                style: TextStyle(color: Theme.of(_context!).textTheme.headlineLarge!.color),
               ).tr())
         ]);
   }
 
-  static showCustomAlertDialog(BuildContext context,
-      {Widget? header, Widget? body, List<Widget>? actions}) {
+  static showCustomAlertDialog(BuildContext context, {Widget? header, Widget? body, List<Widget>? actions}) {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
             actionsAlignment: MainAxisAlignment.center,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             titlePadding: EdgeInsets.all(0),
             title: header != null ? header : null,
             content: body != null ? body : null,
             actions: actions != null ? actions : null));
   }
 
-  static showTost(String message, {Color? backgroundColor, double? fontsize}) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: backgroundColor ?? AppStyle.deepGreen,
-        textColor: AppStyle.mainColor,
-        fontSize: fontsize ?? 16.0);
+  static showTost(BuildContext context, String message, {Color? backgroundColor, double? fontsize}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      showCloseIcon: true,
+      backgroundColor: backgroundColor,
+    ));
   }
 
-  static showBottomModal(BuildContext context, Widget child,
-      {AnimationController? controller}) {
+  static showBottomModal(BuildContext context, Widget child, {AnimationController? controller}) {
     showModalBottomSheet<void>(
       transitionAnimationController: controller,
       context: context,
