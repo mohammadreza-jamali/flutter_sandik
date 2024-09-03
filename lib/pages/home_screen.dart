@@ -1,21 +1,29 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart' as esy;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/dtos/transaction_dto.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:flutter_sandik/model/budget.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/pages/add_budget.dart';
 import 'package:flutter_sandik/pages/add_transaction.dart';
 import 'package:flutter_sandik/pages/data.dart';
 import 'package:flutter_sandik/pages/transactions_page.dart';
+import 'package:flutter_sandik/viewmodel/transaction.dart';
+import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_sandik/core/application/persian_date_helper.dart';
 
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
   final String groupId;
   const HomeScreen({
-    super.key, required this.groupId,
+    super.key,
+    required this.groupId,
   });
 
   @override
@@ -23,107 +31,154 @@ class HomeScreen extends StatefulWidget{
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   List<MoneyTransaction>? _transactions;
-  Budget? _budget;
+  List<Category>? _categories;
+  String filterDate = "";
+  late MTransaction _transaction;
+  late Map<String, dynamic> transactionsInfo;
+  @override
+  void initState() {
+    super.initState();
+    filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    return  Container(
-      color: Color(0xff050119),
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Column(children: [
-                Container(
-                  color: Color(0xff050119),
-        child: Stack(children: [
-          Container(
-            height: 330,
-          ),
-          Column(
-            children: [
-              Container(
-                height: 230,
+    _transaction = Provider.of<MTransaction>(context);
+    if (_transaction.state == ViewState.Idle) {
+      return FutureBuilder(
+          future: _getInfo(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Container(
                 color: Color(0xff050119),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                MinimalButton(
-                  onTap: () {
-                    _settingBottomSheet(context);
-                  },
-                  icon: Assets.images.icons.question,
-                ),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'محمد مهدی شریفی',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Column(children: [
+                    Container(
+                      color: Color(0xff050119),
+                      child: Stack(children: [
+                        Container(
+                          height: 330,
                         ),
-                        Text('09221837187',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 8))
+                        Column(
+                          children: [
+                            Container(
+                              height: 230,
+                              color: Color(0xff050119),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              MinimalButton(
+                                onTap: () {
+                                  _settingBottomSheet(context);
+                                },
+                                icon: Assets.images.icons.question,
+                              ),
+                              Expanded(
+                                  child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                                  Text(
+                                    'محمد مهدی شریفی',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                  ),
+                                  Text('09221837187', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 8))
+                                ]),
+                              )),
+                              MinimalButton(
+                                onTap: () {},
+                                icon: Assets.images.icons.user,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 14,
+                          right: 14,
+                          child: FloatContainer(
+                            groupId: widget.groupId,
+                            transactionsInfo: transactionsInfo,
+                          ),
+                        )
                       ]),
-                )),
-                MinimalButton(
-                  onTap: () {},
-                  icon: Assets.images.icons.user,
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                        child: CostListView(
+                      costs: _transactions ?? [],
+                      categories: _categories ?? [],
+                    ))
+                  ]),
                 ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 14,
-            right: 14,
-            child: FloatContainer(groupId: widget.groupId,),
-          )
-        ]),
-                ),
-                SizedBox(height: 20,),
-                Expanded(child: CostListView())
-              ]),
-      ),
-    );
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          });
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+  }
+
+  Future _getInfo() async {
+    transactionsInfo = await _transaction.getTransactionInfo(widget.groupId, filterDate);
+    _transactions = transactionsInfo["transactions"];
+    _categories = await _transaction.getCategories(widget.groupId);
   }
 }
 
 class CostListView extends StatelessWidget {
-  final List<Cost> costs = FakeCostList.costs;
-   CostListView({
+  final List<MoneyTransaction> costs;
+  final List<Category> categories;
+  CostListView({
+    required this.costs,
+    required this.categories,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: costs.length,
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      itemBuilder: (context, index) {
-      return CostListItem(cost:costs[index]);
-    });
+        itemCount: costs.length,
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        itemBuilder: (context, index) {
+          var costCategory = categories.firstWhere((category) => category.categoryId == costs[index].categoryId);
+          return CostListItem(
+              cost: costs
+                  .map((cost) => TransactionDto(
+                      id: cost.id,
+                      userName: cost.userId,
+                      amount: cost.amount,
+                      description: cost.description,
+                      insertDate: cost.insertDate,
+                      month: cost.month,
+                      categoryName: costCategory.categoryName,
+                      icon: costCategory.icon))
+                  .toList()[index]);
+        });
   }
 }
 
 class CostListItem extends StatelessWidget {
-  final Cost cost;
-  const CostListItem({
-    super.key, required this.cost,
+  final TransactionDto cost;
+  final esy.DateFormat _formatter = esy.DateFormat(OPERATIONAL_DATE_TIME_FORMAT);
+  CostListItem({
+    super.key,
+    required this.cost,
   });
 
   @override
@@ -135,27 +190,48 @@ class CostListItem extends StatelessWidget {
         color: Color(0xff1B202C),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(8,24,8,24),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('تومان',style: TextStyle(color: Colors.grey.shade600),),
-            SizedBox(width: 4,),
-            Text(cost.price,style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [Text(cost.groupName,style: TextStyle(color: Colors.white),),
-              Text(cost.date,style: TextStyle(fontSize: 10,color: Colors.grey.shade600),textDirection: TextDirection.rtl,)],),
+        padding: const EdgeInsets.fromLTRB(8, 24, 8, 24),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Text(
+            'تومان',
+            style: TextStyle(color: Colors.grey.shade600),
+          ),
+          SizedBox(
+            width: 4,
+          ),
+          Text(
+            cost.amount?.toStringAsFixed(2) ?? "0",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  cost.description ?? "",
+                  style: TextStyle(color: Colors.white),
+                ),
+                Text(
+                  _formatter.format(cost.insertDate?.toDate() ?? DateTime.now()),
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                  textDirection: TextDirection.ltr,
+                )
+              ],
             ),
-            SizedBox(width: 8,),
-            Container(
-              width: 45,
-              height: 45,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(color: Color(0xffBCDFFF),borderRadius: BorderRadius.circular(5)),
-              child: Icon(cost.groupIcon,color: Color(0xff1F50D3),),
-            )
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Container(
+            width: 45,
+            height: 45,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: Color(0xffBCDFFF), borderRadius: BorderRadius.circular(5)),
+            child: Icon(
+              MdiIcons.fromString(cost.icon!),
+              color: Color(0xff1F50D3),
+            ),
+          )
         ]),
       ),
     );
@@ -164,43 +240,34 @@ class CostListItem extends StatelessWidget {
 
 class FloatContainer extends StatelessWidget {
   final groupId;
+  final Map<String, dynamic> transactionsInfo;
   const FloatContainer({
-    super.key, this.groupId,
+    required this.groupId,
+    required this.transactionsInfo,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-                    color: Color.fromARGB(98, 158, 194, 252),
-                    blurRadius: 25,
-                  )
-        ]
-      ),
-      child: Stack(
-        children: [
-      
-          ClipRRect(
-            child: Assets.images.backgrounds.darkCardBackground.image(
-              width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Color.fromARGB(98, 158, 194, 252),
+          blurRadius: 25,
+        )
+      ]),
+      child: Stack(children: [
+        ClipRRect(
+          child: Assets.images.backgrounds.darkCardBackground.image(width: MediaQuery.of(context).size.width, height: 220, fit: BoxFit.cover),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+            child: Container(
               height: 220,
-              fit: BoxFit.cover
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-      
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 1,sigmaY: 1),
-              child: Container(
-              height: 220,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -215,33 +282,26 @@ class FloatContainer extends StatelessWidget {
                           children: [
                             MinimalButton(
                               onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(builder:(context)=>TransactionsPage(groupId) ));
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => TransactionsPage(groupId)));
                               },
                               icon: Assets.images.icons.chart,
                             ),
                           ],
                         ),
-                        
                         Container(
                           alignment: Alignment.centerLeft,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder:(context)=>AddTransaction(groupId) ));
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTransaction(groupId)));
                               },
                               style: ButtonStyle(
-                                  backgroundColor:
-                                      WidgetStateProperty.all(Colors.transparent),
-                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(35))),
-                                      ),
+                                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(35))),
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('افزودن خرج',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12)),
+                                  Text('افزودن خرج', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                                   SizedBox(
                                     width: 4,
                                   ),
@@ -259,34 +319,29 @@ class FloatContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                              'مخارج ماه اردیبهشت',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
+                          'مخارج ماه ${DateTime.now().persianMonthName}',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
                               'تومان',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10),
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
                             ),
                             SizedBox(
                               width: 8,
                             ),
                             Text(
-                              '9,983,000',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 32),
+                              (transactionsInfo["transactions"] as List<MoneyTransaction>)
+                                      .map((transaction) => transaction.amount)
+                                      .reduce((value, element) => (value ?? 0) + (element ?? 0))
+                                      ?.toStringAsFixed(2) ??
+                                  "",
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32),
                             )
                           ],
                         ),
@@ -294,56 +349,40 @@ class FloatContainer extends StatelessWidget {
                           height: 8,
                         ),
                         Container(
-                          alignment: Alignment.centerRight,
+                            alignment: Alignment.centerRight,
                             child: Text('نه میلیون و نهصد و هشتاد و سه هزار تومان',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10))),
-
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10))),
                         SizedBox(
                           height: 16,
                         ),
-
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.transparent.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(8)
-                            ),
+                            decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.3), borderRadius: BorderRadius.circular(8)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                'بودجه :',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10),
-                                  textDirection: TextDirection.rtl,),
+                                  'بودجه :',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                  textDirection: TextDirection.rtl,
+                                ),
                                 Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'تومان',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                '9,983,000',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                              )
-                            ],
-                          ),
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'تومان',
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                    ),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(
+                                      (transactionsInfo["budget"] as Budget).budgetValue?.toStringAsFixed(2) ?? "",
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -353,11 +392,10 @@ class FloatContainer extends StatelessWidget {
                   ],
                 ),
               ),
-                    ),
             ),
           ),
-        ]
-      ),
+        ),
+      ]),
     );
   }
 }
@@ -376,9 +414,7 @@ class MinimalButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-            color: Color(0xff16398B),
-            borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(color: Color(0xff16398B), borderRadius: BorderRadius.circular(4)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: icon.svg(width: 16, height: 16, color: Colors.white),
@@ -388,58 +424,78 @@ class MinimalButton extends StatelessWidget {
   }
 }
 
-Future _settingBottomSheet(BuildContext context){
+Future _settingBottomSheet(BuildContext context) {
   return showModalBottomSheet(
-    context: context, builder: (context)=>
-  Directionality(
-    textDirection: TextDirection.rtl,
-    child: Container(
-      width: MediaQuery.of(context).size.width,
-      height: 300,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 12),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(MdiIcons.cogOutline),
-                SizedBox(width: 4,),
-                Text('SETTINGS',style: TextStyle(fontSize: 16),),
-              ],
+      context: context,
+      builder: (context) => Directionality(
+            textDirection: TextDirection.rtl,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(MdiIcons.cogOutline),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'SETTINGS',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 64,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'Theme :',
+                        ),
+                      ],
+                    ),
+                    CustomDropdown(
+                      items: const {
+                        0: 'روشن',
+                        1: 'تاریک',
+                      },
+                      icon: Icon(MdiIcons.themeLightDark),
+                      onChanged: () {},
+                      hintText: 'Chose your favorite theme',
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'Language :',
+                        ),
+                      ],
+                    ),
+                    CustomDropdown(
+                      items: const {
+                        0: 'فارسی',
+                        1: 'انگلیسی',
+                      },
+                      icon: Icon(MdiIcons.alphabetGreek),
+                      onChanged: () {},
+                      hintText: 'Chose app Language',
+                    )
+                  ],
+                ),
+              ),
             ),
-            SizedBox(height: 64,),
-            Row(
-              children: [
-                SizedBox(width: 4,),
-                Text('Theme :',),
-              ],
-            ),
-            CustomDropdown(items: const{
-              0: 'روشن',
-              1:'تاریک',
-            },
-            icon: Icon(MdiIcons.themeLightDark),
-            onChanged: (){},
-            hintText: 'Chose your favorite theme',),
-      
-            SizedBox(height: 16,),
-            Row(
-              children: [
-                SizedBox(width: 4,),
-                Text('Language :',),
-              ],
-            ),
-            CustomDropdown(items: const{
-              0: 'فارسی',
-              1:'انگلیسی',
-            },
-            icon: Icon(MdiIcons.alphabetGreek),
-            onChanged: (){},
-            hintText: 'Chose app Language',)
-          ],
-        ),
-      ),
-    ),
-  ));
+          ));
 }

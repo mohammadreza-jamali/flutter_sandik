@@ -11,8 +11,8 @@ import 'package:flutter_sandik/model/group.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class AddGroupPage extends StatefulWidget{
-     final Group group;
+class AddGroupPage extends StatefulWidget {
+  final Group group;
 
   const AddGroupPage({super.key, required this.group});
 
@@ -21,8 +21,7 @@ class AddGroupPage extends StatefulWidget{
 }
 
 class _AddGroupPageState extends State<AddGroupPage> {
-
- TextEditingController searchController=TextEditingController();
+  TextEditingController searchController = TextEditingController();
   late Group _group;
   ValueNotifier<bool> _usersIsLoaded = ValueNotifier(false);
   List<AppUser>? _users;
@@ -34,8 +33,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
   void initState() {
     super.initState();
     _group = widget.group;
-    _groupNameController = TextEditingController()
-      ..text = _group.groupName ?? "";
+    _groupNameController = TextEditingController()..text = _group.groupName ?? "";
     _getUsers();
   }
 
@@ -46,14 +44,15 @@ class _AddGroupPageState extends State<AddGroupPage> {
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           toolbarHeight: 80,
-          title: Text('Add Group',style: TextStyle(color: Color(0xff16398B)),),
-          iconTheme: IconThemeData(
-            color: Color(0xff16398B)
+          title: Text(
+            'Add Group',
+            style: TextStyle(color: Color(0xff16398B)),
           ),
+          iconTheme: IconThemeData(color: Color(0xff16398B)),
           centerTitle: true,
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             children: [
               Directionality(
@@ -61,53 +60,62 @@ class _AddGroupPageState extends State<AddGroupPage> {
                 child: TextField(
                   controller: _groupNameController,
                   decoration: InputDecoration(
-                    label: Text('Gruop Name',),
+                    label: Text(
+                      'Gruop Name',
+                    ),
                   ),
                 ),
               ),
-
-              SizedBox(height: 4,),
+              SizedBox(
+                height: 4,
+              ),
               Directionality(
-                textDirection: TextDirection.rtl,
-                child: 
-                DropdownSearch<AppUser>.multiSelection(
-                  
-                  selectedItems: _selectedUsers,
-                  itemAsString: (item) => item.email??"",
-    asyncItems: (String filter) async {
-      print(filter);
-       return getUsersByFilter(filter);
-    },
-    compareFn: (item, selectedItem) => item.userId == selectedItem.userId,
-     dropdownDecoratorProps: DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: "BottomSheet mode",
-                          hintText: "Select an Int",
+                  textDirection: TextDirection.rtl,
+                  child: DropdownSearch<AppUser>.multiSelection(
+                    selectedItems: _selectedUsers,
+                    itemAsString: (item) => item.email ?? "",
+                    asyncItems: (String filter) async {
+                      print(filter);
+                      return getUsersByFilter(filter);
+                    },
+                    compareFn: (item, selectedItem) => item.userId == selectedItem.userId,
+                    dropdownDecoratorProps: DropDownDecoratorProps(
+                      dropdownSearchDecoration: InputDecoration(
+                        labelText: "BottomSheet mode",
+                        hintText: "Select an Int",
+                      ),
+                    ),
+                    popupProps: PopupPropsMultiSelection.bottomSheet(
+                      showSearchBox: true,
+                      showSelectedItems: true,
+                      searchFieldProps: TextFieldProps(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(MdiIcons.magnify),
+                          label: Text('Users'),
+                          hintText: 'search user email',
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
                         ),
                       ),
-                      popupProps: PopupPropsMultiSelection.bottomSheet(
-                        showSearchBox: true,
-                        showSelectedItems: true,
-                        searchFieldProps: TextFieldProps(
-                          controller: searchController,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(MdiIcons.magnify),
-                              label: Text('Users'),
-                              hintText: 'search user email',
-                              enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-                            ),
-                          ),
-                          bottomSheetProps: BottomSheetProps(elevation: 16, backgroundColor: Colors.grey.shade50,), 
-                          ),
-                        )
+                      bottomSheetProps: BottomSheetProps(
+                        elevation: 16,
+                        backgroundColor: Colors.grey.shade50,
+                      ),
+                    ),
+                  )),
+              ElevatedButton(onPressed: () => _addGroupMemberBottomSheet(context, _users), child: Text('add users')),
+              SizedBox(
+                height: 32,
               ),
-              ElevatedButton(onPressed: ()=>_addGroupMemberBottomSheet(context,_users), child: Text('add users')),
-              SizedBox(height: 32,),
-              ElevatedButton(onPressed: _saveGroup, child: Text('ُSAVE',style: TextStyle(color:Color(0xff16398B) ),),style: ButtonStyle(
-                minimumSize: WidgetStateProperty.all(Size(150, 50)),
-                backgroundColor: WidgetStateProperty.all(Colors.indigo.shade50)
-              ),),
+              ElevatedButton(
+                onPressed: _saveGroup,
+                child: Text(
+                  'ُSAVE',
+                  style: TextStyle(color: Color(0xff16398B)),
+                ),
+                style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(150, 50)), backgroundColor: WidgetStateProperty.all(Colors.indigo.shade50)),
+              ),
             ],
           ),
         ),
@@ -116,38 +124,33 @@ class _AddGroupPageState extends State<AddGroupPage> {
   }
 
   _saveGroup() async {
-    if ( _groupNameController.text.isEmpty) return;
+    if (_groupNameController.text.isEmpty) return;
     final _userModel = context.read<UserModel>();
-    _group.groupId==null?await _addNewGroup(_userModel):await _editGroup(_userModel);
+    _group.groupId == null ? await _addNewGroup(_userModel) : await _editGroup(_userModel);
     Navigator.of(context).pop();
   }
 
   _addNewGroup(UserModel userModel) async {
     final _transaction = context.read<MTransaction>();
-    var groupId=Uuid().v8();
+    var groupId = Uuid().v8();
     await _transaction.saveGroup(Group.init(
         groupId: groupId,
         groupName: _groupNameController.text,
         groupUsers: [userModel.getCurrentUser()!.userId!, ..._selectedUsers],
         groupAdmin: userModel.getCurrentUser()!.userId!));
 
-    await _transaction.initDefaultCategories(
-      [
-        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"غدا و خوراک",icon:"food",isDefault:true),
-        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"لباس و پوشاک'",icon:"tshirtCrew",isDefault:true),
-        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"حمل و نقل'",icon:"carSide",isDefault:true),
-        Category.init(groupId:groupId,categoryId:Uuid().v8(),categoryName:"قبض موبایل'",icon:"cellphone",isDefault:true),
-      ]
-    );
+    await _transaction.initDefaultCategories([
+      Category.init(groupId: groupId, categoryId: Uuid().v8(), categoryName: "غدا و خوراک", icon: "food", isDefault: true),
+      Category.init(groupId: groupId, categoryId: Uuid().v8(), categoryName: "لباس و پوشاک", icon: "tshirtCrew", isDefault: true),
+      Category.init(groupId: groupId, categoryId: Uuid().v8(), categoryName: "حمل و نقل", icon: "carSide", isDefault: true),
+      Category.init(groupId: groupId, categoryId: Uuid().v8(), categoryName: "قبض موبایل", icon: "cellphone", isDefault: true),
+    ]);
   }
 
   _editGroup(UserModel userModel) async {
     final _transaction = context.read<MTransaction>();
     _group.groupName = _groupNameController.text;
-    _group.groupUsers = [
-      userModel.getCurrentUser()!.userId!,
-      ..._selectedUsers
-    ];
+    _group.groupUsers = [userModel.getCurrentUser()!.userId!, ..._selectedUsers];
     await _transaction.updateGroup(_group);
   }
 
@@ -158,67 +161,68 @@ class _AddGroupPageState extends State<AddGroupPage> {
     _usersIsLoaded.value = true;
     _selectedUsers = [];
     _users?.forEach((user) {
-      if (_group.groupUsers?.any((groupUser) => groupUser == user.userId) ??
-          false) {
+      if (_group.groupUsers?.any((groupUser) => groupUser == user.userId) ?? false) {
         _selectedUsers.add(user);
       }
     });
-    if(mounted)
-    {
-      setState(() {
-        
-      });
+    if (mounted) {
+      setState(() {});
     }
   }
 
- Future<List<AppUser>> getUsersByFilter(String filter)async{
-     final _transaction = context.read<MTransaction>();
-        var users=await  _transaction.getUsers();
-        return users??[];
+  Future<List<AppUser>> getUsersByFilter(String filter) async {
+    final _transaction = context.read<MTransaction>();
+    var users = await _transaction.getUsers();
+    return users ?? [];
   }
 }
 
-Future _addGroupMemberBottomSheet(BuildContext context, List<AppUser>? users){
- return showModalBottomSheet(context: context, builder: (context){
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    height: 400,
-    child: Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
+Future _addGroupMemberBottomSheet(BuildContext context, List<AppUser>? users) {
+  return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
           width: MediaQuery.of(context).size.width,
-          height: 48,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade400,
-            borderRadius: BorderRadius.circular(12),
+          height: 400,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                width: MediaQuery.of(context).size.width,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: TextField(
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(
+                      MdiIcons.magnify,
+                      color: Colors.grey,
+                    ),
+                    hintText: 'search',
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GroupMembersList(users: users),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                child: ElevatedButton(onPressed: () {}, child: Text('ok')),
+              ),
+            ],
           ),
-          child: TextField(
-            maxLines: 1,
-            decoration: InputDecoration(
-              prefixIcon: Icon(MdiIcons.magnify,color: Colors.grey,),
-              hintText: 'search',
-            ),
-          ),
-        ),
-
-        Expanded(
-          child: GroupMembersList(users: users),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 12),
-          child: ElevatedButton(onPressed: (){}, child: Text('ok')),
-        ),
-      ],
-    ),
-  );
- });
+        );
+      });
 }
 
 class GroupMembersList extends StatelessWidget {
   final List<AppUser>? users;
   const GroupMembersList({
-    super.key, required this.users,
+    super.key,
+    required this.users,
   });
 
   @override
@@ -242,32 +246,33 @@ class GroupMembersListItem extends StatefulWidget {
 class _GroupMembersListItemState extends State<GroupMembersListItem> {
   @override
   Widget build(BuildContext context) {
-      bool? isCheked = false;
+    bool? isCheked = false;
     return ListView.builder(
-      itemCount: widget.users!.length,
-      itemBuilder: (BuildContext context,index){
-      return Container(
-        padding: EdgeInsets.fromLTRB(12,8,12,0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
-    
-        child: Row(
-          children: [
-            Icon(MdiIcons.account),
-            SizedBox(width: 8,),
-            Expanded(child: Text(widget.users![index].email!)),
-            Checkbox(
-              tristate: true,
-              value: isCheked, onChanged: (bool? value){
-              setState(() {
-                isCheked = value;
-              });
-            }),
-          ],
-        ),
-      );
-    });
+        itemCount: widget.users!.length,
+        itemBuilder: (BuildContext context, index) {
+          return Container(
+            padding: EdgeInsets.fromLTRB(12, 8, 12, 0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(MdiIcons.account),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(child: Text(widget.users![index].email!)),
+                Checkbox(
+                    tristate: true,
+                    value: isCheked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isCheked = value;
+                      });
+                    }),
+              ],
+            ),
+          );
+        });
   }
 }
-

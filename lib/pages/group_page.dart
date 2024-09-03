@@ -20,7 +20,6 @@ import 'package:provider/provider.dart';
 class GroupPage extends StatefulWidget {
   const GroupPage(this.user);
   final AppUser user;
-  
 
   @override
   State<GroupPage> createState() => _GroupPageState();
@@ -62,8 +61,7 @@ class _GroupPageState extends State<GroupPage> {
               child: FloatingActionButton(
                 backgroundColor: Colors.indigoAccent[50],
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddGroupPage(group:Group())));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupPage(group: Group())));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -111,88 +109,84 @@ class _GroupPageState extends State<GroupPage> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (_groups == null || _groups?.length == 0) {
                       return Center(
-                        child:Text("Your Not Subscribed In Any Group"),
+                        child: Text("Your Not Subscribed In Any Group"),
                       );
                     }
                     return ListView.builder(
                       itemCount: _groups!.length,
                       itemBuilder: (context, index) {
                         return Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: Slidable(
-                        endActionPane: ActionPane(motion: StretchMotion() ,
-                        extentRatio: 1,
-                        children: [
-                          SlidableAction(
-                            onPressed: (context){
-                                _deleteGroup(_groups![index].groupId!);
-                                _groups!.removeAt(index);
-                            },
-                            backgroundColor: Color(0xff16398B),
-                            foregroundColor: Colors.red,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                          SlidableAction(
-                            onPressed: (context){
-                              Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => AddGroupPage(group :_groups![index]),
-                                  ));
-                            },
-                            backgroundColor: AppStyle.deepYellow,
-                            foregroundColor: Color(0xff16398B),
-                            icon: Icons.edit,
-                            label: 'Edit',
-                          ),
-                        ]),
-                        child: InkWell(
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomePage(user:widget.user,group: _groups![index],))),
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              margin: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Color.fromARGB(31, 32, 30, 30),
-                                        blurRadius: 5),
+                            textDirection: TextDirection.rtl,
+                            child: Slidable(
+                              endActionPane: ActionPane(motion: StretchMotion(), extentRatio: 1, children: [
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    _deleteGroup(_groups![index].groupId!);
+                                    _groups!.removeAt(index);
+                                  },
+                                  backgroundColor: Color(0xff16398B),
+                                  foregroundColor: Colors.red,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
+                                ),
+                                SlidableAction(
+                                  onPressed: (context) {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => AddGroupPage(group: _groups![index]),
+                                    ));
+                                  },
+                                  backgroundColor: AppStyle.deepYellow,
+                                  foregroundColor: Color(0xff16398B),
+                                  icon: Icons.edit,
+                                  label: 'Edit',
+                                ),
+                              ]),
+                              child: InkWell(
+                                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                          user: widget.user,
+                                          group: _groups![index],
+                                        ))),
+                                child: Container(
+                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
+                                    BoxShadow(color: Color.fromARGB(31, 32, 30, 30), blurRadius: 5),
                                   ]),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xff16398B),
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Icon(
-                                      MdiIcons.accountGroupOutline,
-                                      color: Colors.white,
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xff16398B),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        child: Icon(
+                                          MdiIcons.accountGroupOutline,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 16,
+                                      ),
+                                      Expanded(
+                                          child: Text(
+                                        _groups![index].groupName ?? "group name",
+                                        style: TextStyle(
+                                          color: Color(0xff16398B),
+                                          fontSize: 16,
+                                        ),
+                                      )),
+                                      Icon(
+                                        MdiIcons.chevronLeft,
+                                        color: Color(0xff16398B),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                    _groups![index].groupName??"group name",
-                                    style: TextStyle(
-                                      color: Color(0xff16398B),
-                                      fontSize: 16,
-                                    ),
-                                  )),
-                                  Icon(
-                                    MdiIcons.chevronLeft,
-                                    color: Color(0xff16398B),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                      )
-                        );
+                            ));
                       },
                     );
                   }
@@ -207,7 +201,8 @@ class _GroupPageState extends State<GroupPage> {
       ),
     );
   }
-   _signOut() async {
+
+  _signOut() async {
     final _userModel = context.read<UserModel>();
     await _userModel.signOut();
   }
