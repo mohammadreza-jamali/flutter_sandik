@@ -20,7 +20,7 @@ class Category{
 
   Category fromJson(Map<String,dynamic> json){
     groupId=json["groupId"];
-    groupId=json["categoryId"];
+    categoryId=json["categoryId"];
     categoryName=json["categoryName"];
     isDefault=json["isDefault"];
     icon=json["icon"];

@@ -1,16 +1,28 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
+import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:provider/src/provider.dart';
 
-class AddTransaction extends StatelessWidget {
+class AddTransaction extends StatefulWidget {
   AddTransaction(this.groupId, {Key? key}) : super(key: key);
   final String groupId;
 
+  @override
+  State<AddTransaction> createState() => _AddTransactionState();
+}
+
+class _AddTransactionState extends State<AddTransaction> {
   double? _amount;
+
   String? _description;
+
+  List<Category>? _categories;
+  Map<String, String> _categoriesMap = {};
+  String? _selectedCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +56,37 @@ class AddTransaction extends StatelessWidget {
                   _description = value;
                 },
               ),
+              SizedBox(
+                height: 8,
+              ),
+              FutureBuilder(
+                  future: getCategories(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return GenericCustomDropdown<String>(
+                          items: _categoriesMap,
+                          hintText: "select your category",
+                          onChanged: (String val) {
+                            _selectedCategory = val;
+                          });
+                    }
+                    if (snapshot.hasError) {
+                      return Center(child: Text("Error"));
+                    }
+                    return CircularProgressIndicator();
+                  }),
               ElevatedButton(onPressed: () => _saveTransaction(context), child: Text("Save"))
             ],
           ),
         ),
       ),
     );
+  }
+
+  getCategories() async {
+    var _transaction = context.read<MTransaction>();
+    _categories = await _transaction.getCategories(widget.groupId);
+    _categoriesMap.addEntries((_categories ?? []).map((category) => {category.categoryId!: category.categoryName!}.entries.first));
   }
 
   _saveTransaction(BuildContext context) async {
@@ -59,16 +96,14 @@ class AddTransaction extends StatelessWidget {
     var filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
     await _transaction.saveTransaction(MoneyTransaction.init(
         id: Random().nextInt(999999999).toString(),
-        groupId: groupId,
+        groupId: widget.groupId,
+        categoryId: _selectedCategory,
         amount: _amount,
         description: _description,
         userId: _userModel.getCurrentUser()!.userId!,
         month: filterDate));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Your Paid Saved Successfully"),
-      showCloseIcon: true,
-      backgroundColor: Colors.green.shade700,
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
+
     Navigator.of(context).pop();
   }
 }

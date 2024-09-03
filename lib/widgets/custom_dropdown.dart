@@ -60,3 +60,63 @@ class _CustomDropdownState extends State<CustomDropdown> {
               );
   }
 }
+
+class GenericCustomDropdown<T> extends StatefulWidget {
+  const GenericCustomDropdown({required this.items,this.onChanged,this.icon,this.hintText=""});
+  final Map<T,String> items;
+  final String hintText;
+  final Icon? icon;
+  final Function? onChanged;
+
+  @override
+  State<GenericCustomDropdown<T>> createState() => _GenericCustomDropdownState<T>();
+}
+class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
+   T? selectedItem;
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonHideUnderline( 
+                child: DropdownButton2<T>(
+                  isExpanded: true,
+                  value: selectedItem,
+                  alignment: AlignmentDirectional.centerEnd,
+                  items:widget.items.entries.map<DropdownMenuItem<T>>((e) => DropdownMenuItem<T>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value),),).toList(),
+                  hint: Row(
+                    children: [
+                      if(widget.icon!=null) widget.icon!,
+                      SizedBox(width: 8,),
+                      Text(widget.hintText,style: TextStyle(fontSize: 14),),
+                    ],
+                  ),
+                 onChanged: (value){
+                  setState((){
+                    selectedItem=value;
+                    if(widget.onChanged!=null)
+                    {
+                      widget.onChanged!(value);
+                    }
+                  });
+                 },
+                 buttonStyleData: ButtonStyleData(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                 ),
+              
+                 dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                  )
+                 ),
+
+                 selectedItemBuilder: (BuildContext context){return widget.items.entries.map<Row>((e) =>Row(
+                    children: [
+                      const SizedBox(width: 4,),
+                      Text(e.value,style: const TextStyle(fontSize: 14),),
+                    ],
+                  )).toList();},
+                 ),
+              );
+  }
+}

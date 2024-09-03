@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
+import 'package:flutter_sandik/model/budget.dart';
+import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/pages/add_budget.dart';
 import 'package:flutter_sandik/pages/add_transaction.dart';
 import 'package:flutter_sandik/pages/data.dart';
@@ -21,6 +23,9 @@ class HomeScreen extends StatefulWidget{
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  List<MoneyTransaction>? _transactions;
+  Budget? _budget;
   @override
   Widget build(BuildContext context) {
 
@@ -198,89 +203,153 @@ class FloatContainer extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        MinimalButton(
-                          onTap: () {},
-                          icon: Assets.images.icons.chart,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            MinimalButton(
+                              onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(builder:(context)=>TransactionsPage(groupId) ));
+                              },
+                              icon: Assets.images.icons.chart,
+                            ),
+                          ],
                         ),
-                        Text(
-                          'مخارج ماه اردیبهشت',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 24,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'تومان',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          '9,983,000',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 32),
+                        
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder:(context)=>AddTransaction(groupId) ));
+                              },
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      WidgetStateProperty.all(Colors.transparent),
+                                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(35))),
+                                      ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('افزودن خرج',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12)),
+                                  SizedBox(
+                                    width: 4,
+                                  ),
+                                  Icon(
+                                    CupertinoIcons.add_circled_solid,
+                                    color: Colors.white,
+                                    size: 15,
+                                  )
+                                ],
+                              )),
                         )
                       ],
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Center(
-                        child: Text('نه میلیون و نهصد و هشتاد و سه هزار تومان',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10))),
-                    SizedBox(
-                      height: 17,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder:(context)=>AddTransaction(groupId) ));
-                        },
-                        style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStateProperty.all(Color(0xff194DD5)),
-                            shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                              'مخارج ماه اردیبهشت',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            ),
+                            SizedBox(
+                              height: 16,
+                            ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('افزودن خرج',
+                            Text(
+                              'تومان',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              '9,983,000',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Container(
+                          alignment: Alignment.centerRight,
+                            child: Text('نه میلیون و نهصد و هشتاد و سه هزار تومان',
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 12)),
-                            SizedBox(
-                              width: 4,
+                                    fontSize: 10))),
+
+                        SizedBox(
+                          height: 16,
+                        ),
+
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(8)
                             ),
-                            Icon(
-                              CupertinoIcons.add_circled_solid,
-                              color: Colors.white,
-                              size: 15,
-                            )
-                          ],
-                        ))
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                'بودجه :',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10),
+                                  textDirection: TextDirection.rtl,),
+                                Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'تومان',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10),
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text(
+                                '9,983,000',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12),
+                              )
+                            ],
+                          ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    )
                   ],
                 ),
               ),
