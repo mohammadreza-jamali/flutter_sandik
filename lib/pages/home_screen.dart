@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Category>? _categories;
   String filterDate = "";
   late MTransaction _transaction;
-  late Map<String, dynamic> transactionsInfo;
+  late Map<String, dynamic>? transactionsInfo;
   @override
   void initState() {
     super.initState();
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future _getInfo() async {
     transactionsInfo = await _transaction.getTransactionInfo(widget.groupId, filterDate);
-    _transactions = transactionsInfo["transactions"];
+    _transactions = transactionsInfo?["transactions"];
     _categories = await _transaction.getCategories(widget.groupId);
   }
 }
@@ -240,7 +240,7 @@ class CostListItem extends StatelessWidget {
 
 class FloatContainer extends StatelessWidget {
   final groupId;
-  final Map<String, dynamic> transactionsInfo;
+  final Map<String, dynamic>? transactionsInfo;
   const FloatContainer({
     required this.groupId,
     required this.transactionsInfo,
@@ -336,8 +336,8 @@ class FloatContainer extends StatelessWidget {
                               width: 8,
                             ),
                             Text(
-                              (transactionsInfo["transactions"] as List<MoneyTransaction>)
-                                      .map((transaction) => transaction.amount)
+                              (transactionsInfo?["transactions"] as List<MoneyTransaction>?)
+                                      ?.map((transaction) => transaction.amount)
                                       .reduce((value, element) => (value ?? 0) + (element ?? 0))
                                       ?.toStringAsFixed(2) ??
                                   "",
@@ -378,9 +378,9 @@ class FloatContainer extends StatelessWidget {
                                       width: 8,
                                     ),
                                     Text(
-                                      (transactionsInfo["budget"] as Budget).budgetValue?.toStringAsFixed(2) ?? "",
+                                      (transactionsInfo?["budget"] as Budget).budgetValue?.toStringAsFixed(2) ?? "",
                                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                                    )
+                                    ),
                                   ],
                                 ),
                               ],
