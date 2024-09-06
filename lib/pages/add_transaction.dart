@@ -85,7 +85,7 @@ class _AddTransactionState extends State<AddTransaction> {
 
   getCategories() async {
     var _transaction = context.read<MTransaction>();
-    _categories = await _transaction.getCategories(widget.groupId);
+    _categories = await _transaction.getCategories(widget.groupId,false);
     _categoriesMap.addEntries((_categories ?? []).map((category) => {category.categoryId!: category.categoryName!}.entries.first));
   }
 

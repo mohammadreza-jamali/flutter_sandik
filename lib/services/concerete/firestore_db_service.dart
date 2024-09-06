@@ -94,7 +94,7 @@ FirebaseFirestore _firestore= FirebaseFirestore.instance;
   }
 
   @override
-  Future<List<Category>> getCategories(String groupId) async {
+  Future<List<Category>> getCategories(String groupId,bool isDefault) async {
 
     var categories = await _firestore.collection("Categories")
         .where("groupId", isEqualTo: groupId)

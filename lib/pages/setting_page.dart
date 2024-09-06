@@ -176,7 +176,7 @@ class _SettingItemState extends State<SettingItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: widget.ontap(),
+      onTap: (){widget.ontap();},
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         decoration: BoxDecoration(

@@ -151,8 +151,8 @@ class MTransaction with ChangeNotifier implements IDbBase{
   }
   
   @override
-  Future<List<Category>> getCategories(String groupId) async {
-    var result= await _dbRepository.getCategories(groupId);
+  Future<List<Category>> getCategories(String groupId,bool isDefault) async {
+    var result= await _dbRepository.getCategories(groupId,isDefault);
     return result;
   }
   

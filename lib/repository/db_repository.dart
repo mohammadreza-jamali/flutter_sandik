@@ -87,8 +87,8 @@ class DbRepository implements IDbBase{
   }
 
   @override
-  Future<List<Category>> getCategories(String groupId) async {
-    return await _dbService.getCategories(groupId);
+  Future<List<Category>> getCategories(String groupId,bool isDefault) async {
+    return await _dbService.getCategories(groupId,isDefault);
   }
 
 }

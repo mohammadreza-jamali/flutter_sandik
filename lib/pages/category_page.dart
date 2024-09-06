@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/pages/data.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
+import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class CategoryPage extends StatefulWidget {
-  
   final String groupId;
 
-  CategoryPage(this.groupId,{super.key});
+  CategoryPage(this.groupId, {super.key});
 
   @override
   State<CategoryPage> createState() => _CategoryPageState();
@@ -19,9 +19,11 @@ class CategoryPage extends StatefulWidget {
 
 class _CategoryPageState extends State<CategoryPage> {
   List<Category>? _categories;
+  late MTransaction _transaction;
 
   @override
   Widget build(BuildContext context) {
+    _transaction = Provider.of<MTransaction>(context, listen: true);
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -52,10 +54,7 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
             ),
           ),
-          body:
-          FutureBuilder(future: getCategories(), builder: (context, snapshot) {
-            if(snapshot.connectionState==ConnectionState.done){
-              return Column(
+          body: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Padding(
@@ -80,7 +79,24 @@ class _CategoryPageState extends State<CategoryPage> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Expanded(child: DefaultCategoryList(_categories?.where((category)=>category.isDefault??false).toList()??[])),
+                        Expanded(
+                            child: FutureBuilder(
+                          future: getCategories(true),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return DefaultCategoryList(snapshot.data
+                                      ?.where((category) =>
+                                          category.isDefault ?? false)
+                                      .toList() ??
+                                  []);
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text("Error"));
+                            }
+                            return CircularProgressIndicator();
+                          },
+                        )),
                       ],
                     )),
               ),
@@ -91,7 +107,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        _addCategoryBottomSheet(context,widget.groupId);
+                        _addCategoryBottomSheet(context, widget.groupId);
                       },
                       child: Text(
                         'افزودن دسته بندی',
@@ -114,33 +130,41 @@ class _CategoryPageState extends State<CategoryPage> {
               Expanded(
                   child: Directionality(
                       textDirection: TextDirection.rtl,
-                      child: CategoryGridView(_categories?.where((category)=>category.isDefault==false).toList()??[]))),
+                      child: _transaction.state == ViewState.Idle
+                          ? FutureBuilder(
+                              future: getCategories(false),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return CategoryGridView(snapshot.data
+                                          ?.where((category) =>
+                                              category.isDefault == false)
+                                          .toList() ??
+                                      []);
+                                }
+                                if (snapshot.hasError) {
+                                  return Center(child: Text("Error"));
+                                }
+                                return CircularProgressIndicator();
+                              },
+                            )
+                          : CircularProgressIndicator())),
             ],
-          );
-            }
-          if(snapshot.hasError){
-            return Center(child:Text("Error"));
-          }
-return CircularProgressIndicator();
-          }, ) 
-          
-          ),
+          )),
     );
   }
 
-  getCategories() async {
-    var _transaction = context.read<MTransaction>();
-    _categories=await _transaction.getCategories(widget.groupId);
+  Future<List<Category>> getCategories(bool isDefault) async {
+     return await _transaction.getCategories(widget.groupId, isDefault);
   }
 }
 
 class CategoryGridView extends StatelessWidget {
   final List<Category> favoriteCategories;
-   CategoryGridView(this.favoriteCategories);
+  CategoryGridView(this.favoriteCategories);
 
   @override
   Widget build(BuildContext context) {
-    
     return GridView.builder(
         scrollDirection: Axis.vertical,
         physics: BouncingScrollPhysics(),
@@ -164,37 +188,62 @@ class CategoryGridViewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Color(0xffBCDFFF),
-        boxShadow: [
-          BoxShadow(color: Color.fromARGB(255, 19, 125, 157), blurRadius: 0.8)
-        ],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(MdiIcons.fromString(item.icon!), color: Color(0xff1F50D3)),
-          SizedBox(
-            height: 16,
+    return Stack(
+      children: [
+        Container(
+          width: 150,
+          height: 150,
+          margin: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Color(0xffBCDFFF),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromARGB(255, 19, 125, 157), blurRadius: 0.8)
+            ],
+            borderRadius: BorderRadius.circular(12),
           ),
-          Text(
-            item.categoryName!,
-            style: TextStyle(
-                color: Colors.blue.shade900,
-                fontWeight: FontWeight.bold,
-                fontSize: 12),
-          )
-        ],
-      ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(MdiIcons.fromString(item.icon!), color: Color(0xff1F50D3)),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                item.categoryName!,
+                style: TextStyle(
+                    color: Colors.blue.shade900,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
+              )
+            ],
+          ),
+        ),
+        Positioned(
+            top: 14,
+            left: 14,
+            child: InkWell(
+              onTap: () async {
+                var _transaction = context.read<MTransaction>();
+                await _transaction.deleteCategory(item.categoryId!);
+              },
+              child: Container(
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      color: Colors.red.shade300,
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Icon(
+                    MdiIcons.delete,
+                    color: Colors.white,
+                    size: 18,
+                  )),
+            ))
+      ],
     );
   }
 }
 
 class DefaultCategoryList extends StatelessWidget {
-  
   final List<Category> defaultCategories;
   DefaultCategoryList(this.defaultCategories);
 
@@ -255,20 +304,22 @@ class CategoryListItem extends StatelessWidget {
   }
 }
 
-Future _addCategoryBottomSheet(BuildContext context,String groupId) {
+Future _addCategoryBottomSheet(BuildContext context, String groupId) {
   List<IconData> icons = MdiIcons.getIcons();
-  TextEditingController categoryNameController=TextEditingController();
+  TextEditingController categoryNameController = TextEditingController();
   late String selectedIcon;
+  ValueNotifier<int> selectedIndex =ValueNotifier(-1);
   return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (context) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: Container(
+            textDirection: TextDirection.rtl,
+            child: Container(
               width: MediaQuery.of(context).size.width,
               height: 400,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: Column(
                   children: [
                     Padding(
@@ -282,32 +333,45 @@ Future _addCategoryBottomSheet(BuildContext context,String groupId) {
                         ),
                       ),
                     ),
-
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0,16,24,16),
+                      padding: const EdgeInsets.fromLTRB(0, 16, 24, 16),
                       child: Row(
                         children: [
-                          Text('icon :',style: TextStyle(fontSize: 18),),
+                          Text(
+                            'icon :',
+                            style: TextStyle(fontSize: 18),
+                          ),
                         ],
                       ),
                     ),
-
                     Expanded(
                       child: GridView.builder(
-                        itemCount: icons.length,
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),
+                          itemCount: icons.length,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5),
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {
-                                selectedIcon=MdiIcons.getNames()[index];
+                                selectedIcon = MdiIcons.getNames()[index];
+                                selectedIndex.value=index;
                               },
-                              child: Container(
+                              child: 
+                              ValueListenableBuilder(
+                                valueListenable:  selectedIndex,
+                                builder: (BuildContext context, dynamic value, Widget? child) {
+                                  return  Container(
+                                color: value == index
+                                        ?Colors.green:Colors.transparent,
                                 width: 40,
                                 height: 40,
                                 child: Icon(icons[index]),
+                              );
+                                },
                               ),
+                              
                             );
                           }),
                     ),
@@ -320,7 +384,11 @@ Future _addCategoryBottomSheet(BuildContext context,String groupId) {
                       child: ElevatedButton(
                         onPressed: () async {
                           var _transaction = context.read<MTransaction>();
-                          await _transaction.addCategory(Category.init(groupId: groupId,categoryId:Uuid().v8(),categoryName:categoryNameController.text,icon:selectedIcon ));
+                          await _transaction.addCategory(Category.init(
+                              groupId: groupId,
+                              categoryId: Uuid().v8(),
+                              categoryName: categoryNameController.text,
+                              icon: selectedIcon));
                         },
                         child: Text(
                           'SAVE',
@@ -336,6 +404,5 @@ Future _addCategoryBottomSheet(BuildContext context,String groupId) {
                 ),
               ),
             ),
-      ));
-      
+          ));
 }
