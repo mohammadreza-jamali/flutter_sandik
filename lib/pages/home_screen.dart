@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:digit_to_persian_word/digit_to_persian_word.dart';
 import 'package:easy_localization/easy_localization.dart' as esy;
@@ -17,9 +17,11 @@ import 'package:flutter_sandik/pages/transactions_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sandik/core/application/persian_date_helper.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class HomeScreen extends StatefulWidget {
   final String groupId;
@@ -41,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
+    filterDate =
+        "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
   }
 
   @override
@@ -85,13 +88,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                   child: Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
-                                child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                                  Text(
-                                    'محمد مهدی شریفی',
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                                  ),
-                                  Text('09221837187', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 8))
-                                ]),
+                                child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        'محمد مهدی شریفی',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12),
+                                      ),
+                                      Text('09221837187',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 8))
+                                    ]),
                               )),
                               MinimalButton(
                                 onTap: () {},
@@ -136,9 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future _getInfo() async {
-    transactionsInfo = await _transaction.getTransactionInfo(widget.groupId, filterDate);
+    transactionsInfo =
+        await _transaction.getTransactionInfo(widget.groupId, filterDate);
     _transactions = transactionsInfo["transactions"];
-    _categories = await _transaction.getCategories(widget.groupId,true);
+    _categories = await _transaction.getCategories(widget.groupId, true);
   }
 }
 
@@ -158,7 +171,8 @@ class CostListView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
-          var costCategory = categories.firstWhere((category) => category.categoryId == costs[index].categoryId);
+          var costCategory = categories.firstWhere(
+              (category) => category.categoryId == costs[index].categoryId);
           return CostListItem(
               cost: costs
                   .map((cost) => TransactionDto(
@@ -177,7 +191,6 @@ class CostListView extends StatelessWidget {
 
 class CostListItem extends StatelessWidget {
   final TransactionDto cost;
-  final esy.DateFormat _formatter = esy.DateFormat(OPERATIONAL_DATE_TIME_FORMAT);
   CostListItem({
     super.key,
     required this.cost,
@@ -202,7 +215,7 @@ class CostListItem extends StatelessWidget {
             width: 4,
           ),
           Text(
-            cost.amount?.toStringAsFixed(2) ?? "0",
+            FormatHelper.numberFormatter(cost.amount) ?? "0",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Expanded(
@@ -214,9 +227,9 @@ class CostListItem extends StatelessWidget {
                   style: TextStyle(color: Colors.white),
                 ),
                 Text(
-                  _formatter.format(cost.insertDate?.toDate() ?? DateTime.now()),
+                  FormatHelper.dateFormatter(
+                      cost.insertDate?.toDate() ?? DateTime.now()),
                   style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                  textDirection: TextDirection.ltr,
                 )
               ],
             ),
@@ -228,7 +241,9 @@ class CostListItem extends StatelessWidget {
             width: 45,
             height: 45,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: Color(0xffBCDFFF), borderRadius: BorderRadius.circular(5)),
+            decoration: BoxDecoration(
+                color: Color(0xffBCDFFF),
+                borderRadius: BorderRadius.circular(5)),
             child: Icon(
               MdiIcons.fromString(cost.icon!),
               color: Color(0xff1F50D3),
@@ -260,16 +275,21 @@ class FloatContainer extends StatelessWidget {
       ]),
       child: Stack(children: [
         ClipRRect(
-          child: Assets.images.backgrounds.darkCardBackground.image(width: MediaQuery.of(context).size.width, height: 220, fit: BoxFit.cover),
+          child: Assets.images.backgrounds.darkCardBackground.image(
+              width: MediaQuery.of(context).size.width,
+              height: 220,
+              fit: BoxFit.cover),
           borderRadius: BorderRadius.circular(12),
         ),
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+            filter: ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1),
             child: Container(
               height: 220,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -284,7 +304,9 @@ class FloatContainer extends StatelessWidget {
                           children: [
                             MinimalButton(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => TransactionsPage(groupId)));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        TransactionsPage(groupId)));
                               },
                               icon: Assets.images.icons.chart,
                             ),
@@ -294,16 +316,26 @@ class FloatContainer extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTransaction(groupId)));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddTransaction(groupId)));
                               },
                               style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(35))),
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.transparent),
+                                shape: WidgetStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(35))),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('افزودن خرج', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                                  Text('افزودن خرج',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12)),
                                   SizedBox(
                                     width: 4,
                                   ),
@@ -321,8 +353,11 @@ class FloatContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          'مخارج ماه ${DateTime.now().persianMonthName}',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                          'مخارج ${DateTime.now().toJalali().formatter.mN} ماه',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
                         SizedBox(
                           height: 16,
@@ -332,19 +367,32 @@ class FloatContainer extends StatelessWidget {
                           children: [
                             Text(
                               'تومان',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10),
                             ),
                             SizedBox(
                               width: 8,
                             ),
                             Text(
-                              (transactionsInfo["transactions"] as List<MoneyTransaction>).isEmpty?"":
-                                              (transactionsInfo["transactions"] as List<MoneyTransaction>)
-                                      .map((transaction) => transaction.amount)
-                                      .reduce((value, element) => (value ?? 0) + (element ?? 0))
-                                      ?.truncate().toString() ??
-                                  "",
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32),
+                              (transactionsInfo["transactions"]
+                                          as List<MoneyTransaction>)
+                                      .isEmpty
+                                  ? ""
+                                  : FormatHelper.numberFormatter(
+                                          (transactionsInfo["transactions"]
+                                                  as List<MoneyTransaction>)
+                                              .map((transaction) =>
+                                                  transaction.amount)
+                                              .reduce((value, element) =>
+                                                  (value ?? 0) +
+                                                  (element ?? 0))) ??
+                                      "",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32),
                             )
                           ],
                         ),
@@ -353,36 +401,67 @@ class FloatContainer extends StatelessWidget {
                         ),
                         Container(
                             alignment: Alignment.centerRight,
-                            child: Text('نه میلیون و نهصد و هشتاد و سه هزار تومان',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10))),
+                            child: Text(
+                                (transactionsInfo["transactions"]
+                                          as List<MoneyTransaction>)
+                                      .isEmpty
+                                  ? ""
+                                  : DigitToWord.toWord(
+                                          (transactionsInfo["transactions"]
+                                                  as List<MoneyTransaction>)
+                                              .map((transaction) =>
+                                                  transaction.amount)
+                                              .reduce((value, element) =>
+                                                  (value ?? 0) +
+                                                  (element ?? 0))?.truncate().toString(),StrType.StrWord)+' تومان' ??
+                                      "",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10))),
                         SizedBox(
                           height: 16,
                         ),
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.3), borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(
+                                color: Colors.transparent.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   'بودجه :',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
-                                  textDirection: TextDirection.rtl,
+                                  textDirection: ui.TextDirection.rtl,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'تومان',
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 10),
                                     ),
                                     SizedBox(
                                       width: 8,
                                     ),
                                     Text(
-                                      (transactionsInfo["budget"] as Budget?)?.budgetValue?.toStringAsFixed(2) ?? "",
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                      FormatHelper.numberFormatter(
+                                              (transactionsInfo["budget"]
+                                                      as Budget?)
+                                                  ?.budgetValue) ??
+                                          "",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -417,7 +496,8 @@ class MinimalButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(color: Color(0xff16398B), borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(
+            color: Color(0xff16398B), borderRadius: BorderRadius.circular(4)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: icon.svg(width: 16, height: 16, color: Colors.white),
@@ -430,13 +510,13 @@ class MinimalButton extends StatelessWidget {
 Future _settingBottomSheet(BuildContext context) {
   return showModalBottomSheet(
       context: context,
-      builder: (context) => Directionality(
-            textDirection: TextDirection.rtl,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 300,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+      builder: (context) => Container(
+            width: MediaQuery.of(context).size.width,
+            height: 300,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              child: Directionality(
+                textDirection: ui.TextDirection.rtl,
                 child: Column(
                   children: [
                     Row(
