@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
@@ -75,7 +77,9 @@ class _AddTransactionState extends State<AddTransaction> {
                     }
                     return CircularProgressIndicator();
                   }),
-              ElevatedButton(onPressed: () => _saveTransaction(context), child: Text("Save"))
+              ElevatedButton(
+                  onPressed: () => _saveTransaction(context),
+                  child: Text("Save"))
             ],
           ),
         ),
@@ -85,15 +89,17 @@ class _AddTransactionState extends State<AddTransaction> {
 
   getCategories() async {
     var _transaction = context.read<MTransaction>();
-    _categories = await _transaction.getCategories(widget.groupId,false);
-    _categoriesMap.addEntries((_categories ?? []).map((category) => {category.categoryId!: category.categoryName!}.entries.first));
+    _categories = await _transaction.getCategories(widget.groupId, false);
+    _categoriesMap.addEntries((_categories ?? []).map((category) =>
+        {category.categoryId!: category.categoryName!}.entries.first));
   }
 
   _saveTransaction(BuildContext context) async {
     if (_amount == null || _amount == 0) return;
     final _userModel = context.read<UserModel>();
     final _transaction = context.read<MTransaction>();
-    var filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
+    var filterDate =
+        "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
     await _transaction.saveTransaction(MoneyTransaction.init(
         id: Random().nextInt(999999999).toString(),
         groupId: widget.groupId,
@@ -102,8 +108,19 @@ class _AddTransactionState extends State<AddTransaction> {
         description: _description,
         userId: _userModel.getCurrentUser()!.userId!,
         month: filterDate));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
 
     Navigator.of(context).pop();
   }
+
+  String _faDateTime() {
+    DateTime now = DateTime.now();
+    initializeDateFormatting(' fa ', null);
+    String formattedDatePersian =
+        DateFormat(' yyyy_MM_dd HH:mm:ss ', ' fa_IR ').format(now);
+    return(formattedDatePersian);
+  }
+
+  
 }
