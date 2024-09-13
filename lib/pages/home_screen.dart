@@ -4,6 +4,9 @@ import 'package:digit_to_persian_word/digit_to_persian_word.dart';
 import 'package:easy_localization/easy_localization.dart' as esy;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/dtos/transaction_dto.dart';
 import 'package:flutter_sandik/format_helper.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
@@ -127,12 +130,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 20,
                     ),
                     Expanded(
-                        child: CostListView(
+                        child: _transactions==null? CostListView(
                       costs: _transactions ?? [],
                       categories: _categories ?? [],
+                    ):Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            child: Assets.images.emptyPage.image(),
+                          ),
+                        ),
+                        Text('هنوز چیزی خرج نکردی !',style: TextStyle( fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),textDirection: ui.TextDirection.rtl,),
+                        SizedBox(height: 4,),
+                        Text('اولین خرجت رو اضافه کن.',style: TextStyle( fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey.shade300),textDirection: ui.TextDirection.rtl,),
+                        SizedBox(
+                          height: 32,
+                        )
+                      ],
                     ))
                   ]),
                 ),
+                
               );
             } else {
               return Center(
@@ -463,6 +481,7 @@ class FloatContainer extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12),
                                     ),
+                                    
                                   ],
                                 ),
                               ],

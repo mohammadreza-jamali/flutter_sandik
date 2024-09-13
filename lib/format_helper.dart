@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
+
 class FormatHelper {
   
   static String numberFormatter(double? number) {

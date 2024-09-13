@@ -19,6 +19,18 @@ class $AssetsImagesGen {
   $AssetsImagesBackgroundsGen get backgrounds =>
       const $AssetsImagesBackgroundsGen();
 
+  /// File path: assets/images/empty_note.png
+  AssetGenImage get emptyNote =>
+      const AssetGenImage('assets/images/empty_note.png');
+
+  /// File path: assets/images/empty_notebook.png
+  AssetGenImage get emptyNotebook =>
+      const AssetGenImage('assets/images/empty_notebook.png');
+
+  /// File path: assets/images/empty_page.png
+  AssetGenImage get emptyPage =>
+      const AssetGenImage('assets/images/empty_page.png');
+
   /// Directory path: assets/images/icons
   $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
 
@@ -26,7 +38,8 @@ class $AssetsImagesGen {
   AssetGenImage get splash => const AssetGenImage('assets/images/splash.jpg');
 
   /// List of all assets
-  List<AssetGenImage> get values => [splash];
+  List<AssetGenImage> get values =>
+      [emptyNote, emptyNotebook, emptyPage, splash];
 }
 
 class $AssetsTranslationsGen {

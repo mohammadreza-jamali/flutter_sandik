@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/pages/data.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
@@ -91,6 +92,42 @@ class _CategoryPageState extends State<CategoryPage> {
                                       .toList() ??
                                   []);
                             }
+                            if (snapshot.data
+                                    ?.where((category) =>
+                                        category.isDefault ?? false)
+                                    .toList()==[]) {
+                              return Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Assets.images.emptyPage.image(),
+                                    ),
+                                  ),
+                                  Text(
+                                    'هنوز چیزی خرج نکردی !',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text(
+                                    'اولین خرجت رو اضافه کن.',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey.shade300),
+                                    textDirection: TextDirection.rtl,
+                                  ),
+                                  SizedBox(
+                                    height: 32,
+                                  )
+                                ],
+                              );
+                            }
                             if (snapshot.hasError) {
                               return Center(child: Text("Error"));
                             }
@@ -155,7 +192,7 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Future<List<Category>> getCategories(bool isDefault) async {
-     return await _transaction.getCategories(widget.groupId, isDefault);
+    return await _transaction.getCategories(widget.groupId, isDefault);
   }
 }
 
@@ -308,7 +345,7 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
   List<IconData> icons = MdiIcons.getIcons();
   TextEditingController categoryNameController = TextEditingController();
   late String selectedIcon;
-  ValueNotifier<int> selectedIndex =ValueNotifier(-1);
+  ValueNotifier<int> selectedIndex = ValueNotifier(-1);
   return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -356,22 +393,22 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                             return InkWell(
                               onTap: () {
                                 selectedIcon = MdiIcons.getNames()[index];
-                                selectedIndex.value=index;
+                                selectedIndex.value = index;
                               },
-                              child: 
-                              ValueListenableBuilder(
-                                valueListenable:  selectedIndex,
-                                builder: (BuildContext context, dynamic value, Widget? child) {
-                                  return  Container(
-                                color: value == index
-                                        ?Colors.green:Colors.transparent,
-                                width: 40,
-                                height: 40,
-                                child: Icon(icons[index]),
-                              );
+                              child: ValueListenableBuilder(
+                                valueListenable: selectedIndex,
+                                builder: (BuildContext context, dynamic value,
+                                    Widget? child) {
+                                  return Container(
+                                    color: value == index
+                                        ? Colors.green
+                                        : Colors.transparent,
+                                    width: 40,
+                                    height: 40,
+                                    child: Icon(icons[index]),
+                                  );
                                 },
                               ),
-                              
                             );
                           }),
                     ),
