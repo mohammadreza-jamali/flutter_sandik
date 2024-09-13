@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/core/application/navigation_service.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/pages/data.dart';
@@ -29,8 +30,12 @@ class _CategoryPageState extends State<CategoryPage> {
       child: Scaffold(
           appBar: AppBar(
             centerTitle: true,
+            automaticallyImplyLeading: false,
             actions: [
               InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
                 child: Container(
                   margin: EdgeInsets.fromLTRB(0, 16, 16, 0),
                   decoration: BoxDecoration(
@@ -86,48 +91,9 @@ class _CategoryPageState extends State<CategoryPage> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
-                              return DefaultCategoryList(snapshot.data
-                                      ?.where((category) =>
-                                          category.isDefault ?? false)
-                                      .toList() ??
-                                  []);
+                              return DefaultCategoryList(snapshot.data ?? []);
                             }
-                            if (snapshot.data
-                                    ?.where((category) =>
-                                        category.isDefault ?? false)
-                                    .toList()==[]) {
-                              return Column(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      child: Assets.images.emptyPage.image(),
-                                    ),
-                                  ),
-                                  Text(
-                                    'هنوز چیزی خرج نکردی !',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  Text(
-                                    'اولین خرجت رو اضافه کن.',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.grey.shade300),
-                                    textDirection: TextDirection.rtl,
-                                  ),
-                                  SizedBox(
-                                    height: 32,
-                                  )
-                                ],
-                              );
-                            }
+
                             if (snapshot.hasError) {
                               return Center(child: Text("Error"));
                             }
@@ -173,11 +139,47 @@ class _CategoryPageState extends State<CategoryPage> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
-                                  return CategoryGridView(snapshot.data
-                                          ?.where((category) =>
-                                              category.isDefault == false)
-                                          .toList() ??
-                                      []);
+                                  return (snapshot.data ?? []).isNotEmpty
+                                      ? CategoryGridView(snapshot.data ?? [])
+                                      : Center(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                  child: Assets.images.emptyPage
+                                                      .image(),
+                                                ),
+                                              ),
+                                              Text(
+                                                'هنوز چیزی خرج نکردی !',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                                textDirection:
+                                                    TextDirection.rtl,
+                                              ),
+                                              SizedBox(
+                                                height: 4,
+                                              ),
+                                              Text(
+                                                'اولین خرجت رو اضافه کن.',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.grey.shade300),
+                                                textDirection:
+                                                    TextDirection.rtl,
+                                              ),
+                                              SizedBox(
+                                                height: 32,
+                                              )
+                                            ],
+                                          ),
+                                        );
                                 }
                                 if (snapshot.hasError) {
                                   return Center(child: Text("Error"));

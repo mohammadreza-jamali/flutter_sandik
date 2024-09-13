@@ -28,9 +28,11 @@ import 'package:shamsi_date/shamsi_date.dart';
 
 class HomeScreen extends StatefulWidget {
   final String groupId;
+  final String groupName;
   const HomeScreen({
     super.key,
     required this.groupId,
+    required this.groupName,
   });
 
   @override
@@ -91,22 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                   child: Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
-                                child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'محمد مهدی شریفی',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12),
-                                      ),
-                                      Text('09221837187',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 8))
-                                    ]),
+                                child: Directionality(
+                                  child: Text(widget.groupName),
+                                  textDirection: ui.TextDirection.rtl,
+                                ),
                               )),
                               MinimalButton(
                                 onTap: () {},
@@ -130,27 +120,44 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 20,
                     ),
                     Expanded(
-                        child: _transactions==null? CostListView(
-                      costs: _transactions ?? [],
-                      categories: _categories ?? [],
-                    ):Column(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: Assets.images.emptyPage.image(),
-                          ),
-                        ),
-                        Text('هنوز چیزی خرج نکردی !',style: TextStyle( fontSize: 18,fontWeight: FontWeight.bold,color: Colors.white),textDirection: ui.TextDirection.rtl,),
-                        SizedBox(height: 4,),
-                        Text('اولین خرجت رو اضافه کن.',style: TextStyle( fontSize: 12,fontWeight: FontWeight.bold,color: Colors.grey.shade300),textDirection: ui.TextDirection.rtl,),
-                        SizedBox(
-                          height: 32,
-                        )
-                      ],
-                    ))
+                        child: (_transactions ?? []).isNotEmpty
+                            ? CostListView(
+                                costs: _transactions ?? [],
+                                categories: _categories ?? [],
+                              )
+                            : Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      child: Assets.images.emptyPage.image(),
+                                    ),
+                                  ),
+                                  Text(
+                                    'هنوز چیزی خرج نکردی !',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                    textDirection: ui.TextDirection.rtl,
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text(
+                                    'اولین خرجت رو اضافه کن.',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey.shade300),
+                                    textDirection: ui.TextDirection.rtl,
+                                  ),
+                                  SizedBox(
+                                    height: 32,
+                                  )
+                                ],
+                              ))
                   ]),
                 ),
-                
               );
             } else {
               return Center(
@@ -421,18 +428,24 @@ class FloatContainer extends StatelessWidget {
                             alignment: Alignment.centerRight,
                             child: Text(
                                 (transactionsInfo["transactions"]
-                                          as List<MoneyTransaction>)
-                                      .isEmpty
-                                  ? ""
-                                  : DigitToWord.toWord(
-                                          (transactionsInfo["transactions"]
-                                                  as List<MoneyTransaction>)
-                                              .map((transaction) =>
-                                                  transaction.amount)
-                                              .reduce((value, element) =>
-                                                  (value ?? 0) +
-                                                  (element ?? 0))?.truncate().toString(),StrType.StrWord)+' تومان' ??
-                                      "",
+                                            as List<MoneyTransaction>)
+                                        .isEmpty
+                                    ? ""
+                                    : DigitToWord.toWord(
+                                                (transactionsInfo[
+                                                            "transactions"]
+                                                        as List<
+                                                            MoneyTransaction>)
+                                                    .map((transaction) =>
+                                                        transaction.amount)
+                                                    .reduce((value, element) =>
+                                                        (value ?? 0) +
+                                                        (element ?? 0))
+                                                    ?.truncate()
+                                                    .toString(),
+                                                StrType.StrWord) +
+                                            ' تومان' ??
+                                        "",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -481,7 +494,6 @@ class FloatContainer extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12),
                                     ),
-                                    
                                   ],
                                 ),
                               ],

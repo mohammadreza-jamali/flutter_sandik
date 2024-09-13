@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
             body: IndexedStack(
               index: selectedScreenIndex,
               children: [
-                HomeScreen(groupId: widget.group.groupId!,),
+                HomeScreen(groupId: widget.group.groupId!,groupName: widget.group.groupName!),
                 CategoryPage(widget.group.groupId!),
                 SettingPage(),
                 ReportPage()
