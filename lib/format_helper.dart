@@ -12,8 +12,9 @@ class FormatHelper {
   }
 
   static String dateFormatter(DateTime date){
+    NumberFormat formatter = NumberFormat(' ## ', 'fa_IR');
     Jalali jalaliDate  = date.toJalali();
-    String formattedDatePersian = '${jalaliDate.year}/${jalaliDate.month}/${jalaliDate.day}  ${jalaliDate.hour}:${jalaliDate.minute}:${jalaliDate.second}';
+    String formattedDatePersian = '${formatter.format(jalaliDate.year)}/${formatter.format(jalaliDate.month)}/${formatter.format(jalaliDate.day)}  ${formatter.format(jalaliDate.hour)}:${formatter.format(jalaliDate.minute)}:${formatter.format(jalaliDate.second)}';
     return formattedDatePersian ;
   }
 }

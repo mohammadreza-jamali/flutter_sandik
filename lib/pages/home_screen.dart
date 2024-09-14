@@ -252,7 +252,7 @@ class CostListItem extends StatelessWidget {
             width: 4,
           ),
           Text(
-            FormatHelper.numberFormatter(cost.amount) ?? "0",
+            FormatHelper.numberFormatter(cost.amount),
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           Expanded(
