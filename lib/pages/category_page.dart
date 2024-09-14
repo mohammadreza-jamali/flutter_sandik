@@ -91,7 +91,7 @@ class _CategoryPageState extends State<CategoryPage> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.done) {
-                              return DefaultCategoryList(snapshot.data ?? []);
+                              return DefaultCategoryList(snapshot.data!.where((category)=>category.isDefault==true).toList() ?? []);
                             }
 
                             if (snapshot.hasError) {
@@ -139,8 +139,8 @@ class _CategoryPageState extends State<CategoryPage> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.done) {
-                                  return (snapshot.data ?? []).isNotEmpty
-                                      ? CategoryGridView(snapshot.data ?? [])
+                                  return (snapshot.data!.where((category)=>category.isDefault==false).toList() ?? []).isNotEmpty
+                                      ? CategoryGridView(snapshot.data!.where((category)=>category.isDefault==false).toList())
                                       : Center(
                                           child: Column(
                                             crossAxisAlignment:

@@ -22,6 +22,7 @@ import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sandik/core/application/persian_date_helper.dart';
 import 'package:shamsi_date/shamsi_date.dart';
@@ -59,6 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
       return FutureBuilder(
           future: _getInfo(),
           builder: (context, snapshot) {
+            PanaraInfoDialog.show(
+    context,
+    title: "Hello",
+    message: "This is the PanaraInfoDialog",
+    buttonText: "Okay",
+    onTapDismiss: () {
+        Navigator.pop(context);
+    },
+    panaraDialogType: PanaraDialogType.normal,
+    barrierDismissible: false, // optional parameter (default is true)
+);
             if (snapshot.connectionState == ConnectionState.done) {
               return Container(
                 color: Color(0xff050119),

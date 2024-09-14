@@ -53,6 +53,7 @@ dependencies:
   dropdown_search: ^5.0.6
   digit_to_persian_word: ^2.0.0
   shamsi_date: ^1.0.4
+  panara_dialogs: ^0.1.5
 dev_dependencies:
   build_runner:
   flutter_gen_runner:
