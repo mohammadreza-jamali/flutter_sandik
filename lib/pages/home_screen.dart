@@ -60,17 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
       return FutureBuilder(
           future: _getInfo(),
           builder: (context, snapshot) {
-            PanaraInfoDialog.show(
-    context,
-    title: "Hello",
-    message: "This is the PanaraInfoDialog",
-    buttonText: "Okay",
-    onTapDismiss: () {
-        Navigator.pop(context);
-    },
-    panaraDialogType: PanaraDialogType.normal,
-    barrierDismissible: false, // optional parameter (default is true)
-);
+//             PanaraInfoDialog.show(
+//     context,
+//     title: "Hello",
+//     message: "This is the PanaraInfoDialog",
+//     buttonText: "Okay",
+//     onTapDismiss: () {
+        
+//     },
+//     panaraDialogType: PanaraDialogType.normal,
+//     barrierDismissible: false, // optional parameter (default is true)
+// );
             if (snapshot.connectionState == ConnectionState.done) {
               return Container(
                 color: Color(0xff050119),

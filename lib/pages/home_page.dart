@@ -13,6 +13,7 @@ import 'package:flutter_sandik/pages/group_page.dart';
 import 'package:flutter_sandik/pages/home_screen.dart';
 import 'package:flutter_sandik/pages/report_page.dart';
 import 'package:flutter_sandik/pages/setting_page.dart';
+import 'package:flutter_sandik/widgets/budget_overlay_view.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -81,7 +82,7 @@ class _HomePageState extends State<HomePage> {
             body: IndexedStack(
               index: selectedScreenIndex,
               children: [
-                HomeScreen(groupId: widget.group.groupId!,groupName: widget.group.groupName!),
+                BudgetOverlayView(groupId: widget.group.groupId!,groupName: widget.group.groupName!),
                 CategoryPage(widget.group.groupId!),
                 SettingPage(),
                 ReportPage()
