@@ -35,12 +35,12 @@ class _BudgetDialogState extends State<BudgetDialog> with SingleTickerProviderSt
       child: Stack(
         children: [
           Positioned(
-            top:80,
+            top:100,
             left: 40,
             child: Container(
-              padding: EdgeInsets.only(top: 50),
+              padding: EdgeInsets.only(top: 40),
               width: MediaQuery.of(context).size.width-80,
-              height: 200,
+              height: 260,
               decoration: BoxDecoration(
                 color: Color(0xff050119),
                 borderRadius: BorderRadius.circular(4),
@@ -53,26 +53,38 @@ class _BudgetDialogState extends State<BudgetDialog> with SingleTickerProviderSt
                   Positioned(
                     top: 0,
                     child: SizedBox(
-                      width: MediaQuery.of(context).size.width/2,
-                      child: TextFormField(
-                        keyboardType:TextInputType.number ,
-                        decoration: InputDecoration(
-                          label: Text("Budget"),
-                          hintText: "1000",
-                        ),
-                        onChanged: (value) {
-                          _budget=double.parse(value==""?"0":value);
-                        },
-                        validator: (value) {
-                          if(value!.isEmpty) return "Value not Correct";
-                        },
+                      width: MediaQuery.of(context).size.width-100,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(child: Text('Oops!',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 32,fontStyle: FontStyle.italic),)),
+                          SizedBox(height: 4,),
+                          Center(child: Text('!یادت رفته بودجه این ماه رو تعیین کنی',style: TextStyle(color: Colors.white,fontWeight: FontWeight.normal,fontSize: 12),)),
+                          SizedBox(height: 16,),
+                          Container(
+                            width: (MediaQuery.of(context).size.width-80)/2,
+                            child: TextFormField(
+                              keyboardType:TextInputType.number ,
+                              decoration: InputDecoration(
+                                label: Text("Budget"),
+                                hintText: "1000",
+                              ),
+                              onChanged: (value) {
+                                _budget=double.parse(value==""?"0":value);
+                              },
+                              validator: (value) {
+                                if(value!.isEmpty) return "Value not Correct";
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
-                    right: 10,
-                    child: ElevatedButton(onPressed:()=> _saveGroup(context), child: Text("Save")))
+                    bottom: 7,
+                    right: 7,
+                    child: ElevatedButton(onPressed:()=> _saveGroup(context),style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.indigo.shade50)), child: Text("Save",style: TextStyle(color: Color(0xff1A1A40)),)))
                 ],
               ),
             ),),

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -29,57 +30,78 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff050119),
       appBar: AppBar(
+        backgroundColor: Color(0xff03001C),
         title: Text("Add Transaction"),
       ),
-      body: Form(
-        child: Container(
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Form(
           child: Column(
             children: [
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  label: Text("Paid Amount"),
-                  hintText: "200",
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Center(child: Assets.images.transactionPhoto.image(width: 400,height: 300)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                child: Container(
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          label: Text("Paid Amount"),
+                          hintText: "200",
+                        ),
+                        onChanged: (value) {
+                          _amount = double.parse(value == "" ? "0" : value);
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) return "Value not Correct";
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          label: Text("Paid Description"),
+                          hintText: "paid to shok for chips",
+                        ),
+                        onChanged: (value) {
+                          _description = value;
+                        },
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      FutureBuilder(
+                          future: getCategories(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done) {
+                              return GenericCustomDropdown<String>(
+                                  items: _categoriesMap,
+                                  hintText: "select your category",
+                                  onChanged: (String val) {
+                                    _selectedCategory = val;
+                                  });
+                            }
+                            if (snapshot.hasError) {
+                              return Center(child: Text("Error"));
+                            }
+                            return CircularProgressIndicator();
+                          }),
+                          SizedBox(height: 16,),
+                      SizedBox(
+                        width: 160,
+                        height: 50,
+                        child: ElevatedButton(
+                            onPressed: () => _saveTransaction(context),
+                            child: Text("Save",style: TextStyle(color: Color(0xff1A1A40)),)),
+                      )
+                    ],
+                  ),
                 ),
-                onChanged: (value) {
-                  _amount = double.parse(value == "" ? "0" : value);
-                },
-                validator: (value) {
-                  if (value!.isEmpty) return "Value not Correct";
-                },
               ),
-              TextFormField(
-                decoration: InputDecoration(
-                  label: Text("Paid Description"),
-                  hintText: "paid to shok for chips",
-                ),
-                onChanged: (value) {
-                  _description = value;
-                },
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              FutureBuilder(
-                  future: getCategories(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return GenericCustomDropdown<String>(
-                          items: _categoriesMap,
-                          hintText: "select your category",
-                          onChanged: (String val) {
-                            _selectedCategory = val;
-                          });
-                    }
-                    if (snapshot.hasError) {
-                      return Center(child: Text("Error"));
-                    }
-                    return CircularProgressIndicator();
-                  }),
-              ElevatedButton(
-                  onPressed: () => _saveTransaction(context),
-                  child: Text("Save"))
             ],
           ),
         ),

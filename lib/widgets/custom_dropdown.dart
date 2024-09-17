@@ -80,7 +80,7 @@ class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
                   isExpanded: true,
                   value: selectedItem,
                   alignment: AlignmentDirectional.centerEnd,
-                  items:widget.items.entries.map<DropdownMenuItem<T>>((e) => DropdownMenuItem<T>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value),),).toList(),
+                  items:widget.items.entries.map<DropdownMenuItem<T>>((e) => DropdownMenuItem<T>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value,),),).toList(),
                   hint: Row(
                     children: [
                       if(widget.icon!=null) widget.icon!,
@@ -113,7 +113,7 @@ class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
                  selectedItemBuilder: (BuildContext context){return widget.items.entries.map<Row>((e) =>Row(
                     children: [
                       const SizedBox(width: 4,),
-                      Text(e.value,style: const TextStyle(fontSize: 14),),
+                      Text(e.value,style: const TextStyle(fontSize: 14,),),
                     ],
                   )).toList();},
                  ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -52,6 +54,7 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xff050119),
         floatingActionButton: Container(
             width: MediaQuery.of(context).size.width,
             height: 60,
@@ -84,18 +87,18 @@ class _GroupPageState extends State<GroupPage> {
         appBar: AppBar(
             elevation: 18,
             toolbarHeight: 80,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
+            backgroundColor: Color(0xff050119),
+            surfaceTintColor: Color(0xff050119),
             title: Text(
               'sandog',
-              style: TextStyle(color: Color(0xff16398B)),
+              style: TextStyle(color: Colors.white),
             ),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () {},
                 icon: Icon(
                   MdiIcons.backburger,
-                  color: Color(0xff16398B),
+                  color: Colors.white,
                 ))),
         body: Column(
           children: [
@@ -124,7 +127,7 @@ class _GroupPageState extends State<GroupPage> {
                                     _deleteGroup(_groups![index].groupId!);
                                     _groups!.removeAt(index);
                                   },
-                                  backgroundColor: Color(0xff16398B),
+                                  backgroundColor: Color(0xff202040),
                                   foregroundColor: Colors.red,
                                   icon: Icons.delete,
                                   label: 'Delete',
@@ -135,8 +138,8 @@ class _GroupPageState extends State<GroupPage> {
                                       builder: (context) => AddGroupPage(group: _groups![index]),
                                     ));
                                   },
-                                  backgroundColor: AppStyle.deepYellow,
-                                  foregroundColor: Color(0xff16398B),
+                                  backgroundColor: Color(0xff202040),
+                                  foregroundColor: Color(0xff4E9F3D),
                                   icon: Icons.edit,
                                   label: 'Edit',
                                 ),
@@ -147,42 +150,42 @@ class _GroupPageState extends State<GroupPage> {
                                           user: widget.user,
                                           group: _groups![index],
                                         ))),
-                                child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  margin: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [
-                                    BoxShadow(color: Color.fromARGB(31, 32, 30, 30), blurRadius: 5),
-                                  ]),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 60,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xff16398B),
-                                          borderRadius: BorderRadius.circular(30),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(),
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    margin: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(color: Color(0xff202040).withOpacity(0.2), borderRadius: BorderRadius.circular(12), boxShadow: [
+                                      BoxShadow(color: Color.fromARGB(31, 32, 30, 30), blurRadius: 5),
+                                    ]),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 60,
+                                          height: 60,
+                                          child: Icon(
+                                            size: 30,
+                                            MdiIcons.accountGroupOutline,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                        child: Icon(
-                                          MdiIcons.accountGroupOutline,
+                                        SizedBox(
+                                          width: 16,
+                                        ),
+                                        Expanded(
+                                            child: Text(
+                                          _groups![index].groupName ?? "group name",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        )),
+                                        Icon(
+                                          MdiIcons.chevronLeft,
                                           color: Colors.white,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 16,
-                                      ),
-                                      Expanded(
-                                          child: Text(
-                                        _groups![index].groupName ?? "group name",
-                                        style: TextStyle(
-                                          color: Color(0xff16398B),
-                                          fontSize: 16,
-                                        ),
-                                      )),
-                                      Icon(
-                                        MdiIcons.chevronLeft,
-                                        color: Color(0xff16398B),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

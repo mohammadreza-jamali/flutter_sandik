@@ -334,21 +334,8 @@ class FloatContainer extends StatelessWidget {
                   children: [
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MinimalButton(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        TransactionsPage(groupId)));
-                              },
-                              icon: Assets.images.icons.chart,
-                            ),
-                          ],
-                        ),
                         Container(
                           alignment: Alignment.centerLeft,
                           child: ElevatedButton(
@@ -556,6 +543,10 @@ Future _settingBottomSheet(BuildContext context) {
       builder: (context) => Container(
             width: MediaQuery.of(context).size.width,
             height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: ui.Radius.circular(35),topRight: ui.Radius.circular(35)),
+              color: Color(0xff03001C),
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               child: Directionality(
@@ -565,13 +556,13 @@ Future _settingBottomSheet(BuildContext context) {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(MdiIcons.cogOutline),
+                        Icon(MdiIcons.cogOutline,color: Colors.white,),
                         SizedBox(
                           width: 4,
                         ),
                         Text(
                           'SETTINGS',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16,color: Colors.white),
                         ),
                       ],
                     ),
@@ -584,7 +575,7 @@ Future _settingBottomSheet(BuildContext context) {
                           width: 4,
                         ),
                         Text(
-                          'Theme :',
+                          'Theme :',style: TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -606,7 +597,7 @@ Future _settingBottomSheet(BuildContext context) {
                           width: 4,
                         ),
                         Text(
-                          'Language :',
+                          'Language :',style: TextStyle(color: Colors.white)
                         ),
                       ],
                     ),

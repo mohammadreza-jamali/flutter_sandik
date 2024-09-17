@@ -14,19 +14,22 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff050119),
       appBar: AppBar(
+        backgroundColor: Color(0xff050119),
         centerTitle: true,
+        automaticallyImplyLeading: false,
         actions: [
           InkWell(
             child: Container(
               margin: EdgeInsets.fromLTRB(0, 16, 16, 0),
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
-                child: Icon(CupertinoIcons.arrow_right),
+                child: Icon(CupertinoIcons.arrow_right,color: Colors.white,),
               ),
             ),
           ),
@@ -38,7 +41,7 @@ class _SettingPageState extends State<SettingPage> {
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
-                color: Color(0xff16398B)),
+                color: Colors.white),
           ),
         ),
       ),
@@ -180,14 +183,14 @@ class _SettingItemState extends State<SettingItem> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.grey.shade200,
+          color: Color(0xff202040),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Icon(
-              MdiIcons.chevronLeft,
+              MdiIcons.chevronLeft,color: Colors.white,
             ),
             Expanded(
               child: Row(
@@ -197,13 +200,13 @@ class _SettingItemState extends State<SettingItem> {
                     widget.text,
                     style: TextStyle(
                         fontSize: 12,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     width: 8,
                   ),
-                  Icon(widget.icon),
+                  Icon(widget.icon,color: Colors.white,),
                 ],
               ),
             )
@@ -231,7 +234,7 @@ class ProfileAvatar extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(60),
-                  color: Colors.grey.shade300),
+                  gradient: LinearGradient(colors: [Colors.red,Colors.yellow,Colors.blue])),
               child: Padding(
                 padding: const EdgeInsets.all(5),
                 child: Container(
@@ -251,7 +254,7 @@ class ProfileAvatar extends StatelessWidget {
                 height: 24,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.blue.shade900),
+                    color: Color(0xff202040)),
                 child: Padding(
                   padding: const EdgeInsets.all(2),
                   child: Icon(

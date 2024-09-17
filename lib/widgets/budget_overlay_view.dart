@@ -29,7 +29,13 @@ class _BudgetOverlayViewState extends State<BudgetOverlayView> {
 
         FutureBuilder(future: getBudget(), builder:(context, snapshot) {
           if(snapshot.connectionState==ConnectionState.done){
-            return budget == null || budget!.budgetValue==0 ? BudgetDialog(groupId: widget.groupId) : SizedBox();
+            return budget == null || budget!.budgetValue==0 ? Stack(children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Color(0x020202).withOpacity(0.8),
+              ),
+              BudgetDialog(groupId: widget.groupId)]) : SizedBox();
           }
           return SizedBox();
         }, )

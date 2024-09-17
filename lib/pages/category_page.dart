@@ -28,7 +28,9 @@ class _CategoryPageState extends State<CategoryPage> {
     _transaction = Provider.of<MTransaction>(context, listen: true);
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xff050119),
           appBar: AppBar(
+            backgroundColor: Color(0xff03001C),
             centerTitle: true,
             automaticallyImplyLeading: false,
             actions: [
@@ -37,26 +39,25 @@ class _CategoryPageState extends State<CategoryPage> {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 16, 16, 0),
+                  margin: EdgeInsets.symmetric(horizontal: 16,vertical: 4),
                   decoration: BoxDecoration(
-                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade300)),
                   child: Padding(
                     padding: const EdgeInsets.all(2),
-                    child: Icon(CupertinoIcons.arrow_right),
+                    child: Icon(CupertinoIcons.arrow_right,color: Colors.white,),
                   ),
                 ),
               ),
             ],
             title: Padding(
-              padding: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
                 'دسته بندی ها',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
-                    color: Color(0xff16398B)),
+                    color: Colors.white),
               ),
             ),
           ),
@@ -73,7 +74,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ],
                 ),
@@ -125,7 +126,7 @@ class _CategoryPageState extends State<CategoryPage> {
                       style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ],
                 ),
@@ -153,7 +154,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                                 ),
                                               ),
                                               Text(
-                                                'هنوز چیزی خرج نکردی !',
+                                                'دسته بندی نداری!',
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
@@ -165,7 +166,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                                 height: 4,
                                               ),
                                               Text(
-                                                'اولین خرجت رو اضافه کن.',
+                                                'میتوانید برای خود دسته بندی ایجاد کنید.',
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.bold,
@@ -355,6 +356,10 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
             textDirection: TextDirection.rtl,
             child: Container(
               width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(40),topRight: Radius.circular(40)),
+                color: Color(0xff03001C),
+              ),
               height: 400,
               child: Padding(
                 padding:
@@ -368,6 +373,7 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                         decoration: InputDecoration(
                           label: Text(
                             'Category Name',
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
@@ -403,11 +409,11 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                                     Widget? child) {
                                   return Container(
                                     color: value == index
-                                        ? Colors.green
+                                        ? Color(0xff1A1A40)
                                         : Colors.transparent,
                                     width: 40,
                                     height: 40,
-                                    child: Icon(icons[index]),
+                                    child: Icon(icons[index],color: Colors.white,),
                                   );
                                 },
                               ),
@@ -431,7 +437,7 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                         },
                         child: Text(
                           'SAVE',
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Color(0xff1A1A40)),
                         ),
                         style: ButtonStyle(
                           backgroundColor:
