@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_sandik/widgets/custom_date_picker.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ReportPage extends StatefulWidget {
@@ -77,15 +78,14 @@ class _ReportPageState extends State<ReportPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             child: SelectionBox(
-              width: MediaQuery.of(context).size.width,
-              heght: 40,
-              title: 'مهر 1403 ',
-              icon: MdiIcons.calendarMonth,
-              spinner: false,
-              onTap: (){
-                _monthCalendarBottomSheet(context);
-              }
-            ),
+                width: MediaQuery.of(context).size.width,
+                heght: 40,
+                title: 'مهر 1403 ',
+                icon: MdiIcons.calendarMonth,
+                spinner: false,
+                onTap: () {
+                  _monthCalendarBottomSheet(context);
+                }),
           ),
           // Padding(
           //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
@@ -285,7 +285,7 @@ class SelectionBox extends StatelessWidget {
                     side: BorderSide(width: 1, color: Colors.blue.shade200))),
             padding:
                 WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
-        onPressed: (){
+        onPressed: () {
           onTap();
         },
         child: Directionality(
@@ -499,18 +499,27 @@ Future _reportTypeBottomSheet(BuildContext context) {
       });
 }
 
-Future _monthCalendarBottomSheet(BuildContext context) async{
-Jalali? pickedDate = await showModalBottomSheet<Jalali>(
-  context: context,
-  builder: (context){
-    Jalali tempPickedDate;
-    return Container(
-    height: 250,
-    child: PCupertinoDatePicker(
-                mode: PCupertinoDatePickerMode.date,
-                onDateTimeChanged: (Jalali dateTime) {
-                  tempPickedDate = dateTime;
-                },
-  ) 
-);});
+Future _monthCalendarBottomSheet(BuildContext context) async {
+// Jalali? pickedDate = await showModalBottomSheet<Jalali>(
+//   context: context,
+//   builder: (context){
+//     Jalali tempPickedDate;
+//     return Container(
+//     height: 250,
+//     child: PCupertinoDatePicker(
+//                 mode: PCupertinoDatePickerMode.date,
+//                 onDateTimeChanged: (Jalali dateTime) {
+//                   tempPickedDate = dateTime;
+//                 },
+//   )
+// );});
+  await showModalBottomSheet(
+    context: context,
+    builder: (context) => CustomDatePicker(
+      initialDate: Jalali.now(),
+      minimumYear: 1390,
+      onDateChanged: () {},
+      backgroundColor: Colors.white,
+    ),
+  );
 }
