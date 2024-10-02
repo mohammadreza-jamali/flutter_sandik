@@ -15,6 +15,9 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// Directory path: assets/images/avatars
+  $AssetsImagesAvatarsGen get avatars => const $AssetsImagesAvatarsGen();
+
   /// Directory path: assets/images/backgrounds
   $AssetsImagesBackgroundsGen get backgrounds =>
       const $AssetsImagesBackgroundsGen();
@@ -57,6 +60,38 @@ class $AssetsTranslationsGen {
 
   /// List of all assets
   List<String> get values => [en, tr];
+}
+
+class $AssetsImagesAvatarsGen {
+  const $AssetsImagesAvatarsGen();
+
+  /// File path: assets/images/avatars/avatar1.jpg
+  AssetGenImage get avatar1 =>
+      const AssetGenImage('assets/images/avatars/avatar1.jpg');
+
+  /// File path: assets/images/avatars/avatar2.jpg
+  AssetGenImage get avatar2 =>
+      const AssetGenImage('assets/images/avatars/avatar2.jpg');
+
+  /// File path: assets/images/avatars/avatar3.jpg
+  AssetGenImage get avatar3 =>
+      const AssetGenImage('assets/images/avatars/avatar3.jpg');
+
+  /// File path: assets/images/avatars/avatar4.jpg
+  AssetGenImage get avatar4 =>
+      const AssetGenImage('assets/images/avatars/avatar4.jpg');
+
+  /// File path: assets/images/avatars/avatar5.jpeg
+  AssetGenImage get avatar5 =>
+      const AssetGenImage('assets/images/avatars/avatar5.jpeg');
+
+  /// File path: assets/images/avatars/avatar6.jpg
+  AssetGenImage get avatar6 =>
+      const AssetGenImage('assets/images/avatars/avatar6.jpg');
+
+  /// List of all assets
+  List<AssetGenImage> get values =>
+      [avatar1, avatar2, avatar3, avatar4, avatar5, avatar6];
 }
 
 class $AssetsImagesBackgroundsGen {

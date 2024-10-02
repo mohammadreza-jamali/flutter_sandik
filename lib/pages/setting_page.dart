@@ -22,14 +22,17 @@ class _SettingPageState extends State<SettingPage> {
         actions: [
           InkWell(
             child: Container(
-              margin: EdgeInsets.fromLTRB(0, 16, 16, 0),
+              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(
                   color: Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
-                child: Icon(CupertinoIcons.arrow_right,color: Colors.white,),
+                child: Icon(
+                  CupertinoIcons.arrow_right,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -39,9 +42,7 @@ class _SettingPageState extends State<SettingPage> {
           child: Text(
             'تنظیمات',
             style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.white),
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
@@ -51,7 +52,45 @@ class _SettingPageState extends State<SettingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              ProfileAvatar(),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ProfileAvatar(),
+                    SizedBox(
+                      width: 16,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('پروفایل شما',style: TextStyle(fontSize: 18,color: Colors.white),),
+                        SizedBox(
+                          height: 24,
+                        ),
+
+                        SizedBox(width: 200,
+                        height: 30,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: Text('تغییر آواتار'),
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    WidgetStatePropertyAll(Color(0xff050119)),
+                                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)
+                                ),),
+                                side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200,width: 2))
+                                    ),
+                          ),
+                        )
+                      ],
+                    ),
+                    //ElevatedButton(onPressed: (){}, child: Text('ویرایش'))
+                  ],
+                ),
+              ),
               SizedBox(
                 height: 12,
               ),
@@ -77,80 +116,161 @@ class _SettingPageState extends State<SettingPage> {
                 ),
               ),
               SizedBox(
-                height: 24,
+                height: 16,
               ),
-              Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Text(
-                    'تنظیمات حساب کاربری',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  )),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        label: Text("Name"),
+                        hintText: "Name",
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        label: Text("Last Name"),
+                        hintText: "Last Name",
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(
-                height: 10,
+                height: 8,
               ),
-              SettingItem(
-                text: 'ویرایش حساب کاربر',
-                icon: MdiIcons.account,
-                ontap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => EditUserSetting()));
-                },
+              TextFormField(
+                decoration: InputDecoration(
+                  label: Text("Email"),
+                  hintText: "Email",
+                ),
               ),
               SizedBox(
                 height: 8,
               ),
-              SettingItem(
-                  text: 'تغییر رمز عبور', icon: MdiIcons.lock, ontap: () {}),
-              SizedBox(
-                height: 8,
+
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        label: Text("Country"),
+                        hintText: "Country",
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        label: Text("city"),
+                        hintText: "city",
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SettingItem(
-                  text: 'خروج از حساب کاربری',
-                  icon: MdiIcons.homeExportOutline,
-                  ontap: () {}),
-              SizedBox(
-                height: 14,
+              SizedBox(height: 32,),
+
+              Center(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    child: Text('ویرایش'),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(Color(0xff050119)),
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)
+                        ),),
+                        side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200,width: 2))
+                            ),
+                  ),
+                ),
               ),
-              Directionality(
-                  textDirection: TextDirection.rtl,
-                  child: Text(
-                    'تنظیمات برنامه',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold),
-                  )),
-              SizedBox(
-                height: 10,
-              ),
-              SettingItem(text: 'زبان', icon: MdiIcons.translate, ontap: () {}),
-              SizedBox(
-                height: 8,
-              ),
-              SettingItem(
-                  text: 'واحد پولی', icon: MdiIcons.currencyUsd, ontap: () {}),
-              SizedBox(
-                height: 8,
-              ),
-              SettingItem(
-                  text: 'حالت تاریک',
-                  icon: MdiIcons.themeLightDark,
-                  ontap: () {}),
-              SizedBox(
-                height: 8,
-              ),
-              SettingItem(
-                  text: 'درباره اپ',
-                  icon: MdiIcons.informationSlabCircleOutline,
-                  ontap: () {}),
-              SizedBox(
-                height: 8,
-              ),
+              // SizedBox(
+              //   height: 24,
+              // ),
+              // Directionality(
+              //     textDirection: TextDirection.rtl,
+              //     child: Text(
+              //       'تنظیمات حساب کاربری',
+              //       style: TextStyle(
+              //           fontSize: 12,
+              //           color: Colors.grey,
+              //           fontWeight: FontWeight.bold),
+              //     )),
+              // SizedBox(
+              //   height: 10,
+              // ),
+              // SettingItem(
+              //   text: 'ویرایش حساب کاربر',
+              //   icon: MdiIcons.account,
+              //   ontap: () {
+              //     Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //             builder: (context) => EditUserSetting()));
+              //   },
+              // ),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // SettingItem(
+              //     text: 'تغییر رمز عبور', icon: MdiIcons.lock, ontap: () {}),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // SettingItem(
+              //     text: 'خروج از حساب کاربری',
+              //     icon: MdiIcons.homeExportOutline,
+              //     ontap: () {}),
+              // SizedBox(
+              //   height: 14,
+              // ),
+              // Directionality(
+              //     textDirection: TextDirection.rtl,
+              //     child: Text(
+              //       'تنظیمات برنامه',
+              //       style: TextStyle(
+              //           fontSize: 12,
+              //           color: Colors.grey,
+              //           fontWeight: FontWeight.bold),
+              //     )),
+              // SizedBox(
+              //   height: 10,
+              // ),
+              // SettingItem(text: 'زبان', icon: MdiIcons.translate, ontap: () {}),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // SettingItem(
+              //     text: 'واحد پولی', icon: MdiIcons.currencyUsd, ontap: () {}),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // SettingItem(
+              //     text: 'حالت تاریک',
+              //     icon: MdiIcons.themeLightDark,
+              //     ontap: () {}),
+              // SizedBox(
+              //   height: 8,
+              // ),
+              // SettingItem(
+              //     text: 'درباره اپ',
+              //     icon: MdiIcons.informationSlabCircleOutline,
+              //     ontap: () {}),
+              // SizedBox(
+              //   height: 8,
+              // ),
             ],
           ),
         ),
@@ -179,7 +299,9 @@ class _SettingItemState extends State<SettingItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){widget.ontap();},
+      onTap: () {
+        widget.ontap();
+      },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         decoration: BoxDecoration(
@@ -190,7 +312,8 @@ class _SettingItemState extends State<SettingItem> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Icon(
-              MdiIcons.chevronLeft,color: Colors.white,
+              MdiIcons.chevronLeft,
+              color: Colors.white,
             ),
             Expanded(
               child: Row(
@@ -206,7 +329,10 @@ class _SettingItemState extends State<SettingItem> {
                   SizedBox(
                     width: 8,
                   ),
-                  Icon(widget.icon,color: Colors.white,),
+                  Icon(
+                    widget.icon,
+                    color: Colors.white,
+                  ),
                 ],
               ),
             )
@@ -233,38 +359,38 @@ class ProfileAvatar extends StatelessWidget {
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(60),
-                  gradient: LinearGradient(colors: [Colors.red,Colors.yellow,Colors.blue])),
+                  borderRadius: BorderRadius.circular(25),
+                  gradient: LinearGradient(
+                      colors: [Colors.blue.shade900, Colors.blue.shade200])),
               child: Padding(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(2),
                 child: Container(
                   child: ClipRRect(
-                    child: Assets.images.icons.user
-                        .svg(color: Colors.grey.shade500),
-                    borderRadius: BorderRadius.circular(55),
+                    child: Assets.images.avatars.avatar1.image(),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 ),
               ),
             ),
-            Positioned(
-              top: 12,
-              right: 4,
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Color(0xff202040)),
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Icon(
-                    MdiIcons.pencil,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            )
+            // Positioned(
+            //   top: 12,
+            //   right: 4,
+            //   child: Container(
+            //     width: 24,
+            //     height: 24,
+            //     decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular(12),
+            //         color: Color(0xff202040)),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(2),
+            //       child: Icon(
+            //         MdiIcons.pencil,
+            //         color: Colors.white,
+            //         size: 16,
+            //       ),
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ),

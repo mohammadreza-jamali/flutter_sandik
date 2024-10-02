@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //     message: "This is the PanaraInfoDialog",
 //     buttonText: "Okay",
 //     onTapDismiss: () {
-        
+
 //     },
 //     panaraDialogType: PanaraDialogType.normal,
 //     barrierDismissible: false, // optional parameter (default is true)
@@ -259,9 +259,22 @@ class CostListItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  cost.description ?? "",
-                  style: TextStyle(color: Colors.white),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      cost.description ?? "",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    Icon(
+                      MdiIcons.fromString(cost.icon!),
+                      size: 14,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
                 Text(
                   FormatHelper.dateFormatter(
@@ -279,12 +292,17 @@ class CostListItem extends StatelessWidget {
             height: 45,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Color(0xffBCDFFF),
-                borderRadius: BorderRadius.circular(5)),
-            child: Icon(
-              MdiIcons.fromString(cost.icon!),
-              color: Color(0xff1F50D3),
+                //color: Color(0xffBCDFFF),
+                borderRadius: BorderRadius.circular(15)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Assets.images.avatars.avatar5.image(fit: BoxFit.cover),
             ),
+
+            // Icon(
+            //   MdiIcons.fromString(cost.icon!),
+            //   color: Color(0xff1F50D3),
+            // ),
           )
         ]),
       ),
@@ -544,7 +562,9 @@ Future _settingBottomSheet(BuildContext context) {
             width: MediaQuery.of(context).size.width,
             height: 300,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: ui.Radius.circular(35),topRight: ui.Radius.circular(35)),
+              borderRadius: BorderRadius.only(
+                  topLeft: ui.Radius.circular(35),
+                  topRight: ui.Radius.circular(35)),
               color: Color(0xff03001C),
             ),
             child: Padding(
@@ -556,13 +576,16 @@ Future _settingBottomSheet(BuildContext context) {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(MdiIcons.cogOutline,color: Colors.white,),
+                        Icon(
+                          MdiIcons.cogOutline,
+                          color: Colors.white,
+                        ),
                         SizedBox(
                           width: 4,
                         ),
                         Text(
                           'SETTINGS',
-                          style: TextStyle(fontSize: 16,color: Colors.white),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ],
                     ),
@@ -575,7 +598,8 @@ Future _settingBottomSheet(BuildContext context) {
                           width: 4,
                         ),
                         Text(
-                          'Theme :',style: TextStyle(color: Colors.white),
+                          'Theme :',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ],
                     ),
@@ -596,9 +620,8 @@ Future _settingBottomSheet(BuildContext context) {
                         SizedBox(
                           width: 4,
                         ),
-                        Text(
-                          'Language :',style: TextStyle(color: Colors.white)
-                        ),
+                        Text('Language :',
+                            style: TextStyle(color: Colors.white)),
                       ],
                     ),
                     CustomDropdown(

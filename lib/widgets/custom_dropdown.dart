@@ -20,12 +20,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
                   isExpanded: true,
                   value: selectedItem,
                   alignment: AlignmentDirectional.centerEnd,
-                  items:widget.items.entries.map<DropdownMenuItem<int>>((e) => DropdownMenuItem<int>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value),),).toList(),
+                  items:widget.items.entries.map<DropdownMenuItem<int>>((e) => DropdownMenuItem<int>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value,style: TextStyle(color: Colors.black),),),).toList(),
                   hint: Row(
                     children: [
                       if(widget.icon!=null) widget.icon!,
                       SizedBox(width: 8,),
-                      Text(widget.hintText,style: TextStyle(fontSize: 14),),
+                      Text(widget.hintText,style: TextStyle(fontSize: 14,color: Colors.black),),
                     ],
                   ),
                  onChanged: (value){
@@ -53,7 +53,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                  selectedItemBuilder: (BuildContext context){return widget.items.entries.map<Row>((e) =>Row(
                     children: [
                       const SizedBox(width: 4,),
-                      Text(e.value,style: const TextStyle(fontSize: 14),),
+                      Text(e.value,style: const TextStyle(fontSize: 14,color: Colors.black),),
                     ],
                   )).toList();},
                  ),
