@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class CustomDatePicker extends StatefulWidget {
-   const CustomDatePicker({
+  const CustomDatePicker({
     required this.onDateChanged,
     required this.initialDate,
     required this.minimumYear,
     this.backgroundColor,
     super.key,
   });
-  final Jalali initialDate;
+  final String initialDate;
   final Function onDateChanged;
   final int minimumYear;
   final Color? backgroundColor;
@@ -25,76 +25,91 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   late FixedExtentScrollController monthController;
   late int selectedYear;
   late int selectedMonth;
-  Map<int,String> monthNames={
-    1:"Farvardin",
-    2:"ordibehesht",
-    3:"xordad",
-    4:"tir",
-    5:"mordad",
-    6:"shahrivar",
-    7:"mehr",
-    8:"aban",
-    9:"azar",
-    10:"dey",
-    11:"bahman",
-    12:"esfand",
+  Map<int, String> monthNames = {
+    1: "Farvardin",
+    2: "ordibehesht",
+    3: "xordad",
+    4: "tir",
+    5: "mordad",
+    6: "shahrivar",
+    7: "mehr",
+    8: "aban",
+    9: "azar",
+    10: "dey",
+    11: "bahman",
+    12: "esfand",
   };
 
-@override
-void initState() {
-  super.initState();
-  yearController=FixedExtentScrollController(initialItem: 0);
-  monthController=FixedExtentScrollController(initialItem: 0);
-  selectedYear=widget.initialDate.year;
-  selectedMonth=widget.initialDate.month;
-}
-@override
-void dispose() {
-  yearController.dispose();
-  monthController.dispose();
-  super.dispose();
-}
+  @override
+  void initState() {
+    super.initState();
+    yearController = FixedExtentScrollController(initialItem: 0);
+    monthController = FixedExtentScrollController(initialItem: 0);
+    selectedYear = int.parse(widget.initialDate.split("-")[0]);
+    selectedMonth = int.parse(widget.initialDate.split("-")[1]);
+  }
+
+  @override
+  void dispose() {
+    yearController.dispose();
+    monthController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 300,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      child: Column(
         children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width/2 - 20,
-            child: CupertinoPicker(
-              backgroundColor: widget.backgroundColor,
-              scrollController: yearController,
-              children: List.generate(Jalali.now().year+1 - widget.minimumYear, (i)=>Center(child: Text("${widget.minimumYear+i}"))),
-              itemExtent: 82,
-              looping: true,
-              useMagnifier: true,
-              magnification: 1.2,
-              squeeze: 2,
-              onSelectedItemChanged: (value) {
-                selectedYear=value;
-                debugPrint("Selected Year is : $value");
-              },
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2 - 20,
+                child: CupertinoPicker(
+                  backgroundColor: widget.backgroundColor,
+                  scrollController: yearController,
+                  children: List.generate(Jalali.now().year + 1 - widget.minimumYear, (i) => Center(child: Text("${widget.minimumYear + i}"))),
+                  itemExtent: 82,
+                  looping: true,
+                  useMagnifier: true,
+                  magnification: 1.2,
+                  squeeze: 2,
+                  onSelectedItemChanged: (value) {
+                    selectedYear = value;
+                    debugPrint("Selected Year is : $value");
+                  },
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2 - 20,
+                child: CupertinoPicker(
+                  backgroundColor: widget.backgroundColor,
+                  scrollController: monthController,
+                  children: List.generate(12, (i) => Center(child: Text(monthNames[i + 1]!))),
+                  itemExtent: 82,
+                  looping: true,
+                  useMagnifier: true,
+                  magnification: 1.2,
+                  onSelectedItemChanged: (value) {
+                    selectedMonth = value;
+                    debugPrint("Selected Month is : $value");
+                  },
+                ),
+              )
+            ],
           ),
-         SizedBox(
-            width: MediaQuery.of(context).size.width / 2 - 20,
-            child: CupertinoPicker(
-              backgroundColor: widget.backgroundColor,
-              scrollController: monthController,
-              children: List.generate(12,
-                  (i) => Center(child: Text(monthNames[i+1]!))),
-              itemExtent: 82,
-              looping: true,
-              useMagnifier: true,
-              magnification: 1.2,
-              onSelectedItemChanged: (value) {
-                selectedMonth = value;
-                debugPrint("Selected Month is : $value");
-              },
+          Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              width: 50,
+              child: IconButton(
+                  onPressed: () {
+                    widget.onDateChanged("${selectedYear}-${selectedMonth}");
+                  },
+                  icon: Icon(Icons.check)),
             ),
           )
         ],

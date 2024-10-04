@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_sandik/core/application/navigation_service.dart';
 import 'package:flutter_sandik/widgets/custom_date_picker.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+Map<int, String> reportType = {0: 'گزارش کلی', 1: 'گزارش جزئی'};
 
 class ReportPage extends StatefulWidget {
   @override
@@ -14,6 +17,8 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   int? selectedDropdownValue;
+  int? selectedReportType;
+  String? selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +34,7 @@ class _ReportPageState extends State<ReportPage> {
           InkWell(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
@@ -46,8 +49,7 @@ class _ReportPageState extends State<ReportPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             'گزارش گیری',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
@@ -66,27 +68,37 @@ class _ReportPageState extends State<ReportPage> {
             child: SelectionBox(
               width: MediaQuery.of(context).size.width,
               heght: 40,
-              title: 'گزارش کلی',
+              title: reportType[selectedReportType ?? 0]!,
               icon: MdiIcons.finance,
               spinner: true,
-              onTap: () {
-                _reportTypeBottomSheet(context);
+              onTap: () async {
+                var res = await _reportTypeBottomSheet(context, selectedReportType ?? 0);
+                if (res != null) {
+                  setState(() {
+                    selectedReportType = res;
+                  });
+                }
               },
             ),
           ),
-
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-            child: SelectionBox(
-                width: MediaQuery.of(context).size.width,
-                heght: 40,
-                title: 'مهر 1403 ',
-                icon: MdiIcons.calendarMonth,
-                spinner: false,
-                onTap: () {
-                  _monthCalendarBottomSheet(context);
-                }),
-          ),
+          if ((selectedReportType ?? 0) != 0)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              child: SelectionBox(
+                  width: MediaQuery.of(context).size.width,
+                  heght: 40,
+                  title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                  icon: MdiIcons.calendarMonth,
+                  spinner: false,
+                  onTap: () async {
+                    var res = await _monthCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                    if (res != null) {
+                      setState(() {
+                        selectedDate = res;
+                      });
+                    }
+                  }),
+            ),
           // Padding(
           //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           //   child:
@@ -199,37 +211,27 @@ class _ReportPageState extends State<ReportPage> {
               dataSource: chartData,
               xValueMapper: (ChartData data, _) => data.x,
               yValueMapper: (ChartData data, _) => data.y,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             )
           ]),
     );
   }
 
   renderPieReport() {
-    final List<ChartData> chartData = [
-      ChartData("1", 35),
-      ChartData("2", 23),
-      ChartData("3", 34),
-      ChartData("4", 25),
-      ChartData("5", 40)
-    ];
-    return SfCircularChart(
-        legend: Legend(isVisible: true),
-        series: <CircularSeries>[
-          // Render pie chart
-          PieSeries<ChartData, String>(
-            dataSource: chartData,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.y,
-            dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
-            dataLabelSettings: DataLabelSettings(isVisible: true),
-          )
-        ]);
+    final List<ChartData> chartData = [ChartData("1", 35), ChartData("2", 23), ChartData("3", 34), ChartData("4", 25), ChartData("5", 40)];
+    return SfCircularChart(legend: Legend(isVisible: true), series: <CircularSeries>[
+      // Render pie chart
+      PieSeries<ChartData, String>(
+        dataSource: chartData,
+        xValueMapper: (ChartData data, _) => data.x,
+        yValueMapper: (ChartData data, _) => data.y,
+        dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
+        dataLabelSettings: DataLabelSettings(isVisible: true),
+      )
+    ]);
   }
 
-  renderReportType(
-      Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
+  renderReportType(Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: CustomDropdown(
@@ -252,14 +254,7 @@ class SelectionBox extends StatelessWidget {
   final Function onTap;
 
   const SelectionBox(
-      {super.key,
-      required this.width,
-      required this.heght,
-      required this.title,
-      this.icon,
-      required this.spinner,
-      required this.onTap,
-      this.isSelected});
+      {super.key, required this.width, required this.heght, required this.title, this.icon, required this.spinner, required this.onTap, this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -268,23 +263,17 @@ class SelectionBox extends StatelessWidget {
       height: heght,
       child: ElevatedButton(
         style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                (Set<WidgetState> states) {
-              if (states.contains(WidgetState.disabled))
-                return Colors.grey.shade800;
-              if (states.contains(WidgetState.selected))
-                return Colors.grey.shade200;
+            backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled)) return Colors.grey.shade800;
+              if (states.contains(WidgetState.selected)) return Colors.grey.shade200;
               return null;
             }),
             shape: WidgetStatePropertyAll(isSelected == true
                 ? RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   )
-                : RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(width: 1, color: Colors.blue.shade200))),
-            padding:
-                WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
+                : RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(width: 1, color: Colors.blue.shade200))),
+            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
         onPressed: () {
           onTap();
         },
@@ -301,7 +290,7 @@ class SelectionBox extends StatelessWidget {
                       ),
                       Text(
                         title,
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge!.color),
                       ),
                     ],
                   ),
@@ -325,17 +314,16 @@ class ChartData {
   final int y;
 }
 
-Future _reportTypeBottomSheet(BuildContext context) {
-  int selectIndex = 0;
-  return showModalBottomSheet(
+Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
+  int selectIndex = selected;
+  return await showModalBottomSheet<int>(
       backgroundColor: Color(0xff03001C),
       context: context,
       builder: (context) {
         return StatefulBuilder(
             builder: (context, setState) => Container(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -355,36 +343,26 @@ Future _reportTypeBottomSheet(BuildContext context) {
                               setState(() {
                                 selectIndex = 0;
                               });
+                              Navigator.pop(context, selectIndex);
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 0
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
+                              shadowColor: selectIndex == 0 ? Colors.blue.shade200 : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 0
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                              color: selectIndex == 0 ? Colors.grey.shade800 : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 0
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش کلی',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -405,36 +383,26 @@ Future _reportTypeBottomSheet(BuildContext context) {
                               setState(() {
                                 selectIndex = 1;
                               });
+                              Navigator.pop(context, selectIndex);
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 1
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
+                              shadowColor: selectIndex == 1 ? Colors.blue.shade200 : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 1
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                              color: selectIndex == 1 ? Colors.grey.shade800 : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 1
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش ماهانه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -443,55 +411,44 @@ Future _reportTypeBottomSheet(BuildContext context) {
                           ),
                         ),
 
-                        SizedBox(
-                          height: 8,
-                        ),
+                        // SizedBox(
+                        //   height: 8,
+                        // ),
 
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 64,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                selectIndex = 2;
-                              });
-                            },
-                            radius: 64,
-                            child: Card(
-                              shadowColor: selectIndex == 2
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
-                              elevation: 10,
-                              color: selectIndex == 2
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
-                              surfaceTintColor: Colors.white,
-                              shape: selectIndex == 2
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'گزارش بازه دلخواه',
-                                      textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
+                        // SizedBox(
+                        //   width: MediaQuery.of(context).size.width,
+                        //   height: 64,
+                        //   child: InkWell(
+                        //     onTap: () {
+                        //       setState(() {
+                        //         selectIndex = 2;
+                        //       });
+                        //     },
+                        //     radius: 64,
+                        //     child: Card(
+                        //       shadowColor: selectIndex == 2 ? Colors.blue.shade200 : Colors.transparent,
+                        //       elevation: 10,
+                        //       color: selectIndex == 2 ? Colors.grey.shade800 : Colors.transparent,
+                        //       surfaceTintColor: Colors.white,
+                        //       shape: selectIndex == 2
+                        //           ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                        //           : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
+                        //       child: Padding(
+                        //         padding: const EdgeInsets.symmetric(horizontal: 8),
+                        //         child: Row(
+                        //           mainAxisAlignment: MainAxisAlignment.end,
+                        //           children: [
+                        //             Text(
+                        //               'گزارش بازه دلخواه',
+                        //               textDirection: TextDirection.rtl,
+                        //               style: TextStyle(fontSize: 16, color: Colors.white),
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                     ),
                   ),
@@ -499,7 +456,7 @@ Future _reportTypeBottomSheet(BuildContext context) {
       });
 }
 
-Future _monthCalendarBottomSheet(BuildContext context) async {
+Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate) async {
 // Jalali? pickedDate = await showModalBottomSheet<Jalali>(
 //   context: context,
 //   builder: (context){
@@ -513,12 +470,16 @@ Future _monthCalendarBottomSheet(BuildContext context) async {
 //                 },
 //   )
 // );});
-  await showModalBottomSheet(
+  var selectedDate = initDate;
+  return await showModalBottomSheet<String?>(
     context: context,
     builder: (context) => CustomDatePicker(
-      initialDate: Jalali.now(),
+      initialDate: selectedDate,
       minimumYear: 1390,
-      onDateChanged: () {},
+      onDateChanged: (value) {
+        selectedDate = value;
+        Navigator.pop(context, selectedDate);
+      },
       backgroundColor: Colors.white,
     ),
   );

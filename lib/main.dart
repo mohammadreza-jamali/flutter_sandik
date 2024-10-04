@@ -12,11 +12,11 @@ import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-//test for commit
-Future init() async{
+Future init() async {
   await Future.delayed(Duration(seconds: 3));
   FlutterNativeSplash.remove();
 }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
