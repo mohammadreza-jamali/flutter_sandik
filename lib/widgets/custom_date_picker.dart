@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shamsi_date/shamsi_date.dart';
@@ -60,49 +61,68 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 300,
+      height: 350,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(35),
+                  topRight: Radius.circular(35)),
+              color: Color(0xff03001C),
+      ),
       child: Column(
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 2 - 20,
-                child: CupertinoPicker(
-                  backgroundColor: widget.backgroundColor,
-                  scrollController: yearController,
-                  children: List.generate(Jalali.now().year + 1 - widget.minimumYear, (i) => Center(child: Text("${widget.minimumYear + i}"))),
-                  itemExtent: 82,
-                  looping: true,
-                  useMagnifier: true,
-                  magnification: 1.2,
-                  squeeze: 2,
-                  onSelectedItemChanged: (value) {
-                    selectedYear = value;
-                    debugPrint("Selected Year is : $value");
-                  },
-                ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 16),
+            child: Text('انتخاب ماه',style: TextStyle(fontSize: 18,color: Colors.white),),
+          ),
+          SizedBox(height: 16,),
+          SizedBox(
+            height: 200,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 8),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      child: CupertinoPicker(
+                        backgroundColor: Colors.transparent,
+                        scrollController: yearController,
+                        children: List.generate(Jalali.now().year + 1 - widget.minimumYear, (i) => Center(child: Text("${widget.minimumYear + i}",style: TextStyle(color: Colors.white),))),
+                        itemExtent: 82,
+                        looping: true,
+                        useMagnifier: true,
+                        magnification: 1.2,
+                        squeeze: 2,
+                        onSelectedItemChanged: (value) {
+                          selectedYear =widget.minimumYear + value;
+                          debugPrint("Selected Year is : $selectedYear");
+                        },
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: SizedBox(
+                      child: CupertinoPicker(
+                        backgroundColor: Colors.transparent,
+                        scrollController: monthController,
+                        children: List.generate(12, (i) => Center(child: Text(monthNames[i + 1]!,style: TextStyle(color: Colors.white),))),
+                        itemExtent: 82,
+                        looping: true,
+                        useMagnifier: true,
+                        magnification: 1.2,
+                        onSelectedItemChanged: (value) {
+                          selectedMonth = value+1;
+                          debugPrint("Selected Month is : $selectedMonth");
+                        },
+                      ),
+                    ),
+                  )
+                ],
               ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 2 - 20,
-                child: CupertinoPicker(
-                  backgroundColor: widget.backgroundColor,
-                  scrollController: monthController,
-                  children: List.generate(12, (i) => Center(child: Text(monthNames[i + 1]!))),
-                  itemExtent: 82,
-                  looping: true,
-                  useMagnifier: true,
-                  magnification: 1.2,
-                  onSelectedItemChanged: (value) {
-                    selectedMonth = value;
-                    debugPrint("Selected Month is : $value");
-                  },
-                ),
-              )
-            ],
+            ),
           ),
           Align(
-            alignment: Alignment.centerRight,
+            alignment: Alignment.center,
             child: SizedBox(
               width: 50,
               child: IconButton(

@@ -4,11 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/navigation_service.dart';
 import 'package:flutter_sandik/widgets/custom_date_picker.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
+import 'package:flutter_sandik/widgets/persian_calendar_table.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:shamsi_date/shamsi_date.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-Map<int, String> reportType = {0: 'گزارش کلی', 1: 'گزارش جزئی'};
+Map<int, String> reportType = {0: 'گزارش کلی', 1: 'گزارش ماهانه',2: 'گزارش بازه دلخواه'};
 
 class ReportPage extends StatefulWidget {
   @override
@@ -81,7 +82,7 @@ class _ReportPageState extends State<ReportPage> {
               },
             ),
           ),
-          if ((selectedReportType ?? 0) != 0)
+          if ((selectedReportType ?? 0) == 1)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
               child: SelectionBox(
@@ -92,6 +93,25 @@ class _ReportPageState extends State<ReportPage> {
                   spinner: false,
                   onTap: () async {
                     var res = await _monthCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                    if (res != null) {
+                      setState(() {
+                        selectedDate = res;
+                      });
+                    }
+                  }),
+            ),
+
+            if ((selectedReportType ?? 0) == 2)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              child: SelectionBox(
+                  width: MediaQuery.of(context).size.width,
+                  heght: 40,
+                  title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                  icon: MdiIcons.calendarMonth,
+                  spinner: false,
+                  onTap: () async {
+                    var res = await _dateDurationCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
                     if (res != null) {
                       setState(() {
                         selectedDate = res;
@@ -411,44 +431,45 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                           ),
                         ),
 
-                        // SizedBox(
-                        //   height: 8,
-                        // ),
+                        SizedBox(
+                          height: 8,
+                        ),
 
-                        // SizedBox(
-                        //   width: MediaQuery.of(context).size.width,
-                        //   height: 64,
-                        //   child: InkWell(
-                        //     onTap: () {
-                        //       setState(() {
-                        //         selectIndex = 2;
-                        //       });
-                        //     },
-                        //     radius: 64,
-                        //     child: Card(
-                        //       shadowColor: selectIndex == 2 ? Colors.blue.shade200 : Colors.transparent,
-                        //       elevation: 10,
-                        //       color: selectIndex == 2 ? Colors.grey.shade800 : Colors.transparent,
-                        //       surfaceTintColor: Colors.white,
-                        //       shape: selectIndex == 2
-                        //           ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
-                        //           : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
-                        //       child: Padding(
-                        //         padding: const EdgeInsets.symmetric(horizontal: 8),
-                        //         child: Row(
-                        //           mainAxisAlignment: MainAxisAlignment.end,
-                        //           children: [
-                        //             Text(
-                        //               'گزارش بازه دلخواه',
-                        //               textDirection: TextDirection.rtl,
-                        //               style: TextStyle(fontSize: 16, color: Colors.white),
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // )
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 64,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectIndex = 2;
+                              });
+                              Navigator.pop(context, selectIndex);
+                            },
+                            radius: 64,
+                            child: Card(
+                              shadowColor: selectIndex == 2 ? Colors.blue.shade200 : Colors.transparent,
+                              elevation: 10,
+                              color: selectIndex == 2 ? Colors.grey.shade800 : Colors.transparent,
+                              surfaceTintColor: Colors.white,
+                              shape: selectIndex == 2
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'گزارش بازه دلخواه',
+                                      textDirection: TextDirection.rtl,
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -457,21 +478,10 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
 }
 
 Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate) async {
-// Jalali? pickedDate = await showModalBottomSheet<Jalali>(
-//   context: context,
-//   builder: (context){
-//     Jalali tempPickedDate;
-//     return Container(
-//     height: 250,
-//     child: PCupertinoDatePicker(
-//                 mode: PCupertinoDatePickerMode.date,
-//                 onDateTimeChanged: (Jalali dateTime) {
-//                   tempPickedDate = dateTime;
-//                 },
-//   )
-// );});
+
   var selectedDate = initDate;
   return await showModalBottomSheet<String?>(
+    
     context: context,
     builder: (context) => CustomDatePicker(
       initialDate: selectedDate,
@@ -483,4 +493,13 @@ Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate)
       backgroundColor: Colors.white,
     ),
   );
+}
+
+Future<String?> _dateDurationCalendarBottomSheet(BuildContext context, String initDate) async {
+  
+  var selectedDate = initDate;
+  return await showModalBottomSheet<String?>(
+    context: context,
+    builder: (context) => PersianCalendarTable(),
+);
 }
