@@ -61,7 +61,7 @@ class _PersianCalendarTableState extends State<PersianCalendarTable> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(35), topRight: Radius.circular(35)),
+            topLeft: Radius.circular(25), topRight: Radius.circular(25)),
         color: Color(0xff03001C),
       ),
       child: Padding(

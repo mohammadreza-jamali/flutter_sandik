@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class CustomDatePicker extends StatefulWidget {
@@ -26,20 +27,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   late FixedExtentScrollController monthController;
   late int selectedYear;
   late int selectedMonth;
-  Map<int, String> monthNames = {
-    1: "Farvardin",
-    2: "ordibehesht",
-    3: "xordad",
-    4: "tir",
-    5: "mordad",
-    6: "shahrivar",
-    7: "mehr",
-    8: "aban",
-    9: "azar",
-    10: "dey",
-    11: "bahman",
-    12: "esfand",
-  };
+
 
   @override
   void initState() {
@@ -64,15 +52,15 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       height: 350,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(35),
-                  topRight: Radius.circular(35)),
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25)),
               color: Color(0xff03001C),
       ),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 16),
-            child: Text('انتخاب ماه',style: TextStyle(fontSize: 18,color: Colors.white),),
+            child: Text('انتخاب تاریخ',style: TextStyle(fontSize: 18,color: Colors.white),),
           ),
           SizedBox(height: 16,),
           SizedBox(

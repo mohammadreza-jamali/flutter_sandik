@@ -1,17 +1,27 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_sandik/core/application/navigation_service.dart';
+import 'package:flutter_sandik/core/constants/core_enum.dart';
+import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/widgets/custom_date_picker.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:flutter_sandik/widgets/persian_calendar_table.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-Map<int, String> reportType = {0: 'گزارش کلی', 1: 'گزارش ماهانه',2: 'گزارش بازه دلخواه'};
+Map<int, String> reportType = {
+  0: 'گزارش کلی',
+  1: 'گزارش ماهانه',
+  2: 'گزارش بازه دلخواه'
+};
 
 class ReportPage extends StatefulWidget {
+  final String groupId;
+  const ReportPage(this.groupId, {super.key});
   @override
   State<ReportPage> createState() => _ReportPageState();
 }
@@ -35,7 +45,9 @@ class _ReportPageState extends State<ReportPage> {
           InkWell(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
@@ -50,7 +62,8 @@ class _ReportPageState extends State<ReportPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             'گزارش گیری',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+            style: TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
@@ -73,7 +86,8 @@ class _ReportPageState extends State<ReportPage> {
               icon: MdiIcons.finance,
               spinner: true,
               onTap: () async {
-                var res = await _reportTypeBottomSheet(context, selectedReportType ?? 0);
+                var res = await _reportTypeBottomSheet(
+                    context, selectedReportType ?? 0);
                 if (res != null) {
                   setState(() {
                     selectedReportType = res;
@@ -88,11 +102,15 @@ class _ReportPageState extends State<ReportPage> {
               child: SelectionBox(
                   width: MediaQuery.of(context).size.width,
                   heght: 40,
-                  title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                  title: selectedDate ??
+                      "${Jalali.now().year}-${Jalali.now().month}",
                   icon: MdiIcons.calendarMonth,
                   spinner: false,
                   onTap: () async {
-                    var res = await _monthCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                    var res = await _monthCalendarBottomSheet(
+                        context,
+                        selectedDate ??
+                            "${Jalali.now().year}-${Jalali.now().month}");
                     if (res != null) {
                       setState(() {
                         selectedDate = res;
@@ -101,17 +119,21 @@ class _ReportPageState extends State<ReportPage> {
                   }),
             ),
 
-            if ((selectedReportType ?? 0) == 2)
+          if ((selectedReportType ?? 0) == 2)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
               child: SelectionBox(
                   width: MediaQuery.of(context).size.width,
                   heght: 40,
-                  title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                  title: selectedDate ??
+                      "${Jalali.now().year}-${Jalali.now().month}",
                   icon: MdiIcons.calendarMonth,
                   spinner: false,
                   onTap: () async {
-                    var res = await _dateDurationCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                    var res = await _dateDurationCalendarBottomSheet(
+                        context,
+                        selectedDate ??
+                            "${Jalali.now().year}-${Jalali.now().month}");
                     if (res != null) {
                       setState(() {
                         selectedDate = res;
@@ -185,21 +207,29 @@ class _ReportPageState extends State<ReportPage> {
           //     )),
           //   ],
           // ),
-          renderReport(),
+          FutureBuilder<Widget>(
+            future: renderReport(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                return snapshot.data!;
+              }
+              return Center(child: CircularProgressIndicator());
+            },
+          )
+
           //renderPieReport()
         ],
       ),
     ));
   }
 
-  renderReport() {
-    final List<ChartData> chartData = [
-      ChartData("اردیبهشت", 35),
-      ChartData("خرداد", 23),
-      ChartData("تیر", 34),
-      ChartData("مرداد", 25),
-      ChartData("شهریور", 40)
-    ];
+  Future<Widget> renderReport() async {
+    var result = (selectedReportType ?? 0) == 0
+        ? await getTotalReport()
+        : await getMonthReport(
+            selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+            
     return Container(
       width: MediaQuery.of(context).size.width / 0.7,
       child: //Container()
@@ -222,36 +252,53 @@ class _ReportPageState extends State<ReportPage> {
               name: 'yAxis1',
               interval: 1000,
               minimum: 0,
-              maximum: 7000,
+              maximum: result.chartMaxValue,
             )
           ],
               series: <CartesianSeries<ChartData, String>>[
             // Renders column chart
             ColumnSeries<ChartData, String>(
-              dataSource: chartData,
+              dataSource: result.budgets,
               xValueMapper: (ChartData data, _) => data.x,
               yValueMapper: (ChartData data, _) => data.y,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            ),
+            ColumnSeries<ChartData, String>(
+              dataSource: result.transactions,
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
             )
           ]),
     );
   }
 
   renderPieReport() {
-    final List<ChartData> chartData = [ChartData("1", 35), ChartData("2", 23), ChartData("3", 34), ChartData("4", 25), ChartData("5", 40)];
-    return SfCircularChart(legend: Legend(isVisible: true), series: <CircularSeries>[
-      // Render pie chart
-      PieSeries<ChartData, String>(
-        dataSource: chartData,
-        xValueMapper: (ChartData data, _) => data.x,
-        yValueMapper: (ChartData data, _) => data.y,
-        dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
-        dataLabelSettings: DataLabelSettings(isVisible: true),
-      )
-    ]);
+    final List<ChartData> chartData = [
+      ChartData("1", 35),
+      ChartData("2", 23),
+      ChartData("3", 34),
+      ChartData("4", 25),
+      ChartData("5", 40)
+    ];
+    return SfCircularChart(
+        legend: Legend(isVisible: true),
+        series: <CircularSeries>[
+          // Render pie chart
+          PieSeries<ChartData, String>(
+            dataSource: chartData,
+            xValueMapper: (ChartData data, _) => data.x,
+            yValueMapper: (ChartData data, _) => data.y,
+            dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
+            dataLabelSettings: DataLabelSettings(isVisible: true),
+          )
+        ]);
   }
 
-  renderReportType(Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
+  renderReportType(
+      Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: CustomDropdown(
@@ -262,6 +309,43 @@ class _ReportPageState extends State<ReportPage> {
       ),
     );
   }
+
+  Future<ReportResult> getTotalReport() async {
+    final _transaction = context.read<MTransaction>();
+    var _transactions =
+        await _transaction.getTransactionsMonthlyReport(widget.groupId);
+    final List<ChartData> chartData = _transactions
+            ?.map((monthTransaction) => ChartData(
+                "${monthTransaction.month!.substring(0, 4)}-${monthNames[int.parse(monthTransaction.month!.substring(4))]}",
+                monthTransaction.sum?.toInt() ?? 0,))
+            .toList() ??
+        [];
+    final List<ChartData> budgets = _transactions
+            ?.map((monthTransaction) => ChartData(
+                "${monthTransaction.month!.substring(0, 4)}-${monthNames[int.parse(monthTransaction.month!.substring(4))]}",
+                monthTransaction.plannedBudget?.toInt() ?? 0,))
+            .toList() ??
+        [];
+    var maxValue = (_transactions
+                ?.map((transaction) => transaction.sum ?? 0)
+                .toList()
+                .reduce(max) ??
+            0) +
+        1000;
+    return ReportResult(chartData,budgets,maxValue);
+  }
+
+  Future<ReportResult> getMonthReport(String date) async {
+    return ReportResult([],[],0.0);
+  }
+}
+
+class ReportResult{
+  final List<ChartData> transactions;
+  final List<ChartData> budgets;
+  final double chartMaxValue;
+
+  ReportResult(this.transactions, this.budgets, this.chartMaxValue);
 }
 
 class SelectionBox extends StatelessWidget {
@@ -274,7 +358,14 @@ class SelectionBox extends StatelessWidget {
   final Function onTap;
 
   const SelectionBox(
-      {super.key, required this.width, required this.heght, required this.title, this.icon, required this.spinner, required this.onTap, this.isSelected});
+      {super.key,
+      required this.width,
+      required this.heght,
+      required this.title,
+      this.icon,
+      required this.spinner,
+      required this.onTap,
+      this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -283,17 +374,23 @@ class SelectionBox extends StatelessWidget {
       height: heght,
       child: ElevatedButton(
         style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-              if (states.contains(WidgetState.disabled)) return Colors.grey.shade800;
-              if (states.contains(WidgetState.selected)) return Colors.grey.shade200;
+            backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+              if (states.contains(WidgetState.disabled))
+                return Colors.grey.shade800;
+              if (states.contains(WidgetState.selected))
+                return Colors.grey.shade200;
               return null;
             }),
             shape: WidgetStatePropertyAll(isSelected == true
                 ? RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   )
-                : RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(width: 1, color: Colors.blue.shade200))),
-            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
+                : RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(width: 1, color: Colors.blue.shade200))),
+            padding:
+                WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
         onPressed: () {
           onTap();
         },
@@ -310,7 +407,10 @@ class SelectionBox extends StatelessWidget {
                       ),
                       Text(
                         title,
-                        style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge!.color),
+                        style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge!.color),
                       ),
                     ],
                   ),
@@ -343,7 +443,8 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
         return StatefulBuilder(
             builder: (context, setState) => Container(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -367,22 +468,33 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 0 ? Colors.blue.shade200 : Colors.transparent,
+                              shadowColor: selectIndex == 0
+                                  ? Colors.blue.shade200
+                                  : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 0 ? Colors.grey.shade800 : Colors.transparent,
+                              color: selectIndex == 0
+                                  ? Colors.grey.shade800
+                                  : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 0
-                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
-                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide.none)
+                                  : RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                          color: Colors.blue.shade200)),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش کلی',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(fontSize: 16, color: Colors.white),
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -407,22 +519,33 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 1 ? Colors.blue.shade200 : Colors.transparent,
+                              shadowColor: selectIndex == 1
+                                  ? Colors.blue.shade200
+                                  : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 1 ? Colors.grey.shade800 : Colors.transparent,
+                              color: selectIndex == 1
+                                  ? Colors.grey.shade800
+                                  : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 1
-                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
-                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide.none)
+                                  : RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                          color: Colors.blue.shade200)),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش ماهانه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(fontSize: 16, color: Colors.white),
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -447,22 +570,33 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 2 ? Colors.blue.shade200 : Colors.transparent,
+                              shadowColor: selectIndex == 2
+                                  ? Colors.blue.shade200
+                                  : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 2 ? Colors.grey.shade800 : Colors.transparent,
+                              color: selectIndex == 2
+                                  ? Colors.grey.shade800
+                                  : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 2
-                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
-                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide.none)
+                                  : RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                          color: Colors.blue.shade200)),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش بازه دلخواه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(fontSize: 16, color: Colors.white),
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -477,11 +611,10 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
       });
 }
 
-Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate) async {
-
+Future<String?> _monthCalendarBottomSheet(
+    BuildContext context, String initDate) async {
   var selectedDate = initDate;
   return await showModalBottomSheet<String?>(
-    
     context: context,
     builder: (context) => CustomDatePicker(
       initialDate: selectedDate,
@@ -495,11 +628,10 @@ Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate)
   );
 }
 
-Future<String?> _dateDurationCalendarBottomSheet(BuildContext context, String initDate) async {
-  
-  var selectedDate = initDate;
+Future<String?> _dateDurationCalendarBottomSheet(
+    BuildContext context, String initDate) async {
   return await showModalBottomSheet<String?>(
     context: context,
     builder: (context) => PersianCalendarTable(),
-);
+  );
 }
