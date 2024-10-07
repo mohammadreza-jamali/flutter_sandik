@@ -17,7 +17,8 @@ abstract class IDbBase {
   Future updateGroup(Group group);
   Future<List<MoneyTransaction>?> getAllTransactions(String groupId);
   Future<List<Category>> initDefaultCategories(List<Category> categories);
-  Future<List<Category>> getCategories(String groupId,bool isDefault);
+  Future<List<Category>> getCategories(String groupId, bool isDefault);
+  Future<List<Category>> getAllCategories(String groupId);
   Future<Category> addCategory(Category category);
   Future deleteCategory(String categoryId);
 }

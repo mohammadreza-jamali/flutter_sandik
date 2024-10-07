@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_sandik/core/application/navigation_service.dart';
+import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
 import 'package:flutter_sandik/locator.dart';
@@ -23,6 +24,7 @@ void main() async {
   await Firebase.initializeApp();
   setupLocator();
   init();
+  await PhoneLocalHelper.getCountryPhoneCode();
 
   runApp(EasyLocalization(
     child: const MyApp(),

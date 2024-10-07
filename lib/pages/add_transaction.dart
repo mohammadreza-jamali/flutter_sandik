@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
+import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/src/provider.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -42,10 +44,10 @@ class _AddTransactionState extends State<AddTransaction> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Center(child: Assets.images.transactionPhoto.image(width: 400,height: 300)),
+                child: Center(child: Assets.images.transactionPhoto.image(width: 400, height: 300)),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Container(
                   child: Column(
                     children: [
@@ -90,13 +92,18 @@ class _AddTransactionState extends State<AddTransaction> {
                             }
                             return CircularProgressIndicator();
                           }),
-                          SizedBox(height: 16,),
+                      SizedBox(
+                        height: 16,
+                      ),
                       SizedBox(
                         width: 160,
                         height: 50,
                         child: ElevatedButton(
                             onPressed: () => _saveTransaction(context),
-                            child: Text("Save",style: TextStyle(color: Color(0xff1A1A40)),)),
+                            child: Text(
+                              "Save",
+                              style: TextStyle(color: Color(0xff1A1A40)),
+                            )),
                       )
                     ],
                   ),
@@ -111,17 +118,19 @@ class _AddTransactionState extends State<AddTransaction> {
 
   getCategories() async {
     var _transaction = context.read<MTransaction>();
-    _categories = await _transaction.getCategories(widget.groupId, false);
-    _categoriesMap.addEntries((_categories ?? []).map((category) =>
-        {category.categoryId!: category.categoryName!}.entries.first));
+    _categories = await _transaction.getAllCategories(widget.groupId);
+    _categoriesMap.addEntries((_categories ?? []).map((category) => {category.categoryId!: category.categoryName!}.entries.first));
   }
 
   _saveTransaction(BuildContext context) async {
     if (_amount == null || _amount == 0) return;
     final _userModel = context.read<UserModel>();
     final _transaction = context.read<MTransaction>();
-    var filterDate =
-        "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
+
+    var filterDate = PhoneLocalHelper.phoneLocal == "ir"
+        ? "${Jalali.now().year.toString().padLeft(2, "0")}${Jalali.now().month.toString().padLeft(2, "0")}"
+        : "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
+    //var filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
     await _transaction.saveTransaction(MoneyTransaction.init(
         id: Random().nextInt(999999999).toString(),
         groupId: widget.groupId,
@@ -130,8 +139,7 @@ class _AddTransactionState extends State<AddTransaction> {
         description: _description,
         userId: _userModel.getCurrentUser()!.userId!,
         month: filterDate));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
 
     Navigator.of(context).pop();
   }
@@ -139,10 +147,7 @@ class _AddTransactionState extends State<AddTransaction> {
   String _faDateTime() {
     DateTime now = DateTime.now();
     initializeDateFormatting(' fa ', null);
-    String formattedDatePersian =
-        DateFormat(' yyyy_MM_dd HH:mm:ss ', ' fa_IR ').format(now);
-    return(formattedDatePersian);
+    String formattedDatePersian = DateFormat(' yyyy_MM_dd HH:mm:ss ', ' fa_IR ').format(now);
+    return (formattedDatePersian);
   }
-
-  
 }

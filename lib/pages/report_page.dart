@@ -1,10 +1,12 @@
 import 'dart:math';
-
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:flutter_sandik/model/category.dart';
+import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/widgets/custom_date_picker.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
@@ -14,11 +16,7 @@ import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-Map<int, String> reportType = {
-  0: 'گزارش کلی',
-  1: 'گزارش ماهانه',
-  2: 'گزارش بازه دلخواه'
-};
+Map<int, String> reportType = {0: 'گزارش کلی', 1: 'گزارش ماهانه', 2: 'گزارش بازه دلخواه'};
 
 class ReportPage extends StatefulWidget {
   final String groupId;
@@ -33,6 +31,13 @@ class _ReportPageState extends State<ReportPage> {
   int? selectedDropdownValue;
   int? selectedReportType;
   String? selectedDate;
+  TooltipBehavior? _tooltipBehavior;
+
+  @override
+  void initState() {
+    super.initState();
+    _tooltipBehavior = TooltipBehavior(enable: true, canShowMarker: false, format: 'point.x : point.y', header: '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +53,7 @@ class _ReportPageState extends State<ReportPage> {
           InkWell(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
@@ -59,368 +62,302 @@ class _ReportPageState extends State<ReportPage> {
                 ),
               ),
             ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
         ],
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             'گزارش گیری',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'نوع گزارش',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-            child: SelectionBox(
-              width: MediaQuery.of(context).size.width,
-              heght: 40,
-              title: reportType[selectedReportType ?? 0]!,
-              icon: MdiIcons.finance,
-              spinner: true,
-              onTap: () async {
-                var res = await _reportTypeBottomSheet(
-                    context, selectedReportType ?? 0);
-                if (res != null) {
-                  setState(() {
-                    selectedReportType = res;
-                  });
-                }
-              },
-            ),
-          ),
-          if ((selectedReportType ?? 0) == 1)
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Text(
-                              'انتخاب ماه',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            )),
-                            SizedBox(
-                              height: 8,
-                            ),
-                  SelectionBox(
-                      width: MediaQuery.of(context).size.width,
-                      heght: 40,
-                      title: selectedDate ??
-                          "${Jalali.now().year}-${Jalali.now().month}",
-                      icon: MdiIcons.calendarMonth,
-                      spinner: false,
-                      onTap: () async {
-                        var res = await _monthCalendarBottomSheet(
-                            context,
-                            selectedDate ??
-                                "${Jalali.now().year}-${Jalali.now().month}");
-                        if (res != null) {
-                          setState(() {
-                            selectedDate = res;
-                          });
-                        }
-                      }),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'نوع گزارش',
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
-
-          if ((selectedReportType ?? 0) == 2)
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Text(
-                              'تا تاریخ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            )),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        SelectionBox(
-                            width: double.maxFinite,
-                            heght: 40,
-                            title: selectedDate ??
-                                "${Jalali.now().year}-${Jalali.now().month}",
-                            icon: MdiIcons.calendarMonth,
-                            spinner: false,
-                            onTap: () async {
-                              var res = await _dateDurationCalendarBottomSheet(
-                                  context,
-                                  selectedDate ??
-                                      "${Jalali.now().year}-${Jalali.now().month}");
-                              if (res != null) {
-                                setState(() {
-                                  selectedDate = res;
-                                });
-                              }
-                            }),
-                      ],
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Text(
-                              'از تاریخ',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            )),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        SelectionBox(
-                            width: double.maxFinite,
-                            heght: 40,
-                            title: selectedDate ??
-                                "${Jalali.now().year}-${Jalali.now().month}",
-                            icon: MdiIcons.calendarMonth,
-                            spinner: false,
-                            onTap: () async {
-                              var res = await _dateDurationCalendarBottomSheet(
-                                  context,
-                                  selectedDate ??
-                                      "${Jalali.now().year}-${Jalali.now().month}");
-                              if (res != null) {
-                                setState(() {
-                                  selectedDate = res;
-                                });
-                              }
-                            }),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            if ((selectedReportType ?? 0) == 2||(selectedReportType ?? 0) == 1)
             Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: Text(
-                              'دسته بندی',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            )),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        SelectionBox(
-                            width: double.maxFinite,
-                            heght: 40,
-                            title: selectedDate ??
-                                "انتخاب دسته بندی",
-                            icon: MdiIcons.calendarMonth,
-                            spinner: false,
-                            onTap: () async {
-                              var res = await _dateDurationCalendarBottomSheet(
-                                  context,
-                                  selectedDate ??
-                                      "${Jalali.now().year}-${Jalali.now().month}");
-                              if (res != null) {
-                                setState(() {
-                                  selectedDate = res;
-                                });
-                              }
-                            }),
-                      ],
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+              child: SelectionBox(
+                width: MediaQuery.of(context).size.width,
+                heght: 40,
+                title: reportType[selectedReportType ?? 0]!,
+                icon: MdiIcons.finance,
+                spinner: true,
+                onTap: () async {
+                  var res = await _reportTypeBottomSheet(context, selectedReportType ?? 0);
+                  if (res != null) {
+                    setState(() {
+                      selectedReportType = res;
+                    });
+                  }
+                },
+              ),
+            ),
+            if ((selectedReportType ?? 0) == 1)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          'انتخاب ماه',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        )),
+                    SizedBox(
+                      height: 8,
                     ),
+                    SelectionBox(
+                        width: MediaQuery.of(context).size.width,
+                        heght: 40,
+                        title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                        icon: MdiIcons.calendarMonth,
+                        spinner: false,
+                        onTap: () async {
+                          var res = await _monthCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                          if (res != null) {
+                            setState(() {
+                              selectedDate = res;
+                            });
+                          }
+                        }),
+                  ],
+                ),
+              ),
+
+            if ((selectedReportType ?? 0) == 2)
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text(
+                                'تا تاریخ',
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              )),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          SelectionBox(
+                              width: double.maxFinite,
+                              heght: 40,
+                              title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                              icon: MdiIcons.calendarMonth,
+                              spinner: false,
+                              onTap: () async {
+                                var res = await _dateDurationCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                                if (res != null) {
+                                  setState(() {
+                                    selectedDate = res;
+                                  });
+                                }
+                              }),
+                        ],
+                      ),
                     ),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          //   child:
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: Text(
+                                'از تاریخ',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              )),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          SelectionBox(
+                              width: double.maxFinite,
+                              heght: 40,
+                              title: selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}",
+                              icon: MdiIcons.calendarMonth,
+                              spinner: false,
+                              onTap: () async {
+                                var res = await _dateDurationCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+                                if (res != null) {
+                                  setState(() {
+                                    selectedDate = res;
+                                  });
+                                }
+                              }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
 
-          //   renderReportType(
-          //     {
-          //       0: 'گزارش کلی',
-          //       1: 'گزارش جزئی',
-          //     },
-          //     'انتخاب نوع گزارش',
-          //     Icon(
-          //       MdiIcons.chartLineStacked,
-          //       size: 20,
-          //     ),
-          //     (value) {
-          //       setState(() {
-          //         selectedDropdownValue = value;
-          //       });
-          //     },
-          //   ),
-          // ),
+            // if ((selectedReportType ?? 0) == 2 || (selectedReportType ?? 0) == 1)
+            //   Padding(
+            //     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.end,
+            //       children: [
+            //         Directionality(
+            //             textDirection: TextDirection.rtl,
+            //             child: Text(
+            //               'دسته بندی',
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontSize: 16,
+            //               ),
+            //             )),
+            //         SizedBox(
+            //           height: 8,
+            //         ),
+            //         SelectionBox(
+            //             width: double.maxFinite,
+            //             heght: 40,
+            //             title: selectedDate ?? "انتخاب دسته بندی",
+            //             icon: MdiIcons.calendarMonth,
+            //             spinner: false,
+            //             onTap: () async {
+            //               var res = await _dateDurationCalendarBottomSheet(context, selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+            //               if (res != null) {
+            //                 setState(() {
+            //                   selectedDate = res;
+            //                 });
+            //               }
+            //             }),
+            //       ],
+            //     ),
+            //   ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            //   child:
 
-          // Row(
-          //   children: [
-          //     Expanded(
-          //         child: Padding(
-          //       padding: const EdgeInsets.fromLTRB(8, 0, 4, 16),
-          //       child: renderReportType(
-          //         {
-          //           0: 'غذا و خوراک',
-          //           1: 'حمل و نقل ',
-          //         },
-          //         'انتخاب دسته بندی',
-          //         Icon(
-          //           MdiIcons.chartLineStacked,
-          //           size: 20,
-          //         ),
-          //         (value) {
-          //           setState(() {
-          //             selectedDropdownValue = value;
-          //           });
-          //         },
-          //       ),
-          //     )),
-          //     Expanded(
-          //         child: Padding(
-          //       padding: const EdgeInsets.fromLTRB(4, 0, 8, 16),
-          //       child: renderReportType(
-          //         {
-          //           0: 'گزارش کلی',
-          //           1: 'گزارش جزئی',
-          //         },
-          //         'انتخاب نوع گزارش',
-          //         Icon(
-          //           MdiIcons.chartLineStacked,
-          //           size: 20,
-          //         ),
-          //         (value) {
-          //           setState(() {
-          //             selectedDropdownValue = value;
-          //           });
-          //         },
-          //       ),
-          //     )),
-          //   ],
-          // ),
-          FutureBuilder<Widget>(
-            future: renderReport(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                return snapshot.data!;
-              }
-              return Center(child: CircularProgressIndicator());
-            },
-          )
+            //   renderReportType(
+            //     {
+            //       0: 'گزارش کلی',
+            //       1: 'گزارش جزئی',
+            //     },
+            //     'انتخاب نوع گزارش',
+            //     Icon(
+            //       MdiIcons.chartLineStacked,
+            //       size: 20,
+            //     ),
+            //     (value) {
+            //       setState(() {
+            //         selectedDropdownValue = value;
+            //       });
+            //     },
+            //   ),
+            // ),
 
-          //renderPieReport()
-        ],
+            // Row(
+            //   children: [
+            //     Expanded(
+            //         child: Padding(
+            //       padding: const EdgeInsets.fromLTRB(8, 0, 4, 16),
+            //       child: renderReportType(
+            //         {
+            //           0: 'غذا و خوراک',
+            //           1: 'حمل و نقل ',
+            //         },
+            //         'انتخاب دسته بندی',
+            //         Icon(
+            //           MdiIcons.chartLineStacked,
+            //           size: 20,
+            //         ),
+            //         (value) {
+            //           setState(() {
+            //             selectedDropdownValue = value;
+            //           });
+            //         },
+            //       ),
+            //     )),
+            //     Expanded(
+            //         child: Padding(
+            //       padding: const EdgeInsets.fromLTRB(4, 0, 8, 16),
+            //       child: renderReportType(
+            //         {
+            //           0: 'گزارش کلی',
+            //           1: 'گزارش جزئی',
+            //         },
+            //         'انتخاب نوع گزارش',
+            //         Icon(
+            //           MdiIcons.chartLineStacked,
+            //           size: 20,
+            //         ),
+            //         (value) {
+            //           setState(() {
+            //             selectedDropdownValue = value;
+            //           });
+            //         },
+            //       ),
+            //     )),
+            //   ],
+            // ),
+            FutureBuilder<Widget>(
+              future: renderReport(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                  return snapshot.data!;
+                }
+                return Center(child: CircularProgressIndicator());
+              },
+            )
+
+            //renderPieReport()
+          ],
+        ),
       ),
     ));
   }
 
   Future<Widget> renderReport() async {
-    var result = (selectedReportType ?? 0) == 0
-        ? await getTotalReport()
-        : await getMonthReport(
-            selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Container(
-        width: MediaQuery.of(context).size.width / 0.7,
-        child: //Container()
-            SfCartesianChart(
-                plotAreaBorderWidth: 0,
-                borderWidth: 0,
-                primaryXAxis: CategoryAxis(
-                  majorGridLines: const MajorGridLines(
-                    width: 0,
-                  ),
-                ),
-                primaryYAxis: NumericAxis(
-                  isVisible: false,
-                ),
-                axes: <ChartAxis>[
-              NumericAxis(
-                majorGridLines: const MajorGridLines(
-                  width: 0,
-                ),
-                name: 'yAxis1',
-                interval: 1000,
-                minimum: 0,
-                maximum: result.chartMaxValue,
-              )
-            ],
-                series: <CartesianSeries<ChartData, String>>[
-              // Renders column chart
-              ColumnSeries<ChartData, String>(
-                dataSource: result.budgets,
-                xValueMapper: (ChartData data, _) => data.x,
-                yValueMapper: (ChartData data, _) => data.y,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-              ),
-              ColumnSeries<ChartData, String>(
-                dataSource: result.transactions,
-                xValueMapper: (ChartData data, _) => data.x,
-                yValueMapper: (ChartData data, _) => data.y,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-              )
-            ]),
-      ),
-    );
+    switch (selectedReportType ?? 0) {
+      case 0:
+        return await getTotalReport();
+      case 1:
+        return await getMonthReport(selectedDate ?? "${Jalali.now().year}-${Jalali.now().month}");
+      default:
+        return Future.value(Center(
+          child: Text(" invalid Value"),
+        ));
+    }
   }
 
   renderPieReport() {
-    final List<ChartData> chartData = [
-      ChartData("1", 35),
-      ChartData("2", 23),
-      ChartData("3", 34),
-      ChartData("4", 25),
-      ChartData("5", 40)
-    ];
-    return SfCircularChart(
-        legend: Legend(isVisible: true),
-        series: <CircularSeries>[
-          // Render pie chart
-          PieSeries<ChartData, String>(
-            dataSource: chartData,
-            xValueMapper: (ChartData data, _) => data.x,
-            yValueMapper: (ChartData data, _) => data.y,
-            dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
-            dataLabelSettings: DataLabelSettings(isVisible: true),
-          )
-        ]);
+    final List<ChartData> chartData = [ChartData("1", 35), ChartData("2", 23), ChartData("3", 34), ChartData("4", 25), ChartData("5", 40)];
+    return SfCircularChart(legend: Legend(isVisible: true), series: <CircularSeries>[
+      // Render pie chart
+      PieSeries<ChartData, String>(
+        dataSource: chartData,
+        xValueMapper: (ChartData data, _) => data.x,
+        yValueMapper: (ChartData data, _) => data.y,
+        dataLabelMapper: (ChartData data, _) => "${data.x} : ${data.y}%",
+        dataLabelSettings: DataLabelSettings(isVisible: true),
+      )
+    ]);
   }
 
-  renderReportType(
-      Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
+  renderReportType(Map<int, String> items, String hintText, Icon icon, Function? onChanged) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: CustomDropdown(
@@ -432,10 +369,9 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Future<ReportResult> getTotalReport() async {
+  Future<Widget> getTotalReport() async {
     final _transaction = context.read<MTransaction>();
-    var _transactions =
-        await _transaction.getTransactionsMonthlyReport(widget.groupId);
+    var _transactions = await _transaction.getTransactionsMonthlyReport(widget.groupId);
     final List<ChartData> chartData = _transactions
             ?.map((monthTransaction) => ChartData(
                   "${monthTransaction.month!.substring(0, 4)}-${monthNames[int.parse(monthTransaction.month!.substring(4))]}",
@@ -450,22 +386,141 @@ class _ReportPageState extends State<ReportPage> {
                 ))
             .toList() ??
         [];
-    var maxValue = (_transactions
-                ?.map((transaction) => transaction.sum ?? 0)
-                .toList()
-                .reduce(max) ??
-            0) +
-        1000;
-    return ReportResult(chartData, budgets, maxValue);
+    var maxValue = (_transactions?.map((transaction) => transaction.sum ?? 0).toList().reduce(max) ?? 0) + 1000;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(
+        width: MediaQuery.of(context).size.width / 0.7,
+        child: //Container()
+            SfCartesianChart(
+          plotAreaBorderWidth: 0,
+          borderWidth: 0,
+          primaryXAxis: CategoryAxis(
+            majorGridLines: const MajorGridLines(
+              width: 0,
+            ),
+            labelRotation: 45,
+          ),
+          primaryYAxis: NumericAxis(isVisible: false, minimum: 0, maximum: maxValue),
+          axes: <ChartAxis>[
+            NumericAxis(
+              majorGridLines: const MajorGridLines(
+                width: 0,
+              ),
+              name: 'yAxis1',
+              interval: 1000,
+              minimum: 0,
+              maximum: maxValue,
+            )
+          ],
+          series: <CartesianSeries<ChartData, String>>[
+            // Renders column chart
+            ColumnSeries<ChartData, String>(
+              dataSource: budgets,
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            ),
+            ColumnSeries<ChartData, String>(
+              dataSource: chartData,
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            )
+          ],
+          tooltipBehavior: _tooltipBehavior,
+        ),
+      ),
+    );
   }
 
-  Future<ReportResult> getMonthReport(String date) async {
-    return ReportResult([], [], 0.0);
+  Future<Widget> getMonthReport(String date) async {
+    final _transaction = context.read<MTransaction>();
+    var inputDateString = "";
+    if (PhoneLocalHelper.phoneLocal == "ir") {
+      var inputDate = Jalali(int.parse(date.split("-")[0]), int.parse(date.split("-")[1]));
+      inputDateString = "${inputDate.year.toString().padLeft(2, "0")}${inputDate.month.toString().padLeft(2, "0")}";
+    } else {
+      var inputDate = Jalali(int.parse(date.split("-")[0]), int.parse(date.split("-")[1])).toDateTime();
+      inputDateString = "${inputDate.year.toString().padLeft(2, "0")}${inputDate.month.toString().padLeft(2, "0")}";
+    }
+    var _transactions = await _transaction.getTransactions(widget.groupId, inputDateString);
+    var groupTransactions = groupBy(
+      _transactions ?? <MoneyTransaction>[],
+      (MoneyTransaction transaction) => transaction.categoryId,
+    );
+
+    var monthBudget = await _transaction.getMonthBudget(widget.groupId, inputDateString);
+    var categories = await _transaction.getAllCategories(widget.groupId);
+    var maxValue = 0.0;
+    List<TransactionPerCategory>? tempTransactions = [];
+    for (var group in groupTransactions.entries) {
+      double _sum = 0;
+      var category = await categories.firstWhere((category) => category.categoryId == group.value.firstOrNull?.categoryId);
+      for (var transaction in group.value) {
+        _sum += transaction.amount!;
+      }
+      if (_sum > maxValue) maxValue = _sum;
+      group.value.sort((a, b) => a.insertDate!.compareTo(b.insertDate!));
+      tempTransactions.add(TransactionPerCategory(sum: _sum, category: category));
+    }
+
+    final List<ChartData> chartData =
+        tempTransactions.map((transaction) => ChartData("${transaction.category?.categoryName ?? "Default"}", transaction.sum?.toInt() ?? 0)).toList();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(
+        width: MediaQuery.of(context).size.width / 0.7,
+        child: //Container()
+            SfCartesianChart(
+          plotAreaBorderWidth: 0,
+          borderWidth: 0,
+          primaryXAxis: CategoryAxis(
+            majorGridLines: const MajorGridLines(
+              width: 0,
+            ),
+            labelRotation: 45,
+          ),
+          primaryYAxis: NumericAxis(isVisible: false, minimum: 0, maximum: monthBudget?.budgetValue ?? 1.0),
+          axes: <ChartAxis>[
+            NumericAxis(
+              majorGridLines: const MajorGridLines(
+                width: 0,
+              ),
+              name: 'yAxis1',
+              minimum: 0,
+              interval: 100,
+              maximum: monthBudget?.budgetValue ?? 1.0,
+            )
+          ],
+          series: <CartesianSeries<ChartData, String>>[
+            // Renders column chart
+            ColumnSeries<ChartData, String>(
+              dataLabelSettings:
+                  const DataLabelSettings(isVisible: true, labelAlignment: ChartDataLabelAlignment.top, textStyle: TextStyle(color: Colors.white)),
+              dataSource: chartData,
+              xValueMapper: (ChartData data, _) => data.x,
+              yValueMapper: (ChartData data, _) => data.y,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+            )
+          ],
+          tooltipBehavior: _tooltipBehavior,
+        ),
+      ),
+    );
   }
 
   Future<List<Category>> getCategories(bool isDefault) async {
     return await _transaction.getCategories(widget.groupId, isDefault);
   }
+}
+
+class TransactionPerCategory {
+  final double? sum;
+  final Category? category;
+
+  TransactionPerCategory({required this.sum, required this.category});
 }
 
 class ReportResult {
@@ -486,14 +541,7 @@ class SelectionBox extends StatelessWidget {
   final Function onTap;
 
   const SelectionBox(
-      {super.key,
-      required this.width,
-      required this.heght,
-      required this.title,
-      this.icon,
-      required this.spinner,
-      required this.onTap,
-      this.isSelected});
+      {super.key, required this.width, required this.heght, required this.title, this.icon, required this.spinner, required this.onTap, this.isSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -515,11 +563,8 @@ class SelectionBox extends StatelessWidget {
                 ? RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   )
-                : RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(width: 1, color: Colors.blue.shade200))),
-            padding:
-                WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
+                : RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(width: 1, color: Colors.blue.shade200))),
+            padding: WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8))),
         onPressed: () {
           onTap();
         },
@@ -530,16 +575,18 @@ class SelectionBox extends StatelessWidget {
                 Expanded(
                   child: Row(
                     children: [
-                      icon != null ? Icon(icon,color: Colors.white,) : SizedBox(),
+                      icon != null
+                          ? Icon(
+                              icon,
+                              color: Colors.white,
+                            )
+                          : SizedBox(),
                       SizedBox(
                         width: 4,
                       ),
                       Text(
                         title,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color:
-                                Colors.white),
+                        style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ],
                   ),
@@ -572,8 +619,7 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
         return StatefulBuilder(
             builder: (context, setState) => Container(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -597,33 +643,22 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 0
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
+                              shadowColor: selectIndex == 0 ? Colors.blue.shade200 : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 0
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                              color: selectIndex == 0 ? Colors.grey.shade800 : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 0
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش کلی',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -648,33 +683,22 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 1
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
+                              shadowColor: selectIndex == 1 ? Colors.blue.shade200 : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 1
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                              color: selectIndex == 1 ? Colors.grey.shade800 : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 1
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش ماهانه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -699,33 +723,22 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             },
                             radius: 64,
                             child: Card(
-                              shadowColor: selectIndex == 2
-                                  ? Colors.blue.shade200
-                                  : Colors.transparent,
+                              shadowColor: selectIndex == 2 ? Colors.blue.shade200 : Colors.transparent,
                               elevation: 10,
-                              color: selectIndex == 2
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                              color: selectIndex == 2 ? Colors.grey.shade800 : Colors.transparent,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 2
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide.none)
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      side: BorderSide(
-                                          color: Colors.blue.shade200)),
+                                  ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide.none)
+                                  : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.blue.shade200)),
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'گزارش بازه دلخواه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style: TextStyle(fontSize: 16, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -740,8 +753,7 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
       });
 }
 
-Future<String?> _monthCalendarBottomSheet(
-    BuildContext context, String initDate) async {
+Future<String?> _monthCalendarBottomSheet(BuildContext context, String initDate) async {
   var selectedDate = initDate;
   return await showModalBottomSheet<String?>(
     context: context,
@@ -757,19 +769,14 @@ Future<String?> _monthCalendarBottomSheet(
   );
 }
 
-Future<String?> _dateDurationCalendarBottomSheet(
-    BuildContext context, String initDate) async {
+Future<String?> _dateDurationCalendarBottomSheet(BuildContext context, String initDate) async {
   return await showModalBottomSheet<String?>(
     context: context,
     builder: (context) => PersianCalendarTable(),
   );
 }
 
-Future<int?> _categoryBottomSheet(
-    BuildContext context, String initDate) async {
-  var categoryId ;
-  return await showModalBottomSheet<int?>(
-    context: context,
-    builder: (context) => 
-  );
+Future<int?> _categoryBottomSheet(BuildContext context, String initDate) async {
+  var categoryId;
+  return await showModalBottomSheet<int?>(context: context, builder: (context) => SizedBox());
 }
