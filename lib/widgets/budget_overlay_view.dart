@@ -56,7 +56,7 @@ class _BudgetOverlayViewState extends State<BudgetOverlayView> {
   }
 
   getBudget() async {
-    var date = PhoneLocalHelper.phoneLocal == "tr"
+    var date = PhoneLocalHelper.phoneLocal == "ir"
         ? "${Jalali.now().year.toString().padLeft(2, "0")}${Jalali.now().month.toString().padLeft(2, "0")}"
         : "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
     budget = await _mTransaction.getMonthBudget(widget.group.groupId!, date);
