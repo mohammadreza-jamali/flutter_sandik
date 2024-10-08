@@ -69,6 +69,18 @@ class FirestoreDbService implements IDbBase {
     return users.docs.map((e) => AppUser().fromJson(e.data())).toList();
   }
 
+  @override
+  Future<List<AppUser>?> getUsersByIds(List<String> userIds) async {
+    var users = await _firestore.collection("Users").where("userId", whereIn: userIds).get();
+    return users.docs.map((e) => AppUser().fromJson(e.data())).toList();
+  }
+
+  @override
+  Future<AppUser?> getUserInfo(String userId) async {
+    var user = await _firestore.collection("Users").where("userId", isEqualTo: userId).get();
+    return AppUser().fromJson(user.docs[0].data());
+  }
+
   Future deleteGroup(String groupId) async {
     await _firestore.collection("Groups").doc(groupId).delete();
   }
@@ -108,5 +120,11 @@ class FirestoreDbService implements IDbBase {
 
   Future deleteCategory(String categoryId) async {
     await _firestore.collection("Categories").doc(categoryId).delete();
+  }
+
+  @override
+  Future<AppUser> updateUser(AppUser user) async {
+    await _firestore.collection("Users").doc(user.userId).update(user.toMap());
+    return user;
   }
 }

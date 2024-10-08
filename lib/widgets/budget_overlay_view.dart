@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/model/budget.dart';
+import 'package:flutter_sandik/model/group.dart';
+import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/home_screen.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/widgets/budget_dialog.dart';
@@ -8,9 +10,9 @@ import 'package:provider/provider.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class BudgetOverlayView extends StatefulWidget {
-  const BudgetOverlayView({required this.groupId, required this.groupName, super.key});
-  final String groupId;
-  final String groupName;
+  const BudgetOverlayView({required this.group, required this.currentUser, super.key});
+  final Group group;
+  final AppUser currentUser;
 
   @override
   State<BudgetOverlayView> createState() => _BudgetOverlayViewState();
@@ -26,7 +28,7 @@ class _BudgetOverlayViewState extends State<BudgetOverlayView> {
 
     return Stack(
       children: [
-        HomeScreen(groupId: widget.groupId, groupName: widget.groupName),
+        HomeScreen(group: widget.group, currentUser: widget.currentUser),
         FutureBuilder(
           future: getBudget(),
           builder: (context, snapshot) {
@@ -38,7 +40,7 @@ class _BudgetOverlayViewState extends State<BudgetOverlayView> {
                         height: MediaQuery.of(context).size.height,
                         color: Color(0x020202).withOpacity(0.8),
                       ),
-                      BudgetDialog(groupId: widget.groupId)
+                      BudgetDialog(groupId: widget.group.groupId!)
                     ])
                   : SizedBox();
             }
@@ -54,9 +56,9 @@ class _BudgetOverlayViewState extends State<BudgetOverlayView> {
   }
 
   getBudget() async {
-    var date = PhoneLocalHelper.phoneLocal == "ir"
+    var date = PhoneLocalHelper.phoneLocal == "tr"
         ? "${Jalali.now().year.toString().padLeft(2, "0")}${Jalali.now().month.toString().padLeft(2, "0")}"
         : "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
-    budget = await _mTransaction.getMonthBudget(widget.groupId, date);
+    budget = await _mTransaction.getMonthBudget(widget.group.groupId!, date);
   }
 }

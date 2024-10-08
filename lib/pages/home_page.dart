@@ -26,31 +26,28 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-
 class _HomePageState extends State<HomePage> {
-
   late ThemeManager _themeManager;
   late EventBus _eventBus;
   late ThemeDto currentTheme;
   late SharedPreferenceManager _preference;
-  late Map<int,Function> navigationItems={
+  late Map<int, Function> navigationItems = {
     1: _setTheme,
-  } ;
+  };
   late int selectedScreenIndex;
-
-  
 
   @override
   void initState() {
     super.initState();
     _eventBus = locator<EventBus>();
     _eventBus.on<ThemeDto>().listen(_themeEventHandle);
-    _themeManager=locator<ThemeManager>();
+    _themeManager = locator<ThemeManager>();
     currentTheme = _themeManager.getTheme();
-    _preference=SharedPreferenceManager.getInstanse();
-    selectedScreenIndex=0;
+    _preference = SharedPreferenceManager.getInstanse();
+    selectedScreenIndex = 0;
   }
-   _themeEventHandle(ThemeDto event) {
+
+  _themeEventHandle(ThemeDto event) {
     currentTheme = event;
     if (mounted) setState(() {});
   }
@@ -59,47 +56,73 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-            bottomNavigationBar: Directionality(
-              textDirection: TextDirection.rtl,
-              child: FlashyTabBar(
+          bottomNavigationBar: Directionality(
+            textDirection: TextDirection.rtl,
+            child: FlashyTabBar(
                 backgroundColor: Color(0xff050119),
                 animationCurve: Curves.easeInOutExpo,
                 animationDuration: Duration(milliseconds: 500),
                 selectedIndex: selectedScreenIndex,
                 height: 55,
                 items: [
-                FlashyTabBarItem(icon: Icon(MdiIcons.home,color: Colors.white,), title: Text('خانه',style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),)),
-                FlashyTabBarItem(icon: Icon(MdiIcons.selectGroup,color: Colors.white,), title: Text('دسته بندی',style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),)),
-                FlashyTabBarItem(icon: Icon(MdiIcons.accountTie,color: Colors.white,), title: Text('پروفایل',style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),)),
-                FlashyTabBarItem(icon: Icon(MdiIcons.chartArc,color: Colors.white,), title: Text('گزارش',style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.bold),)),
-              ], 
-              onItemSelected: (index)=> setState(() {
-                selectedScreenIndex=index;
-              })
-              
+                  FlashyTabBarItem(
+                      icon: Icon(
+                        MdiIcons.home,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'خانه',
+                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                      )),
+                  FlashyTabBarItem(
+                      icon: Icon(
+                        MdiIcons.selectGroup,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'دسته بندی',
+                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                      )),
+                  FlashyTabBarItem(
+                      icon: Icon(
+                        MdiIcons.accountTie,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'پروفایل',
+                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                      )),
+                  FlashyTabBarItem(
+                      icon: Icon(
+                        MdiIcons.chartArc,
+                        color: Colors.white,
+                      ),
+                      title: Text(
+                        'گزارش',
+                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                      )),
+                ],
+                onItemSelected: (index) => setState(() {
+                      selectedScreenIndex = index;
+                    })),
+          ),
+          body: IndexedStack(
+            index: selectedScreenIndex,
+            children: [
+              BudgetOverlayView(group: widget.group, currentUser: widget.user!),
+              CategoryPage(widget.group.groupId!),
+              SettingPage(
+                userId: widget.user!.userId!,
               ),
-            ),
-            body: IndexedStack(
-              index: selectedScreenIndex,
-              children: [
-                BudgetOverlayView(groupId: widget.group.groupId!,groupName: widget.group.groupName!),
-                CategoryPage(widget.group.groupId!),
-                SettingPage(),
-                ReportPage(widget.group.groupId!)
-              ],
-            )),
+              ReportPage(widget.group.groupId!)
+            ],
+          )),
     );
   }
 
   _setTheme() {
-    currentTheme.themeName =
-        currentTheme.themeName == ThemeNames.Light ? ThemeNames.Dark : ThemeNames.Light;
-    _preference.setThemeName(currentTheme.themeName == ThemeNames.Light
-        ? ThemeNames.Light.toString()
-        : ThemeNames.Dark.toString());
+    currentTheme.themeName = currentTheme.themeName == ThemeNames.Light ? ThemeNames.Dark : ThemeNames.Light;
+    _preference.setThemeName(currentTheme.themeName == ThemeNames.Light ? ThemeNames.Light.toString() : ThemeNames.Dark.toString());
     _themeManager.createTheme();
   }
-
 }
-
-

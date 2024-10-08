@@ -1,16 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/format_helper.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
+import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/edit_user_setting.dart';
+import 'package:flutter_sandik/viewmodel/transaction.dart';
+import 'package:flutter_sandik/widgets/avatar_change_dialog.dart';
+import 'package:flutter_sandik/widgets/user_info_widget.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class SettingPage extends StatefulWidget {
+  const SettingPage({required this.userId, super.key});
+
   @override
   State<SettingPage> createState() => _SettingPageState();
+  final String userId;
 }
 
 class _SettingPageState extends State<SettingPage> {
+  late AppUser? currentUser;
+  ValueNotifier<bool> isLoaded = ValueNotifier(false);
+
+  ValueNotifier<String?> currentAvatar = ValueNotifier(null);
+
+  @override
+  void initState() {
+    super.initState();
+    getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,10 +43,7 @@ class _SettingPageState extends State<SettingPage> {
           InkWell(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300)),
+              decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
@@ -41,241 +58,217 @@ class _SettingPageState extends State<SettingPage> {
           padding: const EdgeInsets.only(top: 16),
           child: Text(
             'تنظیمات',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Directionality(
-                textDirection: TextDirection.rtl,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ProfileAvatar(),
-                    SizedBox(
-                      width: 16,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('پروفایل شما',style: TextStyle(fontSize: 18,color: Colors.white),),
-                        SizedBox(
-                          height: 24,
-                        ),
+      body: ValueListenableBuilder(
+        valueListenable: isLoaded,
+        builder: (BuildContext context, dynamic value, Widget? child) {
+          if (!value)
+            return Center(
+              child: CircularProgressIndicator(),
+            );
 
-                        SizedBox(width: 200,
-                        height: 30,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            child: Text('تغییر آواتار'),
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    WidgetStatePropertyAll(Color(0xff050119)),
-                                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)
-                                ),),
-                                side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200,width: 2))
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25), gradient: LinearGradient(colors: [Colors.blue.shade900, Colors.blue.shade200])),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: ValueListenableBuilder(
+                              valueListenable: currentAvatar,
+                              builder: (BuildContext context, String? value, Widget? child) {
+                                if (value != null) {
+                                  return Container(
+                                    child: ClipRRect(
+                                      child: Image.asset("assets/images/avatars/${value}.jpg"),
+                                      borderRadius: BorderRadius.circular(25),
                                     ),
+                                  );
+                                }
+                                return Icon(Icons.person, size: 80);
+                              },
+                            ),
                           ),
-                        )
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'پروفایل شما',
+                              style: TextStyle(fontSize: 18, color: Colors.white),
+                            ),
+                            SizedBox(
+                              height: 24,
+                            ),
+                            SizedBox(
+                              width: 200,
+                              height: 30,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  var selectedAvatar = await showGeneralDialog<String?>(
+                                    barrierDismissible: true,
+                                    barrierLabel: "",
+                                    context: context,
+                                    pageBuilder: (context, animation, secondaryAnimation) => AvatarChangeDialog(currentAvatar.value),
+                                  );
+                                  currentAvatar.value = selectedAvatar;
+                                  await updateUserAvatar();
+                                },
+                                child: Text('تغییر آواتار'),
+                                style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(Color(0xff050119)),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2))),
+                              ),
+                            )
+                          ],
+                        ),
+                        //ElevatedButton(onPressed: (){}, child: Text('ویرایش'))
                       ],
                     ),
-                    //ElevatedButton(onPressed: (){}, child: Text('ویرایش'))
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'کاربر صندوق',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      'تاریخ عضویت 14 شهریور 1403',
-                      style: TextStyle(fontSize: 13, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        label: Text("Name"),
-                        hintText: "Name",
-                      ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'کاربر صندوق',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          FormatHelper.dateFormatter(currentUser!.formattedInsertDate),
+                          style: TextStyle(fontSize: 13, color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
-                    width: 8,
+                    height: 16,
                   ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        label: Text("Last Name"),
-                        hintText: "Last Name",
-                      ),
-                    ),
-                  ),
+                  UserInfoWidget(currentUser!)
+                  // SizedBox(
+                  //   height: 24,
+                  // ),
+                  // Directionality(
+                  //     textDirection: TextDirection.rtl,
+                  //     child: Text(
+                  //       'تنظیمات حساب کاربری',
+                  //       style: TextStyle(
+                  //           fontSize: 12,
+                  //           color: Colors.grey,
+                  //           fontWeight: FontWeight.bold),
+                  //     )),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // SettingItem(
+                  //   text: 'ویرایش حساب کاربر',
+                  //   icon: MdiIcons.account,
+                  //   ontap: () {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => EditUserSetting()));
+                  //   },
+                  // ),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // SettingItem(
+                  //     text: 'تغییر رمز عبور', icon: MdiIcons.lock, ontap: () {}),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // SettingItem(
+                  //     text: 'خروج از حساب کاربری',
+                  //     icon: MdiIcons.homeExportOutline,
+                  //     ontap: () {}),
+                  // SizedBox(
+                  //   height: 14,
+                  // ),
+                  // Directionality(
+                  //     textDirection: TextDirection.rtl,
+                  //     child: Text(
+                  //       'تنظیمات برنامه',
+                  //       style: TextStyle(
+                  //           fontSize: 12,
+                  //           color: Colors.grey,
+                  //           fontWeight: FontWeight.bold),
+                  //     )),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // SettingItem(text: 'زبان', icon: MdiIcons.translate, ontap: () {}),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // SettingItem(
+                  //     text: 'واحد پولی', icon: MdiIcons.currencyUsd, ontap: () {}),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // SettingItem(
+                  //     text: 'حالت تاریک',
+                  //     icon: MdiIcons.themeLightDark,
+                  //     ontap: () {}),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
+                  // SettingItem(
+                  //     text: 'درباره اپ',
+                  //     icon: MdiIcons.informationSlabCircleOutline,
+                  //     ontap: () {}),
+                  // SizedBox(
+                  //   height: 8,
+                  // ),
                 ],
               ),
-              SizedBox(
-                height: 8,
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  label: Text("Email"),
-                  hintText: "Email",
-                ),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        label: Text("Country"),
-                        hintText: "Country",
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        label: Text("city"),
-                        hintText: "city",
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 32,),
-
-              Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: Text('ویرایش'),
-                    style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(Color(0xff050119)),
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)
-                        ),),
-                        side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200,width: 2))
-                            ),
-                  ),
-                ),
-              ),
-              // SizedBox(
-              //   height: 24,
-              // ),
-              // Directionality(
-              //     textDirection: TextDirection.rtl,
-              //     child: Text(
-              //       'تنظیمات حساب کاربری',
-              //       style: TextStyle(
-              //           fontSize: 12,
-              //           color: Colors.grey,
-              //           fontWeight: FontWeight.bold),
-              //     )),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              // SettingItem(
-              //   text: 'ویرایش حساب کاربر',
-              //   icon: MdiIcons.account,
-              //   ontap: () {
-              //     Navigator.push(
-              //         context,
-              //         MaterialPageRoute(
-              //             builder: (context) => EditUserSetting()));
-              //   },
-              // ),
-              // SizedBox(
-              //   height: 8,
-              // ),
-              // SettingItem(
-              //     text: 'تغییر رمز عبور', icon: MdiIcons.lock, ontap: () {}),
-              // SizedBox(
-              //   height: 8,
-              // ),
-              // SettingItem(
-              //     text: 'خروج از حساب کاربری',
-              //     icon: MdiIcons.homeExportOutline,
-              //     ontap: () {}),
-              // SizedBox(
-              //   height: 14,
-              // ),
-              // Directionality(
-              //     textDirection: TextDirection.rtl,
-              //     child: Text(
-              //       'تنظیمات برنامه',
-              //       style: TextStyle(
-              //           fontSize: 12,
-              //           color: Colors.grey,
-              //           fontWeight: FontWeight.bold),
-              //     )),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              // SettingItem(text: 'زبان', icon: MdiIcons.translate, ontap: () {}),
-              // SizedBox(
-              //   height: 8,
-              // ),
-              // SettingItem(
-              //     text: 'واحد پولی', icon: MdiIcons.currencyUsd, ontap: () {}),
-              // SizedBox(
-              //   height: 8,
-              // ),
-              // SettingItem(
-              //     text: 'حالت تاریک',
-              //     icon: MdiIcons.themeLightDark,
-              //     ontap: () {}),
-              // SizedBox(
-              //   height: 8,
-              // ),
-              // SettingItem(
-              //     text: 'درباره اپ',
-              //     icon: MdiIcons.informationSlabCircleOutline,
-              //     ontap: () {}),
-              // SizedBox(
-              //   height: 8,
-              // ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  void getUserInfo() async {
+    isLoaded.value = false;
+    var dbService = context.read<MTransaction>();
+    currentUser = await dbService.getUserInfo(widget.userId);
+    currentAvatar.value = currentUser?.avatarName;
+    isLoaded.value = true;
+  }
+
+  updateUserAvatar() async {
+    if (currentUser == null || currentAvatar.value == null) return;
+    currentUser!.updateAvatar(currentAvatar.value!);
+    var dbService = context.read<MTransaction>();
+    await dbService.updateUser(currentUser!);
   }
 }
 
@@ -321,10 +314,7 @@ class _SettingItemState extends State<SettingItem> {
                 children: [
                   Text(
                     widget.text,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     width: 8,
@@ -358,10 +348,8 @@ class ProfileAvatar extends StatelessWidget {
             Container(
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  gradient: LinearGradient(
-                      colors: [Colors.blue.shade900, Colors.blue.shade200])),
+              decoration:
+                  BoxDecoration(borderRadius: BorderRadius.circular(25), gradient: LinearGradient(colors: [Colors.blue.shade900, Colors.blue.shade200])),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Container(

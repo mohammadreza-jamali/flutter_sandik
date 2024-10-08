@@ -157,4 +157,22 @@ class MTransaction with ChangeNotifier implements IDbBase {
     var result = await _dbRepository.getAllCategories(groupId);
     return result;
   }
+
+  @override
+  Future<AppUser> updateUser(AppUser user) async {
+    state = ViewState.Busy;
+    var result = await _dbRepository.updateUser(user);
+    state = ViewState.Idle;
+    return result;
+  }
+
+  @override
+  Future<List<AppUser>?> getUsersByIds(List<String> userIds) async {
+    return await _dbRepository.getUsersByIds(userIds);
+  }
+
+  @override
+  Future<AppUser?> getUserInfo(String userId) async {
+    return await _dbRepository.getUserInfo(userId);
+  }
 }

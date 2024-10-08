@@ -13,7 +13,9 @@ import 'package:flutter_sandik/format_helper.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:flutter_sandik/model/budget.dart';
 import 'package:flutter_sandik/model/category.dart';
+import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
+import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/add_budget.dart';
 import 'package:flutter_sandik/pages/add_transaction.dart';
 import 'package:flutter_sandik/pages/data.dart';
@@ -29,13 +31,9 @@ import 'package:flutter_sandik/core/application/persian_date_helper.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String groupId;
-  final String groupName;
-  const HomeScreen({
-    super.key,
-    required this.groupId,
-    required this.groupName,
-  });
+  final Group group;
+  final AppUser currentUser;
+  const HomeScreen({super.key, required this.group, required this.currentUser});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,13 +42,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<MoneyTransaction>? _transactions;
   List<Category>? _categories;
+  List<AppUser>? groupUsers;
   String filterDate = "";
   late MTransaction _transaction;
   late Map<String, dynamic> transactionsInfo;
   @override
   void initState() {
     super.initState();
-    filterDate = PhoneLocalHelper.phoneLocal == "ir"
+    filterDate = PhoneLocalHelper.phoneLocal == "tr"
         ? "${Jalali.now().year.toString().padLeft(2, "0")}${Jalali.now().month.toString().padLeft(2, "0")}"
         : "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
     //filterDate = "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}";
@@ -75,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //     barrierDismissible: false, // optional parameter (default is true)
 // );
             if (snapshot.connectionState == ConnectionState.done) {
+              var currentUserAvatar = groupUsers!.firstWhere((user) => user.userId == widget.currentUser.userId).avatarName;
               return Container(
                 color: Color(0xff050119),
                 child: Padding(
@@ -109,14 +109,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Directionality(
-                                  child: Text(widget.groupName),
+                                  child: Text(widget.group.groupName!),
                                   textDirection: ui.TextDirection.rtl,
                                 ),
                               )),
-                              MinimalButton(
-                                onTap: () {},
-                                icon: Assets.images.icons.user,
-                              ),
+                              Container(
+                                  width: 35,
+                                  height: 35,
+                                  decoration:
+                                      BoxDecoration(color: Colors.blue, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(4)),
+                                  child: currentUserAvatar == null
+                                      ? Icon(Icons.person)
+                                      : ClipRRect(
+                                          borderRadius: BorderRadius.circular(4),
+                                          child: Image.asset(
+                                            "assets/images/avatars/$currentUserAvatar.jpg",
+                                            fit: BoxFit.cover,
+                                            width: 35,
+                                            height: 35,
+                                          ),
+                                        ))
                             ],
                           ),
                         ),
@@ -125,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           left: 14,
                           right: 14,
                           child: FloatContainer(
-                            groupId: widget.groupId,
+                            groupId: widget.group.groupId,
                             transactionsInfo: transactionsInfo,
                           ),
                         )
@@ -136,10 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Expanded(
                         child: (_transactions ?? []).isNotEmpty
-                            ? CostListView(
-                                costs: _transactions ?? [],
-                                categories: _categories ?? [],
-                              )
+                            ? CostListView(costs: _transactions ?? [], categories: _categories ?? [], users: groupUsers ?? [])
                             : Column(
                                 children: [
                                   Expanded(
@@ -182,18 +191,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future _getInfo() async {
-    transactionsInfo = await _transaction.getTransactionInfo(widget.groupId, filterDate);
+    transactionsInfo = await _transaction.getTransactionInfo(widget.group.groupId!, filterDate);
     _transactions = transactionsInfo["transactions"];
-    _categories = await _transaction.getAllCategories(widget.groupId);
+    _categories = await _transaction.getAllCategories(widget.group.groupId!);
+    groupUsers = await _transaction.getUsersByIds(widget.group.groupUsers!.map((user) => user.toString()).toList());
   }
 }
 
 class CostListView extends StatelessWidget {
   final List<MoneyTransaction> costs;
   final List<Category> categories;
+  final List<AppUser> users;
   CostListView({
     required this.costs,
     required this.categories,
+    required this.users,
     super.key,
   });
 
@@ -205,17 +217,19 @@ class CostListView extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
           var costCategory = categories.firstWhere((category) => category.categoryId == costs[index].categoryId);
+          var user = users.firstWhere((user) => user.userId == costs[index].userId);
           return CostListItem(
               cost: costs
                   .map((cost) => TransactionDto(
                       id: cost.id,
-                      userName: cost.userId,
+                      userName: user.name,
                       amount: cost.amount,
                       description: cost.description,
                       insertDate: cost.insertDate,
                       month: cost.month,
                       categoryName: costCategory.categoryName,
-                      icon: costCategory.icon))
+                      icon: costCategory.icon,
+                      userAvatar: user.avatarName))
                   .toList()[index]);
         });
   }
@@ -290,7 +304,15 @@ class CostListItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
-              child: Assets.images.avatars.avatar5.image(fit: BoxFit.cover),
+              child: cost.userAvatar == null
+                  ? Icon(
+                      Icons.person,
+                      size: 50,
+                    )
+                  : Image.asset(
+                      "assets/images/avatars/${cost.userAvatar}.jpg",
+                      fit: BoxFit.cover,
+                    ),
             ),
 
             // Icon(

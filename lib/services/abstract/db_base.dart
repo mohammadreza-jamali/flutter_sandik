@@ -6,7 +6,9 @@ import 'package:flutter_sandik/model/user.dart';
 
 abstract class IDbBase {
   Future<AppUser> saveUser(AppUser user);
+  Future<AppUser> updateUser(AppUser user);
   Future<List<AppUser>?> getUsers();
+  Future<List<AppUser>?> getUsersByIds(List<String> userIds);
   Future<Group> saveGroup(Group group);
   Future<Budget> saveMonthBudget(Budget budget);
   Future<MoneyTransaction> saveTransaction(MoneyTransaction transaction);
@@ -21,4 +23,5 @@ abstract class IDbBase {
   Future<List<Category>> getAllCategories(String groupId);
   Future<Category> addCategory(Category category);
   Future deleteCategory(String categoryId);
+  Future<AppUser?> getUserInfo(String userId);
 }

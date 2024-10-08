@@ -93,4 +93,19 @@ class DbRepository implements IDbBase {
   Future<List<Category>> getAllCategories(String groupId) async {
     return await _dbService.getAllCategories(groupId);
   }
+
+  @override
+  Future<AppUser> updateUser(AppUser user) async {
+    return await _dbService.updateUser(user);
+  }
+
+  @override
+  Future<List<AppUser>?> getUsersByIds(List<String> userIds) async {
+    return await _dbService.getUsersByIds(userIds);
+  }
+
+  @override
+  Future<AppUser?> getUserInfo(String userId) async {
+    return await _dbService.getUserInfo(userId);
+  }
 }

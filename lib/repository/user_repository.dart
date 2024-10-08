@@ -3,11 +3,10 @@ import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/services/abstract/auth_base.dart';
 import 'package:flutter_sandik/services/concerete/firebase_auth_service.dart';
 
-enum AppMode{DEBUG,RELEASE}
+enum AppMode { DEBUG, RELEASE }
 
-class UserRepository implements IAuthBase{ 
-
-  IAuthBase _authService=locator<FirebaseAuthService>();
+class UserRepository implements IAuthBase {
+  IAuthBase _authService = locator<FirebaseAuthService>();
 
   @override
   AppUser? getCurrentUser() {
@@ -20,8 +19,7 @@ class UserRepository implements IAuthBase{
   }
 
   @override
-  Future<AppUser?> SignWithGoogle() async  {
-    return await _authService.SignWithGoogle();
+  Future<AppUser?> signWithGoogle() async {
+    return await _authService.signWithGoogle();
   }
-
 }

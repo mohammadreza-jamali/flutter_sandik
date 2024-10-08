@@ -10,6 +10,7 @@ class TransactionDto {
   String? month;
   String? categoryName;
   String? icon;
+  String? userAvatar;
   TransactionDto({
     this.id,
     this.userName,
@@ -19,5 +20,6 @@ class TransactionDto {
     this.month,
     this.categoryName,
     this.icon,
+    this.userAvatar,
   });
 }

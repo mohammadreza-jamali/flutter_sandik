@@ -5,7 +5,6 @@ import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -26,9 +25,7 @@ class LoginPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.blue.shade900,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(32),
-                      topRight: Radius.circular(32)),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
                 ),
                 child: Column(
                   children: [
@@ -43,9 +40,7 @@ class LoginPage extends StatelessWidget {
                                 onPressed: () {},
                                 child: Text(
                                   'LOGIN',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                 )),
                             SizedBox(
                               width: 50,
@@ -54,9 +49,7 @@ class LoginPage extends StatelessWidget {
                                 onPressed: () {},
                                 child: Text(
                                   'SIGN UP',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                 )),
                           ],
                         ),
@@ -66,9 +59,7 @@ class LoginPage extends StatelessWidget {
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(32),
-                              topRight: Radius.circular(32)),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(32), topRight: Radius.circular(32)),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(32, 24, 32, 32),
@@ -78,15 +69,11 @@ class LoginPage extends StatelessWidget {
                               children: [
                                 Text(
                                   'Welcome back',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                      color: Colors.black),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.black),
                                 ),
                                 Text(
                                   'sign in with your account',
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.grey),
+                                  style: TextStyle(fontSize: 14, color: Colors.grey),
                                 ),
                                 SizedBox(
                                   height: 32,
@@ -95,8 +82,7 @@ class LoginPage extends StatelessWidget {
                                   decoration: InputDecoration(
                                     label: Text(
                                       'Username',
-                                      style: TextStyle(
-                                          fontSize: 14, color: Colors.grey),
+                                      style: TextStyle(fontSize: 14, color: Colors.grey),
                                     ),
                                   ),
                                 ),
@@ -104,51 +90,39 @@ class LoginPage extends StatelessWidget {
                                   decoration: InputDecoration(
                                       label: Text(
                                         'Password',
-                                        style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                        style: TextStyle(fontSize: 14, color: Colors.grey),
                                       ),
                                       suffixIcon: TextButton(
                                           onPressed: () {},
                                           child: Text(
                                             'Show',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.purple.shade700),
+                                            style: TextStyle(fontSize: 12, color: Colors.purple.shade700),
                                           ))),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 32,bottom: 16),
+                                  padding: const EdgeInsets.only(top: 32, bottom: 16),
                                   child: ElevatedButton(
                                       onPressed: () async {},
                                       style: ButtonStyle(
-                                        minimumSize: WidgetStateProperty.all(
-                                            Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60)),
-                                        shape: WidgetStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8))),
-                                        backgroundColor:
-                                            WidgetStateProperty.all(
-                                                Colors.blue.shade900),
+                                        minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width, 60)),
+                                        shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                                        backgroundColor: WidgetStateProperty.all(Colors.blue.shade900),
                                       ),
                                       child: Text(
                                         'LOGIN',
                                         style: TextStyle(color: Colors.white),
                                       )),
                                 ),
-                                                  
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text('Forgot your password?'),
-                                    TextButton(onPressed: (){}, child: Text('Reset here')),
+                                    TextButton(onPressed: () {}, child: Text('Reset here')),
                                   ],
                                 ),
-                                SizedBox(height: 32,),
+                                SizedBox(
+                                  height: 32,
+                                ),
                                 Center(
                                   child: Text('OR SIGN IN WITH'),
                                 ),
@@ -156,14 +130,13 @@ class LoginPage extends StatelessWidget {
                                   height: 8,
                                 ),
                                 Center(
-                                  child:InkWell(
-                                    onTap: () async {
-                                      var user=await _signInWithGoogle(context);
-                                      await _saveUser(context,user);
-                                    },
-                                    child:Assets.images.icons.googleIcon.svg() ,
-                                  )
-                                )
+                                    child: InkWell(
+                                  onTap: () async {
+                                    var user = await _signInWithGoogle(context);
+                                    await _saveUser(context, user);
+                                  },
+                                  child: Assets.images.icons.googleIcon.svg(),
+                                ))
                               ],
                             ),
                           ),
@@ -179,14 +152,16 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
-  _signInWithGoogle(BuildContext context) async{
-    var _userModel=context.read<UserModel>();
-    AppUser? _user =await _userModel.SignWithGoogle();
-    
+
+  _signInWithGoogle(BuildContext context) async {
+    var _userModel = context.read<UserModel>();
+    AppUser? _user = await _userModel.signWithGoogle();
+
     print("created User Id Is : ${_user!.userId}");
   }
-  _saveUser(BuildContext context,AppUser user)async{
-    final _transaction=context.read<MTransaction>();
+
+  _saveUser(BuildContext context, AppUser user) async {
+    final _transaction = context.read<MTransaction>();
     await _transaction.saveUser(user);
   }
 }
