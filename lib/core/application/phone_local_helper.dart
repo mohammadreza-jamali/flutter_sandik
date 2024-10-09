@@ -1,15 +1,11 @@
-import 'dart:convert';
-
-import 'package:http/http.dart' as http;
+import 'package:device_region/device_region.dart';
 
 class PhoneLocalHelper {
   static String phoneLocal = "en";
   static Future getCountryPhoneCode() async {
-    var response = await http.get(Uri.parse('http://ip-api.com/json'));
-    var jsonResponse = json.decode(response.body);
-    final isoCode = jsonResponse['countryCode'];
-    print("country code " + isoCode);
-    phoneLocal = isoCode.toString().toLowerCase();
+    var isoCode = await DeviceRegion.getSIMCountryCode();
+    print("country code $isoCode");
+    phoneLocal = isoCode ?? "ir".toLowerCase();
     //return "+" + countryList.firstWhere((element) => element.isoCode == isoCode, orElse: () => countryList.first).phoneCode;
   }
 }
