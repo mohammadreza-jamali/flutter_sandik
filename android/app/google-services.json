@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "397436294063-am03j6e59635eaecgtjpqim4vhhfs1s1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_sandik",
+            "certificate_hash": "e8cb9d1b64aa9669cc0088498009aef0d9a49c59"
+          }
+        },
+        {
           "client_id": "397436294063-b54rakk7i5sbgp4pubhf9e6i4p93i287.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

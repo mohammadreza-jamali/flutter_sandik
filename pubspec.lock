@@ -249,6 +249,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  device_region:
+    dependency: "direct main"
+    description:
+      name: device_region
+      sha256: d04cc40a445f8c8405e557ec0732e43e18e1a0d2109ddfb191911b15846780c2
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   digit_to_persian_word:
     dependency: "direct main"
     description:
@@ -542,7 +550,7 @@ packages:
     source: hosted
     version: "0.15.4"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
