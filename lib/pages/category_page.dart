@@ -212,7 +212,7 @@ class CategoryGridView extends StatelessWidget {
         itemCount: favoriteCategories.length,
         shrinkWrap: true,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            childAspectRatio: 1, maxCrossAxisExtent: 140, mainAxisExtent: 130),
+            childAspectRatio: 1, maxCrossAxisExtent: 145, mainAxisExtent: 140),
         itemBuilder: (context, position) {
           return CategoryGridViewItem(
             item: favoriteCategories[position],

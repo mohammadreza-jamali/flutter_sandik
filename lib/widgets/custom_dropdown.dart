@@ -2,9 +2,10 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropdown extends StatefulWidget {
-  const CustomDropdown({required this.items,this.onChanged,this.icon,this.hintText=""});
+  const CustomDropdown({required this.items,required this.selectedValue,this.onChanged,this.icon,this.hintText=""});
   final Map<int,String> items;
   final String hintText;
+  final int selectedValue;
   final Icon? icon;
   final Function? onChanged;
 
@@ -13,6 +14,11 @@ class CustomDropdown extends StatefulWidget {
 }
 class _CustomDropdownState extends State<CustomDropdown> {
    int? selectedItem;
+   @override
+   void initState() {
+     super.initState();
+     selectedItem=widget.selectedValue;
+   }
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline( 

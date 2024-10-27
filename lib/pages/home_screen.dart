@@ -8,9 +8,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/phone_local_helper.dart';
+import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
+import 'package:flutter_sandik/core/application/theme_manager.dart';
+import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:flutter_sandik/dtos/transaction_dto.dart';
 import 'package:flutter_sandik/format_helper.dart';
 import 'package:flutter_sandik/gen/assets.gen.dart';
+import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/budget.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -562,8 +566,12 @@ Future _settingBottomSheet(BuildContext context) {
                         0: 'روشن',
                         1: 'تاریک',
                       },
+                      selectedValue: 0,
                       icon: Icon(MdiIcons.themeLightDark),
-                      onChanged: () {},
+                      onChanged: (value) {
+                        SharedPreferenceManager.getInstanse().setThemeName(value == 0 ? ThemeNames.Light.toString() : ThemeNames.Dark.toString());
+                        locator<ThemeManager>().createTheme();
+                      },
                       hintText: 'Chose your favorite theme',
                     ),
                     SizedBox(
@@ -582,8 +590,11 @@ Future _settingBottomSheet(BuildContext context) {
                         0: 'فارسی',
                         1: 'انگلیسی',
                       },
+                      selectedValue: context.locale.languageCode == 'en' ? 1 : 0,
                       icon: Icon(MdiIcons.alphabetGreek),
-                      onChanged: () {},
+                      onChanged: (value) {
+                        context.setLocale(value == 0 ? const Locale('fa') : const Locale('en'));
+                      },
                       hintText: 'Chose app Language',
                     )
                   ],

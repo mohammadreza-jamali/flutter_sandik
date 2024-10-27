@@ -32,10 +32,15 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   @override
   void initState() {
     super.initState();
-    yearController = FixedExtentScrollController(initialItem: 0);
-    monthController = FixedExtentScrollController(initialItem: 0);
     selectedYear = int.parse(widget.initialDate.split("-")[0]);
     selectedMonth = int.parse(widget.initialDate.split("-")[1]);
+    yearController = FixedExtentScrollController(initialItem: 0);
+    monthController = FixedExtentScrollController(initialItem: 0);
+    WidgetsBinding.instance.addPostFrameCallback((_)async{
+      await Future.delayed(const Duration(milliseconds: 100));
+      yearController.jumpTo((selectedYear - widget.minimumYear)*82);
+      monthController.jumpTo((selectedMonth-1) *82);
+    });
   }
 
   @override

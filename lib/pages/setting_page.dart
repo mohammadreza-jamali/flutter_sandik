@@ -41,6 +41,9 @@ class _SettingPageState extends State<SettingPage> {
         automaticallyImplyLeading: false,
         actions: [
           InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
@@ -155,13 +158,6 @@ class _SettingPageState extends State<SettingPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'کاربر صندوق',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
                           FormatHelper.dateFormatter(currentUser!.formattedInsertDate),
                           style: TextStyle(fontSize: 13, color: Colors.grey),
                         ),
@@ -172,81 +168,6 @@ class _SettingPageState extends State<SettingPage> {
                     height: 16,
                   ),
                   UserInfoWidget(currentUser!)
-                  // SizedBox(
-                  //   height: 24,
-                  // ),
-                  // Directionality(
-                  //     textDirection: TextDirection.rtl,
-                  //     child: Text(
-                  //       'تنظیمات حساب کاربری',
-                  //       style: TextStyle(
-                  //           fontSize: 12,
-                  //           color: Colors.grey,
-                  //           fontWeight: FontWeight.bold),
-                  //     )),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  // SettingItem(
-                  //   text: 'ویرایش حساب کاربر',
-                  //   icon: MdiIcons.account,
-                  //   ontap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => EditUserSetting()));
-                  //   },
-                  // ),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
-                  // SettingItem(
-                  //     text: 'تغییر رمز عبور', icon: MdiIcons.lock, ontap: () {}),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
-                  // SettingItem(
-                  //     text: 'خروج از حساب کاربری',
-                  //     icon: MdiIcons.homeExportOutline,
-                  //     ontap: () {}),
-                  // SizedBox(
-                  //   height: 14,
-                  // ),
-                  // Directionality(
-                  //     textDirection: TextDirection.rtl,
-                  //     child: Text(
-                  //       'تنظیمات برنامه',
-                  //       style: TextStyle(
-                  //           fontSize: 12,
-                  //           color: Colors.grey,
-                  //           fontWeight: FontWeight.bold),
-                  //     )),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  // SettingItem(text: 'زبان', icon: MdiIcons.translate, ontap: () {}),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
-                  // SettingItem(
-                  //     text: 'واحد پولی', icon: MdiIcons.currencyUsd, ontap: () {}),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
-                  // SettingItem(
-                  //     text: 'حالت تاریک',
-                  //     icon: MdiIcons.themeLightDark,
-                  //     ontap: () {}),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
-                  // SettingItem(
-                  //     text: 'درباره اپ',
-                  //     icon: MdiIcons.informationSlabCircleOutline,
-                  //     ontap: () {}),
-                  // SizedBox(
-                  //   height: 8,
-                  // ),
                 ],
               ),
             ),
@@ -360,25 +281,6 @@ class ProfileAvatar extends StatelessWidget {
                 ),
               ),
             ),
-            // Positioned(
-            //   top: 12,
-            //   right: 4,
-            //   child: Container(
-            //     width: 24,
-            //     height: 24,
-            //     decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.circular(12),
-            //         color: Color(0xff202040)),
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(2),
-            //       child: Icon(
-            //         MdiIcons.pencil,
-            //         color: Colors.white,
-            //         size: 16,
-            //       ),
-            //     ),
-            //   ),
-            // )
           ],
         ),
       ),

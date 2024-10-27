@@ -1,5 +1,6 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
 import 'package:flutter_sandik/core/constants/app_style.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
+import 'package:flutter_sandik/locale_keys.g.dart';
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
@@ -60,7 +62,7 @@ class _GroupPageState extends State<GroupPage> {
             height: 60,
             padding: EdgeInsets.only(left: 128, right: 96),
             child: Directionality(
-              textDirection: TextDirection.rtl,
+              textDirection: ui.TextDirection.rtl,
               child: FloatingActionButton(
                 backgroundColor: Colors.indigoAccent[50],
                 onPressed: () {
@@ -90,9 +92,9 @@ class _GroupPageState extends State<GroupPage> {
             backgroundColor: Color(0xff050119),
             surfaceTintColor: Color(0xff050119),
             title: Text(
-              'sandog',
+              LocaleKeys.groupPage_pageTitle,
               style: TextStyle(color: Colors.white),
-            ),
+            ).tr(),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () {},
@@ -119,7 +121,7 @@ class _GroupPageState extends State<GroupPage> {
                       itemCount: _groups!.length,
                       itemBuilder: (context, index) {
                         return Directionality(
-                            textDirection: TextDirection.rtl,
+                            textDirection: ui.TextDirection.rtl,
                             child: Slidable(
                               endActionPane: ActionPane(motion: StretchMotion(), extentRatio: 1, children: [
                                 SlidableAction(
@@ -151,7 +153,7 @@ class _GroupPageState extends State<GroupPage> {
                                           group: _groups![index],
                                         ))),
                                 child: BackdropFilter(
-                                  filter: ImageFilter.blur(),
+                                  filter: ui.ImageFilter.blur(),
                                   child: Container(
                                     padding: EdgeInsets.all(8),
                                     margin: EdgeInsets.all(8),
