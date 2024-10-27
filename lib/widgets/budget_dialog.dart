@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/model/budget.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 class BudgetDialog extends StatefulWidget {
   const BudgetDialog({required this.groupId, super.key});
@@ -135,9 +137,10 @@ class _BudgetDialogState extends State<BudgetDialog> with SingleTickerProviderSt
   }
   _saveGroup(BuildContext context) async {
     if (_budget == null || _budget == 0) return;
+
     await _transaction.saveMonthBudget(Budget.init(
         budgetmonth:
-            "${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}",
+            PhoneLocalHelper.phoneLocal == "ir"?"${Jalali.now().year.toString().padLeft(2, "0")}${Jalali.now().month.toString().padLeft(2, "0")}":"${DateTime.now().year.toString().padLeft(2, "0")}${DateTime.now().month.toString().padLeft(2, "0")}",
         budgetValue: _budget,
         groupId: widget.groupId));
   }

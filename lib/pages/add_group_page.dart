@@ -41,14 +41,16 @@ class _AddGroupPageState extends State<AddGroupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Color(0xff050119),
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
+          backgroundColor: Color(0xff050119),
           toolbarHeight: 80,
           title: Text(
             'Add Group',
-            style: TextStyle(color: Color(0xff16398B)),
+            style: TextStyle(color: Colors.white),
           ),
-          iconTheme: IconThemeData(color: Color(0xff16398B)),
+          iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
         ),
         body: Padding(
@@ -81,8 +83,8 @@ class _AddGroupPageState extends State<AddGroupPage> {
                     compareFn: (item, selectedItem) => item.userId == selectedItem.userId,
                     dropdownDecoratorProps: DropDownDecoratorProps(
                       dropdownSearchDecoration: InputDecoration(
-                        labelText: "BottomSheet mode",
-                        hintText: "Select an Int",
+                        labelText: "Group Users",
+                        hintText: "Select your group users",
                       ),
                     ),
                     popupProps: PopupPropsMultiSelection.bottomSheet(
@@ -100,21 +102,37 @@ class _AddGroupPageState extends State<AddGroupPage> {
                       ),
                       bottomSheetProps: BottomSheetProps(
                         elevation: 16,
-                        backgroundColor: Colors.grey.shade50,
+                        backgroundColor: Color(0xff03001C),
                       ),
                     ),
                   )),
-              ElevatedButton(onPressed: () => _addGroupMemberBottomSheet(context, _users), child: Text('add users')),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     ElevatedButton(onPressed: () => _addGroupMemberBottomSheet(context, _users), child: Text('add users',style: TextStyle(color: Color(0xff16398B)),)),
+              //   ],
+              // ),
               SizedBox(
                 height: 32,
               ),
-              ElevatedButton(
-                onPressed: _saveGroup,
-                child: Text(
-                  'ُSAVE',
-                  style: TextStyle(color: Color(0xff16398B)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    onPressed: _saveGroup,
+                    child: Text(
+                      'ُSAVE',
+                      style: TextStyle(color: Colors.blue.shade200),
+                    ),
+                    style: ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(Color(0xff050119)),
+                                        shape: WidgetStatePropertyAll(
+                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        ),
+                                        side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2))),
+                  ),
                 ),
-                style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(150, 50)), backgroundColor: WidgetStateProperty.all(Colors.indigo.shade50)),
               ),
             ],
           ),
@@ -184,6 +202,7 @@ Future _addGroupMemberBottomSheet(BuildContext context, List<AppUser>? users) {
         return Container(
           width: MediaQuery.of(context).size.width,
           height: 400,
+          color: Color(0xff03001C),
           child: Column(
             children: [
               Container(
@@ -203,6 +222,8 @@ Future _addGroupMemberBottomSheet(BuildContext context, List<AppUser>? users) {
                     ),
                     hintText: 'search',
                   ),
+                  style: TextStyle(color: Colors.black),
+                  cursorColor: Color(0xff16398B),
                 ),
               ),
               Expanded(
@@ -210,7 +231,7 @@ Future _addGroupMemberBottomSheet(BuildContext context, List<AppUser>? users) {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                child: ElevatedButton(onPressed: () {}, child: Text('ok')),
+                child: ElevatedButton(onPressed: () {}, child: Text('ok',style: TextStyle(color: Color(0xff16398B)),)),
               ),
             ],
           ),
@@ -257,7 +278,7 @@ class _GroupMembersListItemState extends State<GroupMembersListItem> {
             ),
             child: Row(
               children: [
-                Icon(MdiIcons.account),
+                Icon(MdiIcons.account,color: Colors.white,),
                 SizedBox(
                   width: 8,
                 ),
@@ -269,7 +290,8 @@ class _GroupMembersListItemState extends State<GroupMembersListItem> {
                       setState(() {
                         isCheked = value;
                       });
-                    }),
+                    },
+                    activeColor: Colors.white,),
               ],
             ),
           );

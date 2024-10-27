@@ -414,7 +414,7 @@ class FloatContainer extends StatelessWidget {
                             ),
                             Text(
                               (transactionsInfo["transactions"] as List<MoneyTransaction>).isEmpty
-                                  ? ""
+                                  ? FormatHelper.numberFormatter(0)
                                   : FormatHelper.numberFormatter((transactionsInfo["transactions"] as List<MoneyTransaction>)
                                       .map((transaction) => transaction.amount)
                                       .reduce((value, element) => (value ?? 0) + (element ?? 0))),
@@ -465,7 +465,7 @@ class FloatContainer extends StatelessWidget {
                                       width: 8,
                                     ),
                                     Text(
-                                      FormatHelper.numberFormatter((transactionsInfo["budget"] as Budget?)?.budgetValue) ?? "",
+                                      FormatHelper.numberFormatter((transactionsInfo["budget"] as Budget?)?.budgetValue),
                                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
                                     ),
                                   ],
