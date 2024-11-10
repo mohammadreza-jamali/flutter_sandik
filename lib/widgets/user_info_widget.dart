@@ -100,13 +100,8 @@ class _UserInfoWidgetState extends State<UserInfoWidget> {
               onPressed: () async {
                 await updateUser();
               },
-              child: Text('ویرایش'),
-              style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Color(0xff050119)),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                  ),
-                  side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2))),
+              child: Text('ویرایش',style: TextStyle(color: Colors.blue.shade200),),
+              style: Theme.of(context).elevatedButtonTheme.style,
             ),
           ),
         ),

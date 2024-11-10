@@ -49,16 +49,18 @@ class _ReportPageState extends State<ReportPage> {
         foregroundColor: Color(0xff050119),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        actions: [
-          InkWell(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: Icon(
-                  CupertinoIcons.arrow_right,
-                  color: Colors.white,
+        leading: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+              child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(
+                    CupertinoIcons.arrow_left,
+                    size: 24,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -66,7 +68,6 @@ class _ReportPageState extends State<ReportPage> {
               Navigator.pop(context);
             },
           ),
-        ],
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(

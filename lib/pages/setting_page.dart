@@ -39,24 +39,25 @@ class _SettingPageState extends State<SettingPage> {
         backgroundColor: Color(0xff050119),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        actions: [
-          InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: Icon(
-                  CupertinoIcons.arrow_right,
-                  color: Colors.white,
+        leading: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+              child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(
+                    CupertinoIcons.arrow_left,
+                    size: 24,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
+            onTap: () {
+              Navigator.pop(context);
+            },
           ),
-        ],
         title: Padding(
           padding: const EdgeInsets.only(top: 16),
           child: Text(
@@ -135,13 +136,8 @@ class _SettingPageState extends State<SettingPage> {
                                   currentAvatar.value = selectedAvatar;
                                   await updateUserAvatar();
                                 },
-                                child: Text('تغییر آواتار'),
-                                style: ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(Color(0xff050119)),
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    ),
-                                    side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2))),
+                                child: Text('تغییر آواتار',style:TextStyle(color: Colors.blue.shade200)),
+                                style: Theme.of(context).elevatedButtonTheme.style,
                               ),
                             )
                           ],

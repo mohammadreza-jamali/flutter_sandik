@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
 import 'package:flutter_sandik/core/constants/app_style.dart';
+import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
 import 'package:flutter_sandik/locale_keys.g.dart';
 import 'package:flutter_sandik/locator.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_sandik/pages/home_page.dart';
 import 'package:flutter_sandik/pages/report_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
+import 'package:flutter_sandik/widgets/custom_dropdown.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +66,6 @@ class _GroupPageState extends State<GroupPage> {
             child: Directionality(
               textDirection: ui.TextDirection.rtl,
               child: FloatingActionButton(
-                backgroundColor: Colors.indigoAccent[50],
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AddGroupPage(group: Group())));
                 },
@@ -73,14 +74,14 @@ class _GroupPageState extends State<GroupPage> {
                   children: [
                     Icon(
                       MdiIcons.accountMultiplePlusOutline,
-                      color: Color(0xff16398B),
+                      
                     ),
                     SizedBox(
                       width: 8,
                     ),
                     Text(
                       'افزودن گروه',
-                      style: TextStyle(color: Color(0xff16398B)),
+                      
                     )
                   ],
                 ),
@@ -101,7 +102,12 @@ class _GroupPageState extends State<GroupPage> {
                 icon: Icon(
                   MdiIcons.backburger,
                   color: Colors.white,
-                ))),
+                )),
+              actions: [
+                IconButton(onPressed: (){
+                  _settingBottomSheet(context);
+                }, icon:Icon(MdiIcons.cogOutline,color: Colors.white,))
+              ],),
         body: Column(
           children: [
             Expanded(
@@ -223,4 +229,93 @@ class _GroupPageState extends State<GroupPage> {
     _groups = [];
     _groups = await _transaction.deleteGroup(groupId);
   }
+}
+
+Future _settingBottomSheet(BuildContext context) {
+  return showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+            width: MediaQuery.of(context).size.width,
+            height: 300,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: ui.Radius.circular(35), topRight: ui.Radius.circular(35)),
+              color: Color(0xff03001C),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              child: Directionality(
+                textDirection: ui.TextDirection.rtl,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          MdiIcons.cogOutline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'SETTINGS',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 64,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'Theme :',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    CustomDropdown(
+                      items: const {
+                        0: 'روشن',
+                        1: 'تاریک',
+                      },
+                      selectedValue: 0,
+                      icon: Icon(MdiIcons.themeLightDark),
+                      onChanged: (value) {
+                        SharedPreferenceManager.getInstanse().setThemeName(value == 0 ? ThemeNames.Light.toString() : ThemeNames.Dark.toString());
+                        locator<ThemeManager>().createTheme();
+                      },
+                      hintText: 'Chose your favorite theme',
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text('Language :', style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                    CustomDropdown(
+                      items: const {
+                        0: 'فارسی',
+                        1: 'انگلیسی',
+                      },
+                      selectedValue: context.locale.languageCode == 'en' ? 1 : 0,
+                      icon: Icon(MdiIcons.alphabetGreek),
+                      onChanged: (value) {
+                        context.setLocale(value == 0 ? const Locale('fa') : const Locale('en'));
+                      },
+                      hintText: 'Chose app Language',
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ));
 }

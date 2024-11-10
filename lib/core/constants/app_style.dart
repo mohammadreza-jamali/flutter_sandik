@@ -141,10 +141,10 @@ class AppStyle {
       ));
 
   static ColorScheme colorSchemeDark = ColorScheme(
-    primary: const Color(0xFF607196),
+    primary: const Color(0xff050119),
     secondary: Colors.white,
     surface: Colors.white,
-    background: Colors.white,
+    background: Color(0xff050119),
     brightness: Brightness.dark,
     error: deepRed,
     onBackground: Colors.white,
@@ -164,18 +164,33 @@ class AppStyle {
         focusedBorder: bottomLightInputBorder,
         border: bottomLightInputBorder,
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2)),
+                                    textStyle: WidgetStatePropertyAll(TextStyle(color: Colors.blue.shade200)),
+                                    foregroundColor: WidgetStatePropertyAll(Colors.blue.shade200),
+        )
+      ),
       appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFF607196),
-          actionsIconTheme: IconThemeData(color: Color(0xFFE8E9ED)),
+          backgroundColor: Color(0xff050119),
+          actionsIconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
-          foregroundColor: Color(0xFFE8E9ED)),
+          foregroundColor: Colors.white),
       
       highlightColor: const Color(0xFF607196).withOpacity(0.8),
-      primaryColor: Color(0xFFE8E9ED),
-      hintColor: Color(0xFFFF7B9C),
-      cardColor: const Color(0xFFFFC759),
-      canvasColor: Color(0xffbabfd1),
-      disabledColor: Color(0xffbabfd1),
+      primaryColor: Color(0xff050119),
+      hintColor: Colors.white,
+      //cardColor: const Color(0xFFFFC759),
+      //canvasColor: Color(0xffbabfd1),
+      //disabledColor: Color(0xffbabfd1),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Color(0Xff55679C),
+        foregroundColor: Color(0xff5AB2FF),
+      ),
       textTheme:  TextTheme(
         bodyLarge: TextStyle(color: Color(0xFF607196)),
         bodyMedium: TextStyle(color: Color(0xFF607196)),

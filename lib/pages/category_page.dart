@@ -34,23 +34,25 @@ class _CategoryPageState extends State<CategoryPage> {
             backgroundColor: Color(0xff03001C),
             centerTitle: true,
             automaticallyImplyLeading: false,
-            actions: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16,vertical: 4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Icon(CupertinoIcons.arrow_right,color: Colors.white,),
+            leading: InkWell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
+              child: Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Icon(
+                    CupertinoIcons.arrow_left,
+                    size: 24,
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ],
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
             title: Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(

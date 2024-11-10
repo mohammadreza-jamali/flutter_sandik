@@ -44,10 +44,13 @@ class _AddTransactionState extends State<AddTransaction> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Center(child: Assets.images.transactionPhoto.image(width: 400, height: 300)),
+                child: Center(
+                    child: Assets.images.transactionPhoto
+                        .image(width: 400, height: 300)),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Container(
                   child: Column(
                     children: [
@@ -79,7 +82,8 @@ class _AddTransactionState extends State<AddTransaction> {
                       FutureBuilder(
                           future: getCategories(),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.done) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
                               return GenericCustomDropdown<String>(
                                   items: _categoriesMap,
                                   hintText: "select your category",
@@ -99,10 +103,10 @@ class _AddTransactionState extends State<AddTransaction> {
                         width: 160,
                         height: 50,
                         child: ElevatedButton(
+                            style: Theme.of(context).elevatedButtonTheme.style,
                             onPressed: () => _saveTransaction(context),
                             child: Text(
-                              "Save",
-                              style: TextStyle(color: Color(0xff1A1A40)),
+                              'Save',
                             )),
                       )
                     ],
@@ -119,7 +123,8 @@ class _AddTransactionState extends State<AddTransaction> {
   getCategories() async {
     var _transaction = context.read<MTransaction>();
     _categories = await _transaction.getAllCategories(widget.groupId);
-    _categoriesMap.addEntries((_categories ?? []).map((category) => {category.categoryId!: category.categoryName!}.entries.first));
+    _categoriesMap.addEntries((_categories ?? []).map((category) =>
+        {category.categoryId!: category.categoryName!}.entries.first));
   }
 
   _saveTransaction(BuildContext context) async {
@@ -139,7 +144,8 @@ class _AddTransactionState extends State<AddTransaction> {
         description: _description,
         userId: _userModel.getCurrentUser()!.userId!,
         month: filterDate));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Your Paid Saved Successfully"), showCloseIcon: true));
 
     Navigator.of(context).pop();
   }
@@ -147,7 +153,8 @@ class _AddTransactionState extends State<AddTransaction> {
   String _faDateTime() {
     DateTime now = DateTime.now();
     initializeDateFormatting(' fa ', null);
-    String formattedDatePersian = DateFormat(' yyyy_MM_dd HH:mm:ss ', ' fa_IR ').format(now);
+    String formattedDatePersian =
+        DateFormat(' yyyy_MM_dd HH:mm:ss ', ' fa_IR ').format(now);
     return (formattedDatePersian);
   }
 }

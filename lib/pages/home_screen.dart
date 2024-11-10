@@ -78,7 +78,10 @@ class _HomeScreenState extends State<HomeScreen> {
 //     barrierDismissible: false, // optional parameter (default is true)
 // );
             if (snapshot.connectionState == ConnectionState.done) {
-              var currentUserAvatar = groupUsers!.firstWhere((user) => user.userId == widget.currentUser.userId).avatarName;
+              var currentUserAvatar = groupUsers!
+                  .firstWhere(
+                      (user) => user.userId == widget.currentUser.userId)
+                  .avatarName;
               return Container(
                 color: Color(0xff050119),
                 child: Padding(
@@ -103,11 +106,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              MinimalButton(
+                              InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: Icon(
+                                      CupertinoIcons.arrow_left,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                                 onTap: () {
-                                  _settingBottomSheet(context);
+                                  Navigator.pop(context);
                                 },
-                                icon: Assets.images.icons.question,
                               ),
                               Expanded(
                                   child: Padding(
@@ -120,12 +135,15 @@ class _HomeScreenState extends State<HomeScreen> {
                               Container(
                                   width: 35,
                                   height: 35,
-                                  decoration:
-                                      BoxDecoration(color: Colors.blue, border: Border.all(color: Colors.black), borderRadius: BorderRadius.circular(4)),
+                                  decoration: BoxDecoration(
+                                      color: Colors.blue,
+                                      border: Border.all(color: Colors.black),
+                                      borderRadius: BorderRadius.circular(4)),
                                   child: currentUserAvatar == null
                                       ? Icon(Icons.person)
                                       : ClipRRect(
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                           child: Image.asset(
                                             "assets/images/avatars/$currentUserAvatar.jpg",
                                             fit: BoxFit.cover,
@@ -152,7 +170,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Expanded(
                         child: (_transactions ?? []).isNotEmpty
-                            ? CostListView(costs: _transactions ?? [], categories: _categories ?? [], users: groupUsers ?? [])
+                            ? CostListView(
+                                costs: _transactions ?? [],
+                                categories: _categories ?? [],
+                                users: groupUsers ?? [])
                             : Column(
                                 children: [
                                   Expanded(
@@ -162,7 +183,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   Text(
                                     'هنوز چیزی خرج نکردی !',
-                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
                                     textDirection: ui.TextDirection.rtl,
                                   ),
                                   SizedBox(
@@ -170,7 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   Text(
                                     'اولین خرجت رو اضافه کن.',
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey.shade300),
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey.shade300),
                                     textDirection: ui.TextDirection.rtl,
                                   ),
                                   SizedBox(
@@ -195,10 +222,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future _getInfo() async {
-    transactionsInfo = await _transaction.getTransactionInfo(widget.group.groupId!, filterDate);
+    transactionsInfo = await _transaction.getTransactionInfo(
+        widget.group.groupId!, filterDate);
     _transactions = transactionsInfo["transactions"];
     _categories = await _transaction.getAllCategories(widget.group.groupId!);
-    groupUsers = await _transaction.getUsersByIds(widget.group.groupUsers!.map((user) => user.toString()).toList());
+    groupUsers = await _transaction.getUsersByIds(
+        widget.group.groupUsers!.map((user) => user.toString()).toList());
   }
 }
 
@@ -220,8 +249,10 @@ class CostListView extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 16),
         itemBuilder: (context, index) {
-          var costCategory = categories.firstWhere((category) => category.categoryId == costs[index].categoryId);
-          var user = users.firstWhere((user) => user.userId == costs[index].userId);
+          var costCategory = categories.firstWhere(
+              (category) => category.categoryId == costs[index].categoryId);
+          var user =
+              users.firstWhere((user) => user.userId == costs[index].userId);
           return CostListItem(
               cost: costs
                   .map((cost) => TransactionDto(
@@ -290,7 +321,8 @@ class CostListItem extends StatelessWidget {
                   ],
                 ),
                 Text(
-                  FormatHelper.dateFormatter(cost.insertDate?.toDate() ?? DateTime.now()),
+                  FormatHelper.dateFormatter(
+                      cost.insertDate?.toDate() ?? DateTime.now()),
                   style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
                 )
               ],
@@ -350,7 +382,10 @@ class FloatContainer extends StatelessWidget {
       ]),
       child: Stack(children: [
         ClipRRect(
-          child: Assets.images.backgrounds.darkCardBackground.image(width: MediaQuery.of(context).size.width, height: 220, fit: BoxFit.cover),
+          child: Assets.images.backgrounds.darkCardBackground.image(
+              width: MediaQuery.of(context).size.width,
+              height: 220,
+              fit: BoxFit.cover),
           borderRadius: BorderRadius.circular(12),
         ),
         ClipRRect(
@@ -359,7 +394,9 @@ class FloatContainer extends StatelessWidget {
             filter: ui.ImageFilter.blur(sigmaX: 1, sigmaY: 1),
             child: Container(
               height: 220,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Color.fromARGB(0, 15, 15, 15).withOpacity(0.2)),
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Row(
@@ -373,16 +410,26 @@ class FloatContainer extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTransaction(groupId)));
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddTransaction(groupId)));
                               },
                               style: ButtonStyle(
-                                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(35))),
+                                backgroundColor:
+                                    WidgetStateProperty.all(Colors.transparent),
+                                shape: WidgetStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(35))),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('افزودن خرج', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                                  Text('افزودن خرج',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12)),
                                   SizedBox(
                                     width: 4,
                                   ),
@@ -401,7 +448,10 @@ class FloatContainer extends StatelessWidget {
                       children: [
                         Text(
                           'مخارج ${DateTime.now().toJalali().formatter.mN} ماه',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12),
                         ),
                         SizedBox(
                           height: 16,
@@ -411,18 +461,30 @@ class FloatContainer extends StatelessWidget {
                           children: [
                             Text(
                               'تومان',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10),
                             ),
                             SizedBox(
                               width: 8,
                             ),
                             Text(
-                              (transactionsInfo["transactions"] as List<MoneyTransaction>).isEmpty
+                              (transactionsInfo["transactions"]
+                                          as List<MoneyTransaction>)
+                                      .isEmpty
                                   ? FormatHelper.numberFormatter(0)
-                                  : FormatHelper.numberFormatter((transactionsInfo["transactions"] as List<MoneyTransaction>)
-                                      .map((transaction) => transaction.amount)
-                                      .reduce((value, element) => (value ?? 0) + (element ?? 0))),
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 32),
+                                  : FormatHelper.numberFormatter(
+                                      (transactionsInfo["transactions"]
+                                              as List<MoneyTransaction>)
+                                          .map((transaction) =>
+                                              transaction.amount)
+                                          .reduce((value, element) =>
+                                              (value ?? 0) + (element ?? 0))),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 32),
                             )
                           ],
                         ),
@@ -432,45 +494,68 @@ class FloatContainer extends StatelessWidget {
                         Container(
                             alignment: Alignment.centerRight,
                             child: Text(
-                                (transactionsInfo["transactions"] as List<MoneyTransaction>).isEmpty
+                                (transactionsInfo["transactions"]
+                                            as List<MoneyTransaction>)
+                                        .isEmpty
                                     ? ""
                                     : DigitToWord.toWord(
-                                            (transactionsInfo["transactions"] as List<MoneyTransaction>)
-                                                .map((transaction) => transaction.amount)
-                                                .reduce((value, element) => (value ?? 0) + (element ?? 0))
+                                            (transactionsInfo["transactions"]
+                                                    as List<MoneyTransaction>)
+                                                .map((transaction) =>
+                                                    transaction.amount)
+                                                .reduce((value, element) =>
+                                                    (value ?? 0) +
+                                                    (element ?? 0))
                                                 ?.truncate()
                                                 .toString(),
                                             StrType.StrWord) +
                                         ' تومان',
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10))),
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10))),
                         SizedBox(
                           height: 16,
                         ),
                         Expanded(
                           child: Container(
                             padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(color: Colors.transparent.withOpacity(0.3), borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(
+                                color: Colors.transparent.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(8)),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   'بودجه :',
                                   textDirection: ui.TextDirection.rtl,
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
                                       'تومان',
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 10),
                                     ),
                                     SizedBox(
                                       width: 8,
                                     ),
                                     Text(
-                                      FormatHelper.numberFormatter((transactionsInfo["budget"] as Budget?)?.budgetValue),
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                                      FormatHelper.numberFormatter(
+                                          (transactionsInfo["budget"]
+                                                  as Budget?)
+                                              ?.budgetValue),
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -505,7 +590,8 @@ class MinimalButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(color: Color(0xff16398B), borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(
+            color: Color(0xff16398B), borderRadius: BorderRadius.circular(4)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: icon.svg(width: 16, height: 16, color: Colors.white),
@@ -522,7 +608,9 @@ Future _settingBottomSheet(BuildContext context) {
             width: MediaQuery.of(context).size.width,
             height: 300,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: ui.Radius.circular(35), topRight: ui.Radius.circular(35)),
+              borderRadius: BorderRadius.only(
+                  topLeft: ui.Radius.circular(35),
+                  topRight: ui.Radius.circular(35)),
               color: Color(0xff03001C),
             ),
             child: Padding(
@@ -569,7 +657,10 @@ Future _settingBottomSheet(BuildContext context) {
                       selectedValue: 0,
                       icon: Icon(MdiIcons.themeLightDark),
                       onChanged: (value) {
-                        SharedPreferenceManager.getInstanse().setThemeName(value == 0 ? ThemeNames.Light.toString() : ThemeNames.Dark.toString());
+                        SharedPreferenceManager.getInstanse().setThemeName(
+                            value == 0
+                                ? ThemeNames.Light.toString()
+                                : ThemeNames.Dark.toString());
                         locator<ThemeManager>().createTheme();
                       },
                       hintText: 'Chose your favorite theme',
@@ -582,7 +673,8 @@ Future _settingBottomSheet(BuildContext context) {
                         SizedBox(
                           width: 4,
                         ),
-                        Text('Language :', style: TextStyle(color: Colors.white)),
+                        Text('Language :',
+                            style: TextStyle(color: Colors.white)),
                       ],
                     ),
                     CustomDropdown(
@@ -590,10 +682,13 @@ Future _settingBottomSheet(BuildContext context) {
                         0: 'فارسی',
                         1: 'انگلیسی',
                       },
-                      selectedValue: context.locale.languageCode == 'en' ? 1 : 0,
+                      selectedValue:
+                          context.locale.languageCode == 'en' ? 1 : 0,
                       icon: Icon(MdiIcons.alphabetGreek),
                       onChanged: (value) {
-                        context.setLocale(value == 0 ? const Locale('fa') : const Locale('en'));
+                        context.setLocale(value == 0
+                            ? const Locale('fa')
+                            : const Locale('en'));
                       },
                       hintText: 'Chose app Language',
                     )
