@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
-import 'package:flutter_sandik/core/constants/app_style.dart';
 import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
 import 'package:flutter_sandik/locale_keys.g.dart';
@@ -15,7 +14,6 @@ import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/add_group_page.dart';
 import 'package:flutter_sandik/pages/home_page.dart';
-import 'package:flutter_sandik/pages/report_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
@@ -282,7 +280,7 @@ Future _settingBottomSheet(BuildContext context) {
                         0: 'روشن',
                         1: 'تاریک',
                       },
-                      selectedValue: 0,
+                      selectedValue: SharedPreferenceManager.getInstanse().getThemeName() == ThemeNames.Light.toString() ? 0 : 1,
                       icon: Icon(MdiIcons.themeLightDark),
                       onChanged: (value) {
                         SharedPreferenceManager.getInstanse().setThemeName(value == 0 ? ThemeNames.Light.toString() : ThemeNames.Dark.toString());

@@ -15,8 +15,8 @@ class AppStyle {
     'assets/images/logo.png',
     height: 120,
   );
-  static MaterialStateBorderSide linkButtonBorder =
-      MaterialStateBorderSide.resolveWith((states) => BorderSide.none);
+  static WidgetStateBorderSide linkButtonBorder =
+      WidgetStateBorderSide.resolveWith((states) => BorderSide.none);
 
   static MaterialColor shadowColor = Colors.grey;
   static Color backgroundColor = Colors.grey.shade200;
@@ -84,10 +84,8 @@ class AppStyle {
     primary: Color(0xffbabfd1),
     secondary: Colors.white,
     surface: Colors.white,
-    background: Colors.white,
     brightness: Brightness.light,
     error: deepRed,
-    onBackground: Colors.white,
     onError: Color(0xffbabfd1),
     onPrimary: Color(0xffbabfd1),
     onSecondary: Color(0xffbabfd1),
@@ -144,10 +142,8 @@ class AppStyle {
     primary: const Color(0xff050119),
     secondary: Colors.white,
     surface: Colors.white,
-    background: Color(0xff050119),
     brightness: Brightness.dark,
     error: deepRed,
-    onBackground: Colors.white,
     onError: const Color(0xFF607196),
     onPrimary: const Color(0xFF607196),
     onSecondary: const Color(0xFF607196),

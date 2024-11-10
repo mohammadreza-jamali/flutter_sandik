@@ -1,3 +1,5 @@
+import 'package:flutter_sandik/dtos/login_dto.dart';
+import 'package:flutter_sandik/dtos/sign_result_dto.dart';
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/services/abstract/auth_base.dart';
@@ -21,5 +23,15 @@ class UserRepository implements IAuthBase {
   @override
   Future<AppUser?> signWithGoogle() async {
     return await _authService.signWithGoogle();
+  }
+
+  @override
+  Future<SignResultDto?> registerWithEmailPassword(LoginDto dto) async {
+    return await _authService.registerWithEmailPassword(dto);
+  }
+
+  @override
+  Future<SignResultDto?> signWithEmailPassword(LoginDto dto) async {
+    return await _authService.signWithEmailPassword(dto);
   }
 }

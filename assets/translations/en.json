@@ -1,5 +1,32 @@
 {
     "groupPage":{
         "pageTitle":"Groups"
+    },
+    "customDatePicker":{
+        "title":"Select Date",
+        "gregorianMonth1":"January",
+        "gregorianMonth2":"February",
+        "gregorianMonth3":"March",
+        "gregorianMonth4":"April",
+        "gregorianMonth5":"May",
+        "gregorianMonth6":"June",
+        "gregorianMonth7":"July",
+        "gregorianMonth8":"August",
+        "gregorianMonth9":"September",
+        "gregorianMonth10":"October",
+        "gregorianMonth11":"November",
+        "gregorianMonth12":"December",
+        "persianMonth1":"Farvardin",
+        "persianMonth2":"Ordibehest",
+        "persianMonth3":"Xordad",
+        "persianMonth4":"Tir",
+        "persianMonth5":"Mordad",
+        "persianMonth6":"Shahrivar",
+        "persianMonth7":"Mehr",
+        "persianMonth8":"Aban",
+        "persianMonth9":"Azar",
+        "persianMonth10":"Dey",
+        "persianMonth11":"Bahman",
+        "persianMonth12":"Esfand"
     }
 }

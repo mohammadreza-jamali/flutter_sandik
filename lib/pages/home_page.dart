@@ -9,8 +9,6 @@ import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/category_page.dart';
-import 'package:flutter_sandik/pages/group_page.dart';
-import 'package:flutter_sandik/pages/home_screen.dart';
 import 'package:flutter_sandik/pages/report_page.dart';
 import 'package:flutter_sandik/pages/setting_page.dart';
 import 'package:flutter_sandik/widgets/budget_overlay_view.dart';
@@ -31,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   late EventBus _eventBus;
   late ThemeDto currentTheme;
   late SharedPreferenceManager _preference;
+    final pageController=PageController();
   late Map<int, Function> navigationItems = {
     1: _setTheme,
   };
@@ -64,6 +63,12 @@ class _HomePageState extends State<HomePage> {
                 animationDuration: Duration(milliseconds: 500),
                 selectedIndex: selectedScreenIndex,
                 height: 55,
+                onItemSelected: (index) {
+                  selectedScreenIndex=index;
+                  pageController.jumpToPage(selectedScreenIndex);
+                  setState(() {
+                  });
+                },
                 items: [
                   FlashyTabBarItem(
                       icon: Icon(
@@ -101,13 +106,15 @@ class _HomePageState extends State<HomePage> {
                         'گزارش',
                         style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
                       )),
-                ],
-                onItemSelected: (index) => setState(() {
-                      selectedScreenIndex = index;
-                    })),
+                ],),
           ),
-          body: IndexedStack(
-            index: selectedScreenIndex,
+          body: PageView(
+            controller: pageController,
+            onPageChanged: (value) {
+              setState(() {
+                selectedScreenIndex = value;
+              });
+            },
             children: [
               BudgetOverlayView(group: widget.group, currentUser: widget.user!),
               CategoryPage(widget.group.groupId!),

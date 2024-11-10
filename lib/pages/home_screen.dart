@@ -20,18 +20,12 @@ import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/user.dart';
-import 'package:flutter_sandik/pages/add_budget.dart';
 import 'package:flutter_sandik/pages/add_transaction.dart';
-import 'package:flutter_sandik/pages/data.dart';
-import 'package:flutter_sandik/pages/transactions_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
-import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_sandik/core/application/persian_date_helper.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class HomeScreen extends StatefulWidget {
