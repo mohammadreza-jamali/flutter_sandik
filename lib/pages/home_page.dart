@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           bottomNavigationBar: Directionality(
             textDirection: TextDirection.rtl,
             child: FlashyTabBar(
-                backgroundColor: Color(0xff050119),
+                backgroundColor: Theme.of(context).primaryColor,
                 animationCurve: Curves.easeInOutExpo,
                 animationDuration: Duration(milliseconds: 500),
                 selectedIndex: selectedScreenIndex,
@@ -73,38 +73,38 @@ class _HomePageState extends State<HomePage> {
                   FlashyTabBarItem(
                       icon: Icon(
                         MdiIcons.home,
-                        color: Colors.white,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
                       title: Text(
                         'خانه',
-                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
                       )),
                   FlashyTabBarItem(
                       icon: Icon(
                         MdiIcons.selectGroup,
-                        color: Colors.white,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
                       title: Text(
                         'دسته بندی',
-                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
                       )),
                   FlashyTabBarItem(
                       icon: Icon(
                         MdiIcons.accountTie,
-                        color: Colors.white,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
                       title: Text(
                         'پروفایل',
-                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
                       )),
                   FlashyTabBarItem(
                       icon: Icon(
                         MdiIcons.chartArc,
-                        color: Colors.white,
+                        color: Theme.of(context).primaryIconTheme.color,
                       ),
                       title: Text(
                         'گزارش',
-                        style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
                       )),
                 ],),
           ),

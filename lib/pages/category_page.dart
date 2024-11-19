@@ -29,22 +29,22 @@ class _CategoryPageState extends State<CategoryPage> {
     _transaction = Provider.of<MTransaction>(context, listen: true);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xff050119),
+        backgroundColor: Theme.of(context).primaryColor,
           appBar: AppBar(
-            backgroundColor: Color(0xff03001C),
+            backgroundColor: Theme.of(context).primaryColor,
             centerTitle: true,
             automaticallyImplyLeading: false,
             leading: InkWell(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
               child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color:Theme.of(context).primaryIconTheme.color!)),
                 child: Padding(
                   padding: const EdgeInsets.all(2),
                   child: Icon(
                     CupertinoIcons.arrow_left,
                     size: 24,
-                    color: Colors.white,
+                    color: Theme.of(context).primaryIconTheme.color,
                   ),
                 ),
               ),
@@ -57,10 +57,6 @@ class _CategoryPageState extends State<CategoryPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
                 'دسته بندی ها',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white),
               ),
             ),
           ),
@@ -74,10 +70,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   children: [
                     Text(
                       'دسته بندی های پیش فرض',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.white),
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
                 ),
@@ -126,10 +119,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     ),
                     Text(
                       'دسته بندی های شما',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                      style: Theme.of(context).textTheme.titleMedium
                     ),
                   ],
                 ),
@@ -158,10 +148,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                               ),
                                               Text(
                                                 'دسته بندی نداری!',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
+                                                style: Theme.of(context).textTheme.headlineLarge,
                                                 textDirection:
                                                     TextDirection.rtl,
                                               ),
@@ -174,7 +161,7 @@ class _CategoryPageState extends State<CategoryPage> {
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.bold,
                                                     color:
-                                                        Colors.grey.shade300),
+                                                        Colors.grey.shade500),
                                                 textDirection:
                                                     TextDirection.rtl,
                                               ),
@@ -302,7 +289,6 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(40),topRight: Radius.circular(40)),
-                color: Color(0xff03001C),
               ),
               height: 400,
               child: Padding(
@@ -357,7 +343,9 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                                         : Colors.transparent,
                                     width: 40,
                                     height: 40,
-                                    child: Icon(icons[index],color: Colors.white,),
+                                    child: Icon(icons[index],color: value == index
+                                        ? Colors.white
+                                        : Theme.of(context).iconTheme.color,),
                                   );
                                 },
                               ),
@@ -380,13 +368,7 @@ Future _addCategoryBottomSheet(BuildContext context, String groupId) {
                               icon: selectedIcon));
                         },
                         child: Text(
-                          'SAVE',
-                          style: TextStyle(color: Color(0xff1A1A40)),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(Colors.indigo.shade50),
-                        ),
+                          'SAVE',                        ),
                       ),
                     )
                   ],

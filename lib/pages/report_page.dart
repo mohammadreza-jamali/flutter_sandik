@@ -50,10 +50,7 @@ class _ReportPageState extends State<ReportPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Color(0xff050119),
       appBar: AppBar(
-        backgroundColor: Color(0xff050119),
-        foregroundColor: Color(0xff050119),
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: InkWell(
@@ -62,13 +59,13 @@ class _ReportPageState extends State<ReportPage> {
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300)),
+                  border: Border.all(color: Theme.of(context).iconTheme.color!)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
                   CupertinoIcons.arrow_left,
                   size: 24,
-                  color: Colors.white,
+                  color: Theme.of(context).iconTheme.color,
                 ),
               ),
             ),
@@ -81,8 +78,6 @@ class _ReportPageState extends State<ReportPage> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Text(
             'گزارش گیری',
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
@@ -94,7 +89,7 @@ class _ReportPageState extends State<ReportPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'نوع گزارش',
-                style: TextStyle(fontSize: 16, color: Colors.white),
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
             Padding(
@@ -126,7 +121,7 @@ class _ReportPageState extends State<ReportPage> {
                         textDirection: TextDirection.rtl,
                         child: Text(
                           'انتخاب ماه',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: Theme.of(context).textTheme.titleMedium,
                         )),
                     SizedBox(
                       height: 8,
@@ -492,7 +487,6 @@ class ChartData {
 Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
   int selectIndex = selected;
   return await showModalBottomSheet<int>(
-      backgroundColor: Color(0xff03001C),
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -505,7 +499,7 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                       children: [
                         Text(
                           'انتخاب نوع گزارش',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          style: Theme.of(context).textTheme.headlineLarge,
                         ),
                         SizedBox(
                           height: 16,
@@ -524,12 +518,12 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             radius: 64,
                             child: Card(
                               shadowColor: selectIndex == 0
-                                  ? Colors.blue.shade200
+                                  ? Colors.blue.shade500
                                   : Colors.transparent,
                               elevation: 10,
                               color: selectIndex == 0
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                                  ? Theme.of(context).cardTheme.color
+                                  : Colors.white,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 0
                                   ? RoundedRectangleBorder(
@@ -548,8 +542,9 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                     Text(
                                       'گزارش کلی',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style:selectIndex == 0
+                                  ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
+                                  : Theme.of(context).textTheme.headlineMedium,
                                     ),
                                   ],
                                 ),
@@ -575,12 +570,12 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                             radius: 64,
                             child: Card(
                               shadowColor: selectIndex == 1
-                                  ? Colors.blue.shade200
+                                  ? Colors.blue.shade500
                                   : Colors.transparent,
                               elevation: 10,
                               color: selectIndex == 1
-                                  ? Colors.grey.shade800
-                                  : Colors.transparent,
+                                  ? Theme.of(context).cardTheme.color
+                                  : Colors.white,
                               surfaceTintColor: Colors.white,
                               shape: selectIndex == 1
                                   ? RoundedRectangleBorder(
@@ -599,8 +594,9 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                     Text(
                                       'گزارش ماهانه',
                                       textDirection: TextDirection.rtl,
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                      style:selectIndex == 1
+                                  ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
+                                  : Theme.of(context).textTheme.headlineMedium,
                                     ),
                                   ],
                                 ),
@@ -627,7 +623,6 @@ Future<String?> _monthCalendarBottomSheet(
         selectedDate = value;
         Navigator.pop(context, selectedDate);
       },
-      backgroundColor: Colors.white,
     ),
   );
 }

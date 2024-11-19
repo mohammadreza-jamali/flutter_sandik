@@ -34,22 +34,22 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff050119),
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
-        backgroundColor: Color(0xff050119),
+        backgroundColor: Theme.of(context).primaryColor,
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: InkWell(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 13),
               child: Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: Theme.of(context).primaryIconTheme.color!)),
                 child: Padding(
                   padding: const EdgeInsets.all(2),
                   child: Icon(
                     CupertinoIcons.arrow_left,
                     size: 24,
-                    color: Colors.white,
+                    color: Theme.of(context).primaryIconTheme.color,
                   ),
                 ),
               ),
@@ -62,7 +62,6 @@ class _SettingPageState extends State<SettingPage> {
           padding: const EdgeInsets.only(top: 16),
           child: Text(
             'تنظیمات',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white),
           ),
         ),
       ),
@@ -117,7 +116,7 @@ class _SettingPageState extends State<SettingPage> {
                           children: [
                             Text(
                               'پروفایل شما',
-                              style: TextStyle(fontSize: 18, color: Colors.white),
+                              style: Theme.of(context).textTheme.titleLarge,
                             ),
                             SizedBox(
                               height: 24,

@@ -77,12 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       (user) => user.userId == widget.currentUser.userId)
                   .avatarName;
               return Container(
-                color: Color(0xff050119),
+                color: Theme.of(context).primaryColor,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Column(children: [
                     Container(
-                      color: Color(0xff050119),
+                      color: Theme.of(context).primaryColor,
                       child: Stack(children: [
                         Container(
                           height: 330,
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Container(
                               height: 230,
-                              color: Color(0xff050119),
+                              color: Theme.of(context).primaryColor,
                             ),
                           ],
                         ),
@@ -105,12 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
-                                          color: Colors.grey.shade300)),
+                                          color: Theme.of(context).primaryIconTheme.color!)),
                                   child: Padding(
                                     padding: const EdgeInsets.all(2),
                                     child: Icon(
                                       CupertinoIcons.arrow_left,
-                                      color: Colors.white,
+                                      color: Theme.of(context).primaryIconTheme.color,
                                     ),
                                   ),
                                 ),
@@ -277,7 +277,7 @@ class CostListItem extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Color(0xff1B202C),
+        color: Theme.of(context).cardTheme.color,
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 24, 8, 24),
@@ -291,7 +291,7 @@ class CostListItem extends StatelessWidget {
           ),
           Text(
             FormatHelper.numberFormatter(cost.amount),
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           Expanded(
             child: Column(
@@ -302,7 +302,7 @@ class CostListItem extends StatelessWidget {
                   children: [
                     Text(
                       cost.description ?? "",
-                      style: TextStyle(color: Colors.white),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     SizedBox(
                       width: 8,
@@ -310,7 +310,7 @@ class CostListItem extends StatelessWidget {
                     Icon(
                       MdiIcons.fromString(cost.icon!),
                       size: 14,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.bodyMedium!.color,
                     ),
                   ],
                 ),
@@ -376,7 +376,10 @@ class FloatContainer extends StatelessWidget {
       ]),
       child: Stack(children: [
         ClipRRect(
-          child: Assets.images.backgrounds.darkCardBackground.image(
+          child: ThemeManager().getTheme().themeName==ThemeNames.Dark? Assets.images.backgrounds.darkCardBackground.image(
+              width: MediaQuery.of(context).size.width,
+              height: 220,
+              fit: BoxFit.cover):Assets.images.backgrounds.lightCardBackground.image(
               width: MediaQuery.of(context).size.width,
               height: 220,
               fit: BoxFit.cover),

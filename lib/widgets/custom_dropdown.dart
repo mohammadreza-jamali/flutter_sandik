@@ -113,7 +113,11 @@ class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
                  dropdownStyleData: DropdownStyleData(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey.shade300
                   )
+                 ),
+                 menuItemStyleData: MenuItemStyleData(
+                  overlayColor: WidgetStatePropertyAll(Colors.grey.shade300),
                  ),
 
                  selectedItemBuilder: (BuildContext context){return widget.items.entries.map<Row>((e) =>Row(

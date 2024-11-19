@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppStyle {
   static double smallFontSize = scaleFont(12);
@@ -81,9 +82,9 @@ class AppStyle {
         offset: const Offset(0, 0))
   ]);
   static ColorScheme colorSchemeLight = ColorScheme(
-    primary: Color(0xffbabfd1),
-    secondary: Colors.white,
-    surface: Colors.white,
+    primary: Color(0xfff2f2f2),
+    secondary: Color(0xfff8f9fa),
+    surface: Color(0xfff2f2f2),
     brightness: Brightness.light,
     error: deepRed,
     onError: Color(0xffbabfd1),
@@ -116,23 +117,54 @@ class AppStyle {
         border: bottomLightInputBorder,
       ),
       appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xffbabfd1),
+          systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Color(0xfff2f2f2),statusBarIconBrightness: Brightness.dark,systemStatusBarContrastEnforced: false),
+          backgroundColor: Color(0xfff2f2f2),
           actionsIconTheme: IconThemeData(color: Color(0xFF607196)),
           centerTitle: true,
-          foregroundColor: Color(0xFF607196)),
+          foregroundColor: Color(0xff050119),
+          titleTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xff050119))),
+
+      primaryIconTheme: IconThemeData(
+        color: Color(0xff050119)
+      ),
+
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Color(0xff050119)
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(Color(0xff1b2a41)),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                    side: WidgetStatePropertyAll(BorderSide(color: Colors.blue.shade200, width: 2)),
+                                    textStyle: WidgetStatePropertyAll(TextStyle(color: Colors.blue.shade200)),
+                                    foregroundColor: WidgetStatePropertyAll(Colors.blue.shade200),
+        )
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Color(0xffdee2e6)
+      ),
+
+      cardTheme: CardTheme(
+        color: Color(0xffdddddd),
+      ),
+      
       
       highlightColor: Color(0xffbabfd1).withOpacity(0.8),
-      primaryColor: Colors.white,
-      hintColor: Color(0xFFFF7B9C),
+      primaryColor: Color(0xfff2f2f2),
+      hintColor: Colors.grey.shade800,
       cardColor: const Color(0xFFFFC759),
       canvasColor: Color(0xFFE8E9ED),
       disabledColor: Color(0xffbabfd1),
       textTheme: TextTheme(
-        bodyMedium: TextStyle(color: Color(0xFF607196)),
+        bodyMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Color(0xff050119)),
         bodySmall: TextStyle(color: Color(0xFF607196)),
-        titleLarge: TextStyle(color: Color(0xFF607196)),
-        headlineLarge: TextStyle(color: Color(0xFF607196)),
-        headlineMedium: TextStyle(color: Color(0xFF607196)),
+        titleLarge: TextStyle(fontSize:18,color: Color(0xff050119)),
+        titleMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Color(0xff050119)),
+        headlineLarge: TextStyle(fontSize:18,fontWeight: FontWeight.bold,color: Color(0xff050119)),
+        headlineMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Color(0xff050119)),
         headlineSmall: TextStyle(color: Color(0xFF607196)),
         displayLarge: TextStyle(color: Color(0xFF607196)),
         displayMedium: TextStyle(color: Color(0xFFE8E9ED)),
@@ -140,8 +172,8 @@ class AppStyle {
 
   static ColorScheme colorSchemeDark = ColorScheme(
     primary: const Color(0xff050119),
-    secondary: Colors.white,
-    surface: Colors.white,
+    secondary: Color(0xff00001C),
+    surface: Color(0xff050119),
     brightness: Brightness.dark,
     error: deepRed,
     onError: const Color(0xFF607196),
@@ -162,7 +194,7 @@ class AppStyle {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+          backgroundColor: WidgetStatePropertyAll(Color(0xff1b2a41)),
                                     shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                     ),
@@ -184,16 +216,24 @@ class AppStyle {
       //canvasColor: Color(0xffbabfd1),
       //disabledColor: Color(0xffbabfd1),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: Color(0Xff55679C),
-        foregroundColor: Color(0xff5AB2FF),
+        backgroundColor: Color(0xff00001C)
+      ),
+
+      cardTheme: CardTheme(
+        color: Color(0xff192034),
+      ),
+
+      
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Color(0xff00001C)
       ),
       textTheme:  TextTheme(
-        bodyLarge: TextStyle(color: Color(0xFF607196)),
-        bodyMedium: TextStyle(color: Color(0xFF607196)),
+        bodyMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 14,color: Colors.white),
         bodySmall: TextStyle(color: Color(0xFF607196)),
-        titleLarge: TextStyle(color: Color(0xFF607196)),
-        headlineLarge: TextStyle(color: Color(0xFF607196)),
-        headlineMedium: TextStyle(color: Color(0xFF607196)),
+        titleLarge: TextStyle(fontSize:18,color: Colors.white),
+        titleMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.white),
+        headlineLarge: TextStyle(fontSize:18,fontWeight: FontWeight.bold,color: Colors.white),
+        headlineMedium: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.white),
         headlineSmall: TextStyle(color: Color(0xFF607196)),
         displayLarge: TextStyle(color: Color(0xFF607196)),
         displayMedium: TextStyle(color: Color(0xFFE8E9ED)),

@@ -59,15 +59,14 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-        color: Color(0xff03001C),
       ),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child:const Text(
+            child: Text(
               LocaleKeys.customDatePicker_title,
-              style: TextStyle(fontSize: 18, color: Colors.white),
+              style: Theme.of(context).textTheme.headlineLarge,
             ).tr(),
           ),
           SizedBox(
@@ -94,7 +93,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                             (i) => Center(
                                     child: Text(
                                   "${widget.minimumYear + i}",
-                                  style: TextStyle(color: Colors.white),
+                                  style: Theme.of(context).textTheme.headlineLarge,
                                 ))),
                         itemExtent: 82,
                         looping: true,
@@ -120,7 +119,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                                   PhoneLocalHelper.phoneLocal == "ir"
                                       ? persianMonthNames[i + 1]!
                                       : gregorianMonthNames[i + 1]!,
-                                  style: TextStyle(color: Colors.white),
+                                  style: Theme.of(context).textTheme.headlineLarge,
                                 ).tr())),
                         itemExtent: 82,
                         looping: true,
@@ -145,7 +144,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                   onPressed: () {
                     widget.onDateChanged("${selectedYear}-${selectedMonth}");
                   },
-                  icon: Icon(Icons.check)),
+                  icon: Icon(Icons.check,color: Theme.of(context).iconTheme.color,)),
             ),
           )
         ],

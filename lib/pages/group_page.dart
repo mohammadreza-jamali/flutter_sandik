@@ -56,7 +56,6 @@ class _GroupPageState extends State<GroupPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color(0xff050119),
         floatingActionButton: Container(
             width: MediaQuery.of(context).size.width,
             height: 60,
@@ -88,23 +87,19 @@ class _GroupPageState extends State<GroupPage> {
         appBar: AppBar(
             elevation: 18,
             toolbarHeight: 80,
-            backgroundColor: Color(0xff050119),
-            surfaceTintColor: Color(0xff050119),
             title: Text(
               LocaleKeys.groupPage_pageTitle,
-              style: TextStyle(color: Colors.white),
             ).tr(),
             centerTitle: true,
             leading: IconButton(
                 onPressed: () {},
                 icon: Icon(
                   MdiIcons.backburger,
-                  color: Colors.white,
                 )),
               actions: [
                 IconButton(onPressed: (){
                   _settingBottomSheet(context);
-                }, icon:Icon(MdiIcons.cogOutline,color: Colors.white,))
+                }, icon:Icon(MdiIcons.cogOutline,color: Theme.of(context).iconTheme.color,))
               ],),
         body: Column(
           children: [
@@ -161,8 +156,8 @@ class _GroupPageState extends State<GroupPage> {
                                   child: Container(
                                     padding: EdgeInsets.all(8),
                                     margin: EdgeInsets.all(8),
-                                    decoration: BoxDecoration(color: Color(0xff202040).withOpacity(0.2), borderRadius: BorderRadius.circular(12), boxShadow: [
-                                      BoxShadow(color: Color.fromARGB(31, 32, 30, 30), blurRadius: 5),
+                                    decoration: BoxDecoration(color: ThemeManager().getTheme().themeName==ThemeNames.Light?Color(0xffdddddd):Color(0xff192034), borderRadius: BorderRadius.circular(12), boxShadow: [
+                                      BoxShadow(color: Colors.blue.shade200, blurRadius: 5),
                                     ]),
                                     child: Row(
                                       children: [
@@ -172,7 +167,7 @@ class _GroupPageState extends State<GroupPage> {
                                           child: Icon(
                                             size: 30,
                                             MdiIcons.accountGroupOutline,
-                                            color: Colors.white,
+                                            color: Theme.of(context).iconTheme.color,
                                           ),
                                         ),
                                         SizedBox(
@@ -181,14 +176,11 @@ class _GroupPageState extends State<GroupPage> {
                                         Expanded(
                                             child: Text(
                                           _groups![index].groupName ?? "group name",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
+                                          style: Theme.of(context).textTheme.headlineMedium
                                         )),
                                         Icon(
                                           MdiIcons.chevronLeft,
-                                          color: Colors.white,
+                                          color: Theme.of(context).iconTheme.color,
                                         ),
                                       ],
                                     ),
@@ -237,7 +229,7 @@ Future _settingBottomSheet(BuildContext context) {
             height: 300,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(topLeft: ui.Radius.circular(35), topRight: ui.Radius.circular(35)),
-              color: Color(0xff03001C),
+              color: Theme.of(context).bottomSheetTheme.backgroundColor,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
@@ -250,14 +242,14 @@ Future _settingBottomSheet(BuildContext context) {
                       children: [
                         Icon(
                           MdiIcons.cogOutline,
-                          color: Colors.white,
+                          color: Theme.of(context).iconTheme.color,
                         ),
                         SizedBox(
                           width: 4,
                         ),
                         Text(
                           'SETTINGS',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ],
                     ),

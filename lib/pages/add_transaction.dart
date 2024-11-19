@@ -32,9 +32,7 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff050119),
       appBar: AppBar(
-        backgroundColor: Color(0xff03001C),
         title: Text("Add Transaction"),
       ),
       body: SingleChildScrollView(
