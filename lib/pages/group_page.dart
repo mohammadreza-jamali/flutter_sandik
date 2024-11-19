@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/shared_preference_manager.dart';
 import 'package:flutter_sandik/core/application/theme_manager.dart';
+import 'package:flutter_sandik/core/constants/app_style.dart';
 import 'package:flutter_sandik/core/constants/core_enum.dart';
 import 'package:flutter_sandik/core/entities/dtos/theme_dto.dart';
 import 'package:flutter_sandik/locale_keys.g.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/add_group_page.dart';
 import 'package:flutter_sandik/pages/home_page.dart';
+import 'package:flutter_sandik/pages/login_page.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:flutter_sandik/widgets/custom_dropdown.dart';
@@ -97,9 +99,43 @@ class _GroupPageState extends State<GroupPage> {
                   MdiIcons.backburger,
                 )),
               actions: [
-                IconButton(onPressed: (){
-                  _settingBottomSheet(context);
-                }, icon:Icon(MdiIcons.cogOutline,color: Theme.of(context).iconTheme.color,))
+                PopupMenuButton(itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      child: Row(
+                        children: [
+                          Icon(MdiIcons.cogOutline,color: Theme.of(context).iconTheme.color,),
+                          Padding(
+                            padding: const EdgeInsets.only(left:8.0),
+                            child: Text("Setting"),
+                          )
+                        ],
+                      ),
+                      value: "setting",
+                      onTap: () {
+                        _settingBottomSheet(context);
+                      },
+                    ),
+                    PopupMenuItem(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.logout),
+                          Padding(
+                            padding: const EdgeInsets.only(left:8.0),
+                            child: Text("Logout"),
+                          )
+                        ],
+                      ),
+                      value: "logout",
+                      onTap: () async {
+                  if (await showWarning()) {
+                    await _signOut();
+                    //Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+                  }
+                },
+                    ),
+                  ];
+                })
               ],),
         body: Column(
           children: [
@@ -201,6 +237,38 @@ class _GroupPageState extends State<GroupPage> {
         ),
       ),
     );
+  }
+  showWarning() async {
+    var res = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+              actionsAlignment: MainAxisAlignment.center,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              titlePadding: const EdgeInsets.all(0),
+              backgroundColor: Colors.white.withOpacity(0.8),
+              content: Text(
+                "are you sure you want to sign out?",
+                style: AppStyle.bold16
+                    .apply(color: Colors.orange, fontStyle: FontStyle.italic),
+              ).tr(),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(4))),
+                    child: const Text("Ok").tr()),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(4))),
+                    child:
+                        const Text("Cancel").tr()),
+              ],
+            ));
+    return res ?? false;
   }
 
   _signOut() async {

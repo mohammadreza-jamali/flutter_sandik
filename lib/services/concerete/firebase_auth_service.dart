@@ -62,6 +62,9 @@ class FirebaseAuthService implements IAuthBase {
       } else if (e.code == 'email-already-in-use') {
         return SignResultDto(
             errorMessage: 'The account already exists for that email.');
+      }else{
+        return SignResultDto(
+            errorMessage: e.message);
       }
     } catch (e) {
       return SignResultDto(errorMessage: 'Unknown error occurred.');

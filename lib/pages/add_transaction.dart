@@ -38,80 +38,86 @@ class _AddTransactionState extends State<AddTransaction> {
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Form(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Center(
-                    child: Assets.images.transactionPhoto
-                        .image(width: 400, height: 300)),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Container(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          label: Text("Paid Amount"),
-                          hintText: "200",
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Center(
+                      child: Assets.images.transactionPhoto
+                          .image(width: 400, height: 300)),
+                ),
+                SizedBox(
+                  height: 16,),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Container(
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            label: Text("Paid Amount"),
+                            hintText: "200",
+                          ),
+                          onChanged: (value) {
+                            _amount = double.parse(value == "" ? "0" : value);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) return "Value not Correct";
+                          },
                         ),
-                        onChanged: (value) {
-                          _amount = double.parse(value == "" ? "0" : value);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) return "Value not Correct";
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          label: Text("Paid Description"),
-                          hintText: "paid to shok for chips",
+                        TextFormField(
+                          decoration: InputDecoration(
+                            label: Text("Paid Description"),
+                            hintText: "paid to shok for chips",
+                          ),
+                          onChanged: (value) {
+                            _description = value;
+                          },
                         ),
-                        onChanged: (value) {
-                          _description = value;
-                        },
-                      ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      FutureBuilder(
-                          future: getCategories(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              return GenericCustomDropdown<String>(
-                                  items: _categoriesMap,
-                                  hintText: "select your category",
-                                  onChanged: (String val) {
-                                    _selectedCategory = val;
-                                  });
-                            }
-                            if (snapshot.hasError) {
-                              return Center(child: Text("Error"));
-                            }
-                            return CircularProgressIndicator();
-                          }),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      SizedBox(
-                        width: 160,
-                        height: 50,
-                        child: ElevatedButton(
-                            style: Theme.of(context).elevatedButtonTheme.style,
-                            onPressed: () => _saveTransaction(context),
-                            child: Text(
-                              'Save',
-                            )),
-                      )
-                    ],
+                        SizedBox(
+                          height: 32,
+                        ),
+                        FutureBuilder(
+                            future: getCategories(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return GenericCustomDropdown<String>(
+                                    items: _categoriesMap,
+                                    hintText: "select your category",
+                                    onChanged: (String val) {
+                                      _selectedCategory = val;
+                                    },
+                                    style: TextStyle(color: Colors.black),);
+                              }
+                              if (snapshot.hasError) {
+                                return Center(child: Text("Error"));
+                              }
+                              return CircularProgressIndicator();
+                            }),
+                        SizedBox(
+                          height: 32,
+                        ),
+                        SizedBox(
+                          width: 160,
+                          height: 50,
+                          child: ElevatedButton(
+                              style: Theme.of(context).elevatedButtonTheme.style,
+                              onPressed: () => _saveTransaction(context),
+                              child: Text(
+                                'Save',
+                              )),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

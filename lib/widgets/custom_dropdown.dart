@@ -52,6 +52,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
               
                  dropdownStyleData: DropdownStyleData(
                   decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(12),
                   )
                  ),
@@ -68,11 +69,12 @@ class _CustomDropdownState extends State<CustomDropdown> {
 }
 
 class GenericCustomDropdown<T> extends StatefulWidget {
-  const GenericCustomDropdown({required this.items,this.onChanged,this.icon,this.hintText=""});
+  const GenericCustomDropdown({required this.items,this.onChanged,this.icon,this.hintText="",this.style});
   final Map<T,String> items;
   final String hintText;
   final Icon? icon;
   final Function? onChanged;
+  final TextStyle? style;
 
   @override
   State<GenericCustomDropdown<T>> createState() => _GenericCustomDropdownState<T>();
@@ -86,12 +88,12 @@ class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
                   isExpanded: true,
                   value: selectedItem,
                   alignment: AlignmentDirectional.centerEnd,
-                  items:widget.items.entries.map<DropdownMenuItem<T>>((e) => DropdownMenuItem<T>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value,),),).toList(),
+                  items:widget.items.entries.map<DropdownMenuItem<T>>((e) => DropdownMenuItem<T>(value: e.key,alignment: AlignmentDirectional.centerEnd,child: Text(e.value,style: widget.style?? const TextStyle(),),),).toList(),
                   hint: Row(
                     children: [
                       if(widget.icon!=null) widget.icon!,
                       SizedBox(width: 8,),
-                      Text(widget.hintText,style: TextStyle(fontSize: 14),),
+                      Text(widget.hintText,style: widget.style?? TextStyle(fontSize: 14),),
                     ],
                   ),
                  onChanged: (value){
@@ -123,7 +125,7 @@ class _GenericCustomDropdownState<T> extends State<GenericCustomDropdown<T>> {
                  selectedItemBuilder: (BuildContext context){return widget.items.entries.map<Row>((e) =>Row(
                     children: [
                       const SizedBox(width: 4,),
-                      Text(e.value,style: const TextStyle(fontSize: 14,),),
+                      Text(e.value,style:widget.style?? const TextStyle(fontSize: 14,),),
                     ],
                   )).toList();},
                  ),

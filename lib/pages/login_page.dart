@@ -1,3 +1,6 @@
+import 'package:flutter_sandik/core/constants/app_style.dart';
+import 'package:flutter_sandik/dtos/login_dto.dart';
+
 import '../gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sandik/model/user.dart';
@@ -5,7 +8,14 @@ import 'package:flutter_sandik/viewmodel/transaction.dart';
 import 'package:flutter_sandik/viewmodel/user_model.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextEditingController _passwordController = TextEditingController();
+  ValueNotifier<String> _errorMessage  = ValueNotifier("");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,6 +97,7 @@ class LoginPage extends StatelessWidget {
                                   ),
                                 ),
                                 TextField(
+                                  controller: _passwordController,
                                   decoration: InputDecoration(
                                       label: Text(
                                         'Password',
@@ -102,7 +113,9 @@ class LoginPage extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 32, bottom: 16),
                                   child: ElevatedButton(
-                                      onPressed: () async {},
+                                      onPressed: () async {
+                                        await _signInWithEmailPassword();
+                                      },
                                       style: ButtonStyle(
                                         minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width, 60)),
                                         shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
@@ -136,8 +149,11 @@ class LoginPage extends StatelessWidget {
                                     await _saveUser(context, user);
                                   },
                                   child: Assets.images.icons.googleIcon.svg(),
-                                ))
-                              ],
+                                )),
+                                ValueListenableBuilder(valueListenable: _errorMessage, builder: (context, value, child) {
+                                  return Text(value,style: AppStyle.bold16.apply(color: Colors.red,fontStyle: FontStyle.italic),);
+                                })
+                                ],
                             ),
                           ),
                         ),
@@ -151,6 +167,31 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+   _signInWithEmailPassword() async {
+    var _userModel = context.read<UserModel>();
+    var result= await _userModel.signWithEmailPassword(LoginDto(email: "pooria.jamali@gmail.com", password: _passwordController.text));
+    AppUser? _user = result?.user;
+    var errorMessage=result?.errorMessage;
+    if(errorMessage!=null){
+      _errorMessage.value=errorMessage;
+      await Future.delayed(Duration(seconds: 5));
+      _errorMessage.value="";
+    }
+    
+    print("created User Id Is : ${_user?.userId}");
+  }
+
+   _registerWithEmailPassword(BuildContext context) async {
+    var _userModel = context.read<UserModel>();
+    var result= await _userModel.registerWithEmailPassword(LoginDto(email: "pooria.jamali@gmail.com", password: _passwordController.text));
+    AppUser? _user = result?.user;
+    var errorMessage=result?.errorMessage;
+if(errorMessage!=null){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(showCloseIcon: true,backgroundColor: Colors.red,content: Text(errorMessage ?? "",style: AppStyle.bold16.apply(color: Colors.white,fontStyle: FontStyle.italic),)));
+    }
+    print("created User Id Is : ${_user?.userId}");
   }
 
   _signInWithGoogle(BuildContext context) async {

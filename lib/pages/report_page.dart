@@ -544,7 +544,7 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                       textDirection: TextDirection.rtl,
                                       style:selectIndex == 0
                                   ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
-                                  : Theme.of(context).textTheme.headlineMedium,
+                                  : Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.black),
                                     ),
                                   ],
                                 ),
@@ -596,7 +596,7 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                       textDirection: TextDirection.rtl,
                                       style:selectIndex == 1
                                   ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
-                                  : Theme.of(context).textTheme.headlineMedium,
+                                  : Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.black),
                                     ),
                                   ],
                                 ),
