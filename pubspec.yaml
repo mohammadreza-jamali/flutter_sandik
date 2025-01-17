@@ -58,6 +58,7 @@ dependencies:
   jalali_table_calendar: ^1.3.5
   http: ^1.2.2
   device_region: ^1.3.0
+  carousel_slider: ^5.0.0
 
 
 dev_dependencies:

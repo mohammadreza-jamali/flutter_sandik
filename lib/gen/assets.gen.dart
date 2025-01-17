@@ -37,6 +37,10 @@ class $AssetsImagesGen {
   /// Directory path: assets/images/icons
   $AssetsImagesIconsGen get icons => const $AssetsImagesIconsGen();
 
+  /// File path: assets/images/loan_pic.png
+  AssetGenImage get loanPic =>
+      const AssetGenImage('assets/images/loan_pic.png');
+
   /// File path: assets/images/splash.jpg
   AssetGenImage get splash => const AssetGenImage('assets/images/splash.jpg');
 
@@ -46,7 +50,7 @@ class $AssetsImagesGen {
 
   /// List of all assets
   List<AssetGenImage> get values =>
-      [emptyNote, emptyNotebook, emptyPage, splash, transactionPhoto];
+      [emptyNote, emptyNotebook, emptyPage, loanPic, splash, transactionPhoto];
 }
 
 class $AssetsTranslationsGen {
@@ -55,11 +59,14 @@ class $AssetsTranslationsGen {
   /// File path: assets/translations/en.json
   String get en => 'assets/translations/en.json';
 
+  /// File path: assets/translations/fa.json
+  String get fa => 'assets/translations/fa.json';
+
   /// File path: assets/translations/tr.json
   String get tr => 'assets/translations/tr.json';
 
   /// List of all assets
-  List<String> get values => [en, tr];
+  List<String> get values => [en, fa, tr];
 }
 
 class $AssetsImagesAvatarsGen {
@@ -81,9 +88,9 @@ class $AssetsImagesAvatarsGen {
   AssetGenImage get avatar4 =>
       const AssetGenImage('assets/images/avatars/avatar4.jpg');
 
-  /// File path: assets/images/avatars/avatar5.jpeg
+  /// File path: assets/images/avatars/avatar5.jpg
   AssetGenImage get avatar5 =>
-      const AssetGenImage('assets/images/avatars/avatar5.jpeg');
+      const AssetGenImage('assets/images/avatars/avatar5.jpg');
 
   /// File path: assets/images/avatars/avatar6.jpg
   AssetGenImage get avatar6 =>
@@ -193,7 +200,7 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
     FilterQuality filterQuality = FilterQuality.low,

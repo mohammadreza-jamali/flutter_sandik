@@ -1,5 +1,6 @@
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/category.dart';
+import 'package:flutter_sandik/model/loan.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -108,4 +109,21 @@ class DbRepository implements IDbBase {
   Future<AppUser?> getUserInfo(String userId) async {
     return await _dbService.getUserInfo(userId);
   }
+
+  @override
+  Future<Loan> addLoan(Loan loan) async {
+    return await _dbService.addLoan(loan);
+  }
+
+  @override
+  Future<Loan> updateLoan(Loan loan ) async {
+    return await _dbService.updateLoan(loan);
+  }
+
+  @override
+  Future<List<Loan>> getLoans(String groupId) async {
+    return await _dbService.getLoans(groupId);
+  }
+
+  
 }

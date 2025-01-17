@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -66,11 +67,11 @@ class AppStyle {
   static OutlineInputBorder commonRadiusBorder =
       OutlineInputBorder(borderRadius: BorderRadius.circular(commonRadius));
   static OutlineInputBorder curvedLightInputBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.white),
-      borderRadius: BorderRadius.circular(36));
+      borderSide: BorderSide(color: Color(0xff4D4C7D)),
+      borderRadius: BorderRadius.circular(16));
 
   static UnderlineInputBorder bottomLightInputBorder = UnderlineInputBorder(
-      borderSide: BorderSide(color: Colors.white),
+      borderSide: BorderSide(color: Color(0xff050119)),
       borderRadius: BorderRadius.circular(4));
   static BoxShadow blueShadow =
       BoxShadow(color: shadowColor, blurRadius: 6, spreadRadius: 1);
@@ -103,6 +104,7 @@ class AppStyle {
     }
     return size - (size * diffrence);
   }
+  
 
   static ThemeData lightTheme = ThemeData(
       colorScheme: colorSchemeLight,
@@ -111,10 +113,11 @@ class AppStyle {
         iconColor: Color(0xFF607196),
         labelStyle: TextStyle(color: Color(0xFF607196)),
         hintStyle: TextStyle(color: Color(0xFF607196)),
-        fillColor: Color(0xffbabfd1),
-        enabledBorder: bottomLightInputBorder,
-        focusedBorder: bottomLightInputBorder,
-        border: bottomLightInputBorder,
+        filled: true,
+        fillColor: Color(0xffF1F6F9),
+        enabledBorder: curvedLightInputBorder,
+        focusedBorder: curvedLightInputBorder,
+        border: curvedLightInputBorder,
       ),
       appBarTheme: AppBarTheme(
           systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Color(0xfff2f2f2),statusBarIconBrightness: Brightness.dark,systemStatusBarContrastEnforced: false),
@@ -131,6 +134,8 @@ class AppStyle {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: Color(0xff050119)
       ),
+
+      
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
@@ -218,6 +223,8 @@ class AppStyle {
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: Color(0xff00001C)
       ),
+      
+      
 
       cardTheme: CardTheme(
         color: Color(0xff192034),

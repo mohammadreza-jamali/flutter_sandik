@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_sandik/core/application/phone_local_helper.dart';
 import 'package:flutter_sandik/core/constants/core_enum.dart';
+import 'package:flutter_sandik/gen/assets.gen.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/viewmodel/transaction.dart';
@@ -19,6 +20,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 Map<int, String> reportType = {
   0: 'گزارش کلی',
   1: 'گزارش ماهانه',
+  2: 'گزارش برحسب دسته بندی',
 };
 
 class ReportPage extends StatefulWidget {
@@ -33,6 +35,7 @@ class _ReportPageState extends State<ReportPage> {
   late MTransaction _transaction;
   int? selectedDropdownValue;
   int? selectedReportType;
+  String? selectedCategory;
   String? selectedDate;
   TooltipBehavior? _tooltipBehavior;
 
@@ -44,6 +47,11 @@ class _ReportPageState extends State<ReportPage> {
         canShowMarker: false,
         format: 'point.x : point.y',
         header: '');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -59,7 +67,8 @@ class _ReportPageState extends State<ReportPage> {
             child: Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Theme.of(context).iconTheme.color!)),
+                  border:
+                      Border.all(color: Theme.of(context).iconTheme.color!)),
               child: Padding(
                 padding: const EdgeInsets.all(2),
                 child: Icon(
@@ -103,7 +112,7 @@ class _ReportPageState extends State<ReportPage> {
                 onTap: () async {
                   var res = await _reportTypeBottomSheet(
                       context, selectedReportType ?? 0);
-                  if (res != null) {
+                  if (res != null&& mounted) {
                     setState(() {
                       selectedReportType = res;
                     });
@@ -135,9 +144,43 @@ class _ReportPageState extends State<ReportPage> {
                         onTap: () async {
                           var res = await _monthCalendarBottomSheet(
                               context, selectedDate ?? getNow());
-                          if (res != null) {
+                          if (res != null&& mounted) {
                             setState(() {
                               selectedDate = res;
+                            });
+                          }
+                        }),
+                  ],
+                ),
+              ),
+            if ((selectedReportType ?? 0) == 2)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Text(
+                          'انتخاب دسته',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        )),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    SelectionBox(
+                        width: MediaQuery.of(context).size.width,
+                        heght: 40,
+                        title: selectedCategory ?? "یک دسته بندی انتخاب کنید",
+                        icon: MdiIcons.arrangeBringForward,
+                        spinner: false,
+                        onTap: () async {
+                          var res = await _categoryReportBottomSheet(
+                              context, widget.groupId);
+
+                              if (res != null && mounted) {
+                            setState(() {
+                              selectedCategory = res;
                             });
                           }
                         }),
@@ -159,6 +202,7 @@ class _ReportPageState extends State<ReportPage> {
       ),
     ));
   }
+  
 
   Future<Widget> renderReport() async {
     switch (selectedReportType ?? 0) {
@@ -225,7 +269,8 @@ class _ReportPageState extends State<ReportPage> {
                 .reduce(max) ??
             0) +
         1000;
-    return Padding(
+        if (mounted) {
+          return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Container(
         width: MediaQuery.of(context).size.width / 0.7,
@@ -273,6 +318,11 @@ class _ReportPageState extends State<ReportPage> {
         ),
       ),
     );
+        }
+        else{
+          return Center();
+        }
+    
   }
 
   Future<Widget> getMonthReport(String date) async {
@@ -371,6 +421,10 @@ class _ReportPageState extends State<ReportPage> {
 
   Future<List<Category>> getCategories(bool isDefault) async {
     return await _transaction.getCategories(widget.groupId, isDefault);
+  }
+
+  Future<List<Category>> getAllCategories() async {
+    return await _transaction.getAllCategories(widget.groupId);
   }
 
   getNow() {
@@ -486,6 +540,7 @@ class ChartData {
 
 Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
   int selectIndex = selected;
+
   return await showModalBottomSheet<int>(
       context: context,
       builder: (context) {
@@ -542,9 +597,15 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                     Text(
                                       'گزارش کلی',
                                       textDirection: TextDirection.rtl,
-                                      style:selectIndex == 0
-                                  ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
-                                  : Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.black),
+                                      style: selectIndex == 0
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.white)
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.black),
                                     ),
                                   ],
                                 ),
@@ -594,9 +655,73 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
                                     Text(
                                       'گزارش ماهانه',
                                       textDirection: TextDirection.rtl,
-                                      style:selectIndex == 1
-                                  ? Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.white)
-                                  : Theme.of(context).textTheme.headlineMedium!.copyWith(color:Colors.black),
+                                      style: selectIndex == 1
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.white)
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: 8,
+                        ),
+
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: 64,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                selectIndex = 2;
+                              });
+                              Navigator.pop(context, selectIndex);
+                            },
+                            radius: 64,
+                            child: Card(
+                              shadowColor: selectIndex == 2
+                                  ? Colors.blue.shade500
+                                  : Colors.transparent,
+                              elevation: 10,
+                              color: selectIndex == 2
+                                  ? Theme.of(context).cardTheme.color
+                                  : Colors.white,
+                              surfaceTintColor: Colors.white,
+                              shape: selectIndex == 2
+                                  ? RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide.none)
+                                  : RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                          color: Colors.blue.shade200)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      'گزارش بر حسب دسته بندی',
+                                      textDirection: TextDirection.rtl,
+                                      style: selectIndex == 1
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.white)
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .headlineMedium!
+                                              .copyWith(color: Colors.black),
                                     ),
                                   ],
                                 ),
@@ -611,6 +736,80 @@ Future<int?> _reportTypeBottomSheet(BuildContext context, int selected) async {
       });
 }
 
+Future<List<Category>> getAllCategories(
+    BuildContext context, String groupId) async {
+  var _transaction = context.read<MTransaction>();
+  return await _transaction.getAllCategories(groupId);
+}
+
+Future<String?> _categoryReportBottomSheet(
+    BuildContext context, String groupId) async {
+      String? selectedItem;
+  return await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+            builder: (context, setState) => Container(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 16),
+                      child: FutureBuilder(
+                        future: getAllCategories(context, groupId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
+                            return snapshot.data!.isNotEmpty
+                                ? CategorySelectionGridView(
+                                    snapshot.data!.toList(),(item){
+                                      selectedItem=item.categoryName.toString();
+                                      Navigator.pop(context, selectedItem);
+                                    })
+                                : Center(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                            child:
+                                                Assets.images.emptyPage.image(),
+                                          ),
+                                        ),
+                                        Text(
+                                          'دسته بندی نداری!',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headlineLarge,
+                                          textDirection: TextDirection.rtl,
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          'میتوانید برای خود دسته بندی ایجاد کنید.',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey.shade500),
+                                          textDirection: TextDirection.rtl,
+                                        ),
+                                        SizedBox(
+                                          height: 32,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                          }
+                          if (snapshot.hasError) {
+                            return Center(child: Text("Error"));
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      )),
+                ));
+      });
+}
+
 Future<String?> _monthCalendarBottomSheet(
     BuildContext context, String initDate) async {
   var selectedDate = initDate;
@@ -618,7 +817,9 @@ Future<String?> _monthCalendarBottomSheet(
     context: context,
     builder: (context) => CustomDatePicker(
       initialDate: selectedDate,
-      minimumYear: PhoneLocalHelper.phoneLocal == "ir"?Jalali.now().year-10:DateTime.now().year-10,
+      minimumYear: PhoneLocalHelper.phoneLocal == "ir"
+          ? Jalali.now().year - 10
+          : DateTime.now().year - 10,
       onDateChanged: (value) {
         selectedDate = value;
         Navigator.pop(context, selectedDate);
@@ -636,7 +837,115 @@ Future<String?> _dateDurationCalendarBottomSheet(
 }
 
 Future<int?> _categoryBottomSheet(BuildContext context, String initDate) async {
-  var categoryId;
   return await showModalBottomSheet<int?>(
       context: context, builder: (context) => SizedBox());
+}
+
+class CategorySelectionGridView extends StatefulWidget {
+  final List<Category> Categories;
+    final Function(Category selectedItem) onTap;
+
+  CategorySelectionGridView(this.Categories, this.onTap);
+
+  @override
+  State<CategorySelectionGridView> createState() =>
+      _CategorySelectionGridViewState();
+}
+
+class _CategorySelectionGridViewState extends State<CategorySelectionGridView> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: GridView.builder(
+          scrollDirection: Axis.vertical,
+          physics: BouncingScrollPhysics(),
+          itemCount: widget.Categories.length,
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              childAspectRatio: 1,
+              maxCrossAxisExtent: 145,
+              mainAxisExtent: 140),
+          itemBuilder: (context, position) {
+            return CategorySelectionGridViewItem(
+              item: widget.Categories[position],
+              onTap: (item) {
+                if (mounted) {
+                  setState(() {
+                  widget.onTap(item);
+                });
+                }
+              },
+            );
+          }),
+    );
+  }
+}
+
+class CategorySelectionGridViewItem extends StatefulWidget {
+  final Category item;
+final Function(Category selectedItem) onTap ;
+  CategorySelectionGridViewItem({
+    required this.onTap,
+    required this.item,
+  });
+
+  @override
+  State<CategorySelectionGridViewItem> createState() =>
+      _CategorySelectionGridViewItemState();
+}
+
+class _CategorySelectionGridViewItemState
+    extends State<CategorySelectionGridViewItem> {
+  bool selectFlag = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (mounted) {
+          setState(() {
+          widget.onTap(widget.item);
+          selectFlag ? selectFlag=false : selectFlag=true;
+        });
+        }
+      },
+      child: Stack(
+        children: [
+          Container(
+            width: 150,
+            height: 150,
+            margin: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: selectFlag
+                  ? Color.fromARGB(255, 21, 60, 96)
+                  : Color(0xffBCDFFF),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromARGB(255, 19, 125, 157), blurRadius: 0.8)
+              ],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(MdiIcons.fromString(widget.item.icon!),
+                    color: selectFlag?Colors.white:Color(0xff1F50D3)),
+                SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  widget.item.categoryName!,
+                  style: TextStyle(
+                      color: selectFlag?Colors.white :Colors.blue.shade900,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

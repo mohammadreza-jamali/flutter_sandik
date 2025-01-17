@@ -69,6 +69,9 @@ class _AddTransactionState extends State<AddTransaction> {
                             if (value!.isEmpty) return "Value not Correct";
                           },
                         ),
+                        SizedBox(
+                          height: 8,
+                        ),
                         TextFormField(
                           decoration: InputDecoration(
                             label: Text("Paid Description"),

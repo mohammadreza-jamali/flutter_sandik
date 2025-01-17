@@ -1,4 +1,5 @@
 import 'package:flutter_sandik/model/category.dart';
+import 'package:flutter_sandik/model/loan.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/group.dart';
@@ -126,5 +127,24 @@ class FirestoreDbService implements IDbBase {
   Future<AppUser> updateUser(AppUser user) async {
     await _firestore.collection("Users").doc(user.userId).update(user.toMap());
     return user;
+  }
+
+  @override
+  Future<Loan> addLoan(Loan loan) async {
+        await _firestore.collection("Loans").doc(loan.loanId).set(loan.toMap(), SetOptions(merge: true));
+        return loan;
+  }
+
+  @override
+  Future<List<Loan>> getLoans(String groupId) async {
+    var loans = await _firestore.collection("Loans").where("groupId", isEqualTo: groupId).get();
+    var list = loans.docs.map((e) => Loan().fromJson(e.data())).toList();
+    return list;
+  }
+
+  @override
+  Future<Loan> updateLoan(Loan loan) async {
+    await _firestore.collection("Loans").doc(loan.loanId).update(loan.toMap());
+    return loan;
   }
 }

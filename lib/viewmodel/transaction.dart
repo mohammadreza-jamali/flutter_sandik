@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/category.dart';
+import 'package:flutter_sandik/model/loan.dart';
 import 'package:flutter_sandik/model/transaction_per_month.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
@@ -174,5 +175,27 @@ class MTransaction with ChangeNotifier implements IDbBase {
   @override
   Future<AppUser?> getUserInfo(String userId) async {
     return await _dbRepository.getUserInfo(userId);
+  }
+
+  @override
+  Future<Loan> addLoan(Loan loan) async{
+    state = ViewState.Busy;
+    var result = await _dbRepository.addLoan(loan);
+    state = ViewState.Idle;
+    return result;
+  }
+
+  @override
+  Future<List<Loan>> getLoans(String groupId) async {
+        var result = await _dbRepository.getLoans(groupId);
+        return result;
+  }
+
+  @override
+  Future<Loan> updateLoan(Loan loan) async{
+    state = ViewState.Busy;
+    var result = await _dbRepository.updateLoan(loan);
+    state = ViewState.Idle;
+    return result;
   }
 }

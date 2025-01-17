@@ -9,6 +9,7 @@ import 'package:flutter_sandik/locator.dart';
 import 'package:flutter_sandik/model/group.dart';
 import 'package:flutter_sandik/model/user.dart';
 import 'package:flutter_sandik/pages/category_page.dart';
+import 'package:flutter_sandik/pages/loan_page.dart';
 import 'package:flutter_sandik/pages/report_page.dart';
 import 'package:flutter_sandik/pages/setting_page.dart';
 import 'package:flutter_sandik/widgets/budget_overlay_view.dart';
@@ -79,6 +80,15 @@ class _HomePageState extends State<HomePage> {
                         'خانه',
                         style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
                       )),
+                      FlashyTabBarItem(
+                      icon: Icon(
+                        MdiIcons.bankTransfer,
+                        color: Theme.of(context).primaryIconTheme.color,
+                      ),
+                      title: Text(
+                        'وام ها',
+                        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryIconTheme.color, fontWeight: FontWeight.bold),
+                      )),
                   FlashyTabBarItem(
                       icon: Icon(
                         MdiIcons.selectGroup,
@@ -111,12 +121,15 @@ class _HomePageState extends State<HomePage> {
           body: PageView(
             controller: pageController,
             onPageChanged: (value) {
-              setState(() {
+              if (mounted) {
+                setState(() {
                 selectedScreenIndex = value;
               });
+              }
             },
             children: [
               BudgetOverlayView(group: widget.group, currentUser: widget.user!),
+              LoanPage(widget.group.groupId!),
               CategoryPage(widget.group.groupId!),
               SettingPage(
                 userId: widget.user!.userId!,

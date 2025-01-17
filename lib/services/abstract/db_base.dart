@@ -1,6 +1,7 @@
 import 'package:flutter_sandik/model/budget.dart';
 import 'package:flutter_sandik/model/category.dart';
 import 'package:flutter_sandik/model/group.dart';
+import 'package:flutter_sandik/model/loan.dart';
 import 'package:flutter_sandik/model/money_transaction.dart';
 import 'package:flutter_sandik/model/user.dart';
 
@@ -24,4 +25,7 @@ abstract class IDbBase {
   Future<Category> addCategory(Category category);
   Future deleteCategory(String categoryId);
   Future<AppUser?> getUserInfo(String userId);
+  Future<Loan> addLoan(Loan loan);
+  Future<Loan> updateLoan(Loan loan );
+  Future<List<Loan>> getLoans(String groupId);
 }
